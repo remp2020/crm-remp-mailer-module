@@ -11,13 +11,8 @@ use Crm\UsersModule\Auth\UserManager;
 
 class MailSettingsPresenter extends FrontendPresenter
 {
-    /** @var MailUserSubscriptionsRepository @inject */
     public $mailUserSubscriptionsRepository;
 
-    /** @var MailSettingsControlFactoryInterface @inject */
-    public $mailSettingsControlFactory;
-
-    /** @var MailTypesRepository @inject */
     public $mailTypesRepository;
 
     /** @var AutoLogin @inject */
@@ -26,9 +21,18 @@ class MailSettingsPresenter extends FrontendPresenter
     /** @var UserManager @inject */
     public $userManager;
 
-    public function createComponentMailSettings()
+    public function __construct(
+        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
+        MailTypesRepository $mailTypesRepository
+    ) {
+        parent::__construct();
+        $this->mailTypesRepository = $mailTypesRepository;
+        $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
+    }
+
+    public function createComponentMailSettings(MailSettingsControlFactoryInterface $mailSettingsControlFactory)
     {
-        return $this->mailSettingsControlFactory->create();
+        return $mailSettingsControlFactory->create();
     }
 
     public function renderMailSettings()

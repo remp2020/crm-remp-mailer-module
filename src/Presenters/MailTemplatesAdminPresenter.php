@@ -7,8 +7,13 @@ use Crm\RempMailerModule\DI\Config;
 
 class MailTemplatesAdminPresenter extends FrontendPresenter
 {
-    /** @var Config @inject */
     public $config;
+
+    public function __construct(Config $config)
+    {
+        parent::__construct();
+        $this->config = $config;
+    }
 
     public function actionShow($id)
     {
