@@ -1,0 +1,66 @@
+menu:
+	main: E-mails
+	mail_templates: E-mails
+	sent_emails: Last sent emails
+	mail_layouts: Mail Layouts
+	mail_unsubscribe: Unsubscribsions
+	jobs: Mail Jobs
+	email_settings: E-mail settings
+	generator: Mail generator
+	mail_source_templates: Layouts for generator
+	mail_types: Mail types
+
+data:
+	mail_logs:
+		fields:
+			created_at: Sent at
+			subject: Subject
+			email: E-mail address
+			mail_template_id: E-mail
+			events: Events
+			delivered_at: Delivered
+			opened_at: Otvorené
+			clicked_at: Clicked
+			dropped_at: Dropped
+			spam_complained_at: Spam
+			hard_bounced_at: Bounced
+			conversions: Conversions
+
+frontend:
+	mail_settings:
+		header: Email settings
+		your_email: Your email
+		subscribe: Subscribe
+		unsubscribe: Unsubscribe
+		subscribe_success: You have been successfully subscribed.
+		unsubscribe_success: You have been successfully un-subscribed.
+		preview: See sample
+		subscribe_all: Subscribe all
+		unsubscribe_all: Unsubscribe all
+		active: Subscribed
+		inactive: Unsubscribed
+
+	mail_subscribe:
+		header: Subsribed to newsletter
+
+	mail_unsubscribe:
+		header: Unsubscribed from newsletter
+		header_alt: Email %email% was unsubscribed from newsletter
+		header_no_account: "Email <i>%email%</i> is no longer present in the system<br><small>(it's not possible to unsubscribe it anymore)</small>"
+		other_email_settings: Other email settings
+
+admin:
+	mail_logs_component:
+		header: Sent emails
+		no_content: No sent emails
+		no_content_message: No messages have been sent yet
+		total: Total
+		success: Success
+		errors: Errors
+
+	mail_settings:
+		header: Mail settings
+		frontend_header: Choose groups you want to recieve
+		actualized_message: Settings was actualied
+		unsubscribed: Unsubsribed %time%
+		subscribed: Subscribed %time%

@@ -1,0 +1,41 @@
+services:
+	# api
+	- Crm\RempMailerModule\Api\MailTemplateListApiHandler
+
+	# components
+	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
+	- Crm\RempMailerModule\Components\MailSettings\MailSettings
+	- Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface
+	- Crm\RempMailerModule\Components\MailLogs\MailLogs
+	- Crm\RempMailerModule\Components\MailLogs\MailLogControlFactoryInterface
+
+	# DI
+	- Crm\RempMailerModule\DI\Config
+
+	# events
+	- Crm\RempMailerModule\Events\NotificationHandler
+	- Crm\RempMailerModule\Events\SendWelcomeEmailHandler
+
+	# forms
+	- Crm\RempMailerModule\Forms\EmailSettingsFormFactory
+
+	# hermes
+	- Crm\RempMailerModule\Hermes\EmailChangedHandler
+	- Crm\RempMailerModule\Hermes\UserCreatedHandler
+	- Crm\RempMailerModule\Hermes\SendEmailHandler
+	mailerLogRedact: Crm\RempMailerModule\Hermes\LogRedact
+	hermesLogger:
+		setup:
+			- pushProcessor(@mailerLogRedact::add(['token', 'password']))
+
+	# models
+	- Crm\RempMailerModule\Models\Api\Client
+	- Crm\RempMailerModule\Models\Api\MailLogQueryBuilder
+	- Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator
+
+	# repositories
+	mailTypesRepository: Crm\RempMailerModule\Repositories\MailTypesRepository
+	mailTemplatesRepository: Crm\RempMailerModule\Repositories\MailTemplatesRepository
+	mailUserSubscriptionsRepository: Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository
+	mailTypeCategoriesRepository: Crm\RempMailerModule\Repositories\MailTypeCategoriesRepository
+	mailLogsRepository: Crm\RempMailerModule\Repositories\MailLogsRepository

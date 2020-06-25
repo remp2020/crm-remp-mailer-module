@@ -1,0 +1,24 @@
+{block #content}
+
+<div class="page-header">
+  <h1 n:block="title">{_remp_mailer.frontend.mail_subscribe.header}</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <p>
+        {capture $emailSettingsLink}{link :RempMailer:MailSettings:mailSettings}{/capture}
+        {control snippet 'mail-subscribe-success-text', 'mail_type_title' => $mailType->title, 'email_settings_link' => $emailSettingsLink}
+
+        {if $medium === email}
+        <script type="text/javascript">
+            $(function() {
+                ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_emailcta');
+            })
+        </script>
+        {/if}
+    </p>
+
+    {control mailSettings}
+  </div>
+</div>
