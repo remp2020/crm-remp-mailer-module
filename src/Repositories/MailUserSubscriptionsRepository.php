@@ -2,9 +2,11 @@
 
 namespace Crm\RempMailerModule\Repositories;
 
+use Crm\RempMailerModule\Events\UserMailSubscriptionsChanged;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\UsersModule\Repository\UsersRepository;
+use League\Event\Emitter;
 
 class MailUserSubscriptionsRepository
 {
@@ -12,10 +14,13 @@ class MailUserSubscriptionsRepository
 
     private $apiClient;
 
-    public function __construct(Client $apiClient, UsersRepository $usersRepository)
+    private $emitter;
+
+    public function __construct(Client $apiClient, UsersRepository $usersRepository, Emitter $emitter)
     {
         $this->apiClient = $apiClient;
         $this->usersRepository = $usersRepository;
+        $this->emitter = $emitter;
     }
 
     final public function userPreferences(int $userId, ?bool $subscribed = null)
@@ -34,12 +39,16 @@ class MailUserSubscriptionsRepository
 
     final public function subscribeUser($user, $mailTypeId, $variantId = null, $utmParams = [])
     {
-        return $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $utmParams);
+        $result = $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $utmParams);
+        $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
+        return $result;
     }
 
     final public function unSubscribeUser($user, $mailTypeId, $utmParams = [])
     {
-        return $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $utmParams);
+        $result = $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $utmParams);
+        $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
+        return $result;
     }
 
     final public function subscribeUserAll($user)
