@@ -64,7 +64,16 @@ class MailUserSubscriptionsRepository
                 ->setSubscribed(true)
                 ->setMailTypeCode($subscribedMailType['code']);
         }
-        return $this->apiClient->bulkSubscribe($subscribeRequests);
+        $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+
+        /** @var MailSubscribeRequest $subscribeRequest */
+        foreach ($subscribeRequests as $subscribeRequest) {
+            $this->emitter->emit(
+                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
+            );
+        }
+
+        return $result;
     }
 
     final public function unsubscribeUserAll($user)
@@ -80,12 +89,30 @@ class MailUserSubscriptionsRepository
                 ->setSubscribed(false)
                 ->setMailTypeCode($subscribedMailType['code']);
         }
-        return $this->apiClient->bulkSubscribe($subscribeRequests);
+        $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+
+        /** @var MailSubscribeRequest $subscribeRequest */
+        foreach ($subscribeRequests as $subscribeRequest) {
+            $this->emitter->emit(
+                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
+            );
+        }
+
+        return $result;
     }
 
     final public function bulkSubscriptionChange(array $subscribeRequests)
     {
-        return $this->apiClient->bulkSubscribe($subscribeRequests);
+        $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+
+        /** @var MailSubscribeRequest $subscribeRequest */
+        foreach ($subscribeRequests as $subscribeRequest) {
+            $this->emitter->emit(
+                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
+            );
+        }
+
+        return $result;
     }
 
     final public function isUserUnsubscribed($user, $mailTypeId)

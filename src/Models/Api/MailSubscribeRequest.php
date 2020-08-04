@@ -62,4 +62,34 @@ class MailSubscribeRequest
             return $item !== null;
         });
     }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function getMailTypeCode()
+    {
+        return $this->mailTypeCode;
+    }
+
+    public function getMailTypeId()
+    {
+        return $this->mailTypeId;
+    }
+
+    public function getSubscribed()
+    {
+        return $this->subscribed;
+    }
+
+    public function getVariantId()
+    {
+        return $this->variantId;
+    }
 }
