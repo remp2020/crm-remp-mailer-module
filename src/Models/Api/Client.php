@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
+use Nette\Http\IResponse;
 use Nette\Utils\Json;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -170,7 +171,7 @@ class Client
             }
             return $records;
         } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() == 400) {
+            if ($e->getResponse()->getStatusCode() == IResponse::S400_BAD_REQUEST) {
                 Debugger::log($e, ILogger::ERROR);
                 return null;
             }
@@ -202,7 +203,7 @@ class Client
 
             return Json::decode($logsCount->getBody()->getContents(), true);
         } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() == 400) {
+            if ($e->getResponse()->getStatusCode() == IResponse::S400_BAD_REQUEST) {
                 Debugger::log($e, ILogger::ERROR);
                 return null;
             }
@@ -349,10 +350,10 @@ class Client
 
             return Json::decode($result->getBody(), Json::FORCE_ARRAY);
         } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) {
+            if ($e->getResponse()->getStatusCode() == IResponse::S404_NOT_FOUND) {
                 return [];
             }
-            if ($e->getResponse()->getStatusCode() == 400) {
+            if ($e->getResponse()->getStatusCode() == IResponse::S400_BAD_REQUEST) {
                 Debugger::log($e, ILogger::ERROR);
                 return [];
             }
