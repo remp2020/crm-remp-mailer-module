@@ -48,7 +48,7 @@ class RempMailerModule extends CrmModule
 
     public function registerFrontendMenuItems(MenuContainerInterface $menuContainer)
     {
-        $menuItem = new MenuItem('remp_mailer.menu.email_settings', ':RempMailer:MailSettings:MailSettings', '', 140);
+        $menuItem = new MenuItem($this->translator->translate('remp_mailer.menu.email_settings'), ':RempMailer:MailSettings:MailSettings', '', 140);
         $menuContainer->attachMenuItem($menuItem);
     }
 
