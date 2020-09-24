@@ -75,6 +75,11 @@ class Client
                 return $data['email'];
             }
             return false;
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() !== IResponse::S404_NOT_FOUND) {
+                Debugger::log($e);
+            }
+            return false;
         } catch (\Exception $e) {
             Debugger::log($e);
             return false;
