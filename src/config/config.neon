@@ -2,6 +2,8 @@ services:
 	# api
 	mailTemplateListApiHandler:
 		class: Crm\RempMailerModule\Api\MailTemplateListApiHandler
+		setup:
+			- addAllowedMailTypeCodes('system', 'system_optional')
 
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
