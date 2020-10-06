@@ -13,8 +13,8 @@ class MailTemplatesRepository
         $this->apiClient = $apiClient;
     }
 
-    final public function all(array $mailTypeCodes = []): ?array
+    final public function all(array $mailTypeCodes = [], bool $withMailTypes = false): ?array
     {
-        return $this->apiClient->getTemplates($mailTypeCodes);
+        return $this->apiClient->getTemplates($mailTypeCodes, $withMailTypes);
     }
 }

@@ -395,17 +395,20 @@ class Client
         }
     }
 
-    public function getTemplates(array $mailTypeCodes = []): array
+    public function getTemplates(array $mailTypeCodes = [], bool $withMailTypes = false): array
     {
         try {
             $query = [];
             if (count($mailTypeCodes)) {
                 $query['mail_type_codes'] = array_values($mailTypeCodes);
             }
+            if ($withMailTypes) {
+                $query['with_mail_types'] = $withMailTypes;
+            }
             $result = $this->apiClient->get(
                 self::MAIL_TEMPLATES,
                 [
-                    RequestOptions::QUERY => $query,
+                    RequestOptions::QUERY => $query
                 ]
             );
 

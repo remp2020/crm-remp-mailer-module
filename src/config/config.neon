@@ -1,6 +1,7 @@
 services:
 	# api
-	- Crm\RempMailerModule\Api\MailTemplateListApiHandler
+	mailTemplateListApiHandler:
+		class: Crm\RempMailerModule\Api\MailTemplateListApiHandler
 
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
