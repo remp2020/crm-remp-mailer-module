@@ -1,14 +1,8 @@
 menu:
-	main: E-maily
-	mail_templates: E-maily
-	sent_emails: Odoslané e-maily
-	mail_layouts: Šablóny
-	mail_unsubscribe: Odhlásenia z e-mailov
-	jobs: Mailové úlohy
+	main: REMP
+	mailer: Mailer
 	email_settings: Newslettre
-	generator: Mail generátor
-	mail_source_templates: Šablóny pre generátor
-	mail_types: Typy mailov
+
 
 data:
 	mail_logs:

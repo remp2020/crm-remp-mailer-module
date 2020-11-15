@@ -1,14 +1,7 @@
 menu:
-	main: E-mails
-	mail_templates: E-mails
-	sent_emails: Last sent emails
-	mail_layouts: Mail Layouts
-	mail_unsubscribe: Unsubscribsions
-	jobs: Mail Jobs
+	main: REMP
+	mailer: Mailer
 	email_settings: E-mail settings
-	generator: Mail generator
-	mail_source_templates: Layouts for generator
-	mail_types: Mail types
 
 data:
 	mail_logs:

@@ -70,65 +70,10 @@ class RempMailerModule extends CrmModule
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
     {
-        $mainMenu = new MenuItem($this->translator->translate('remp_mailer.menu.main'), '#', 'fa fa-envelope', 300, false);
-        $mainMenu->addChild(new MenuItem(
-            'Dashboard',
-            $this->config->getHost() . '/',
-            'fa fa-envelope',
-            100,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.mail_types'),
-            $this->config->getHost() . '/list',
-            'fa fa-list-ol',
-            400,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.mail_templates'),
-            $this->config->getHost() . '/template',
-            'fa fa-envelope',
-            500,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.mail_layouts'),
-            $this->config->getHost() . '/layout',
-            'fa fa-file',
-            600,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.sent_emails'),
-            $this->config->getHost() . '/log',
-            'fa fa-envelope-open-text',
-            700,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.jobs'),
-            $this->config->getHost() . '/job',
-            'fa fa-coffee',
-            900,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.generator'),
-            $this->config->getHost() . '/mail-generator',
-            'fa fa-mail-bulk',
-            2000,
-            false
-        ));
-        $mainMenu->addChild(new MenuItem(
-            $this->translator->translate('remp_mailer.menu.mail_source_templates'),
-            $this->config->getHost() . '/generator',
-            'fa fa-cogs',
-            2100,
-            false
-        ));
+        $mainMenu = new MenuItem($this->translator->translate('remp_mailer.menu.main'), '#', 'fa fa-rocket', 749, false);
 
-        $menuContainer->attachMenuItem($mainMenu);
+        $menuItem = new MenuItem($this->translator->translate('remp_mailer.menu.mailer'), getenv('REMP_MAILER_HOST'), 'fa fa-envelope', 2000, false);
+        $menuContainer->attachMenuItemToForeignModule('#remp', $mainMenu, $menuItem);
     }
 
     public function registerAuthenticators(AuthenticatorManagerInterface $authenticatorManager)
