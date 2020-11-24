@@ -58,6 +58,14 @@ final class RempMailerModuleExtension extends CompilerExtension implements ITran
             ->addSetup('addModule', [$module]);
     }
 
+    public function beforeCompile()
+    {
+        $builder = $this->getContainerBuilder();
+        // load presenters from extension to Nette
+        $builder->getDefinition($builder->getByType(\Nette\Application\IPresenterFactory::class))
+            ->addSetup('setMapping', [['RempMailer' => 'Crm\RempMailerModule\Presenters\*Presenter']]);
+    }
+
     /**
      * Return array of directories, that contain resources for translator.
      * @return string[]
