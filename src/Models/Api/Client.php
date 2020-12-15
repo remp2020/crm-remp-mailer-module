@@ -253,7 +253,7 @@ class Client
         }
     }
 
-    public function subscribeUser(int $userId, string $email, int $mailTypeId, ?int $variantId = null, array $utmParams = [])
+    public function subscribeUser(int $userId, string $email, int $mailTypeId, ?int $variantId = null, array $rtmParams = [])
     {
         try {
             $data = [
@@ -276,7 +276,7 @@ class Client
         }
     }
 
-    public function unSubscribeUser(int $userId, string $email, int $mailTypeId, array $utmParams = [])
+    public function unSubscribeUser(int $userId, string $email, int $mailTypeId, array $rtmParams = [])
     {
         try {
             $data =  [
@@ -284,7 +284,14 @@ class Client
                 'user_id' => $userId,
                 'list_id' => $mailTypeId,
             ];
-            if (!empty($utmParams)) {
+            if (!empty($rtmParams)) {
+                $data['rtm_params'] = $rtmParams;
+
+                // transition-period (UTM -> RTM), will be removed
+                $utmParams = [];
+                foreach ($rtmParams as $paramName => $value) {
+                    $utmParams['utm_' . substr($paramName, 4)] = $value;
+                }
                 $data['utm_params'] = $utmParams;
             }
             $this->apiClient->post(self::UNSUBSCRIBE, ['json' =>
@@ -315,7 +322,7 @@ class Client
         }
     }
 
-    public function unSubscribeUserVariant(int $userId, string $email, int $mailTypeId, int $variantId, array $utmParams = [])
+    public function unSubscribeUserVariant(int $userId, string $email, int $mailTypeId, int $variantId, array $rtmParams = [])
     {
         try {
             $this->apiClient->post(self::UNSUBSCRIBE_VARIANT, ['json' =>
@@ -324,7 +331,7 @@ class Client
                     'user_email' => $email,
                     'variant_id' => $variantId,
                     'list_id' => $mailTypeId,
-                    'utm_params' => $utmParams
+                    'rtm_params' => $rtmParams
                 ]
             ]);
             return true;

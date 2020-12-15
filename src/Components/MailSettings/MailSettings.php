@@ -90,7 +90,7 @@ class MailSettings extends Control
         if (!$this->presenter->getUser()->isLoggedIn()) {
             $this->presenter->redirect(':Mailer:Register:email', $id, $variantId);
         }
-        $this->mailUserSubscriptionsRepository->subscribeUser($this->presenter->getUser()->getIdentity(), $id, $variantId, $this->presenter->utmParams());
+        $this->mailUserSubscriptionsRepository->subscribeUser($this->presenter->getUser()->getIdentity(), $id, $variantId, $this->presenter->rtmParams());
         $this->flashMessage($this->presenter->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
         $this->template->changedId = (int)$id;
 
@@ -106,7 +106,7 @@ class MailSettings extends Control
     public function handleUnSubscribe($id)
     {
         $this->getPresenter()->onlyLoggedIn();
-        $this->mailUserSubscriptionsRepository->unSubscribeUser($this->presenter->getUser()->getIdentity(), $id, $this->presenter->utmParams());
+        $this->mailUserSubscriptionsRepository->unSubscribeUser($this->presenter->getUser()->getIdentity(), $id, $this->presenter->rtmParams());
         $this->flashMessage($this->presenter->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
         $this->template->changedId = (int)$id;
 

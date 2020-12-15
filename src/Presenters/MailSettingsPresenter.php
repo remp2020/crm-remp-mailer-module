@@ -51,9 +51,12 @@ class MailSettingsPresenter extends FrontendPresenter
         }
 
         $this->template->mailType = $mailType;
-        $this->mailUserSubscriptionsRepository->subscribeUser($this->getUser()->getIdentity(), $mailType->id, null, $this->utmParams());
+        $this->mailUserSubscriptionsRepository->subscribeUser($this->getUser()->getIdentity(), $mailType->id, null, $this->rtmParams());
 
-        $this->redirect('MailSettings:subscribeEmailSuccess', ['id' => $id, 'medium' => $this->getParameter('utm_medium')]);
+        $this->redirect('MailSettings:subscribeEmailSuccess', [
+            'id' => $id,
+            'medium' => $this->getParameter('rtm_medium') ?? $this->getParameter('utm_medium') ?? null,
+        ]);
     }
 
     public function renderSubscribeEmailSuccess($id)
@@ -105,16 +108,11 @@ class MailSettingsPresenter extends FrontendPresenter
 
         if (!$this->mailUserSubscriptionsRepository->isUserUnsubscribed($userToUnsubscribe, $mailType->id)) {
             if ($variantId) {
-                $this->mailUserSubscriptionsRepository->unSubscribeUserVariant($userToUnsubscribe, $mailType->id, $variantId, $this->utmParams());
+                $this->mailUserSubscriptionsRepository->unSubscribeUserVariant($userToUnsubscribe, $mailType->id, $variantId, $this->rtmParams());
             } else {
-                $this->mailUserSubscriptionsRepository->unSubscribeUser($userToUnsubscribe, $mailType->id, $this->utmParams());
+                $this->mailUserSubscriptionsRepository->unSubscribeUser($userToUnsubscribe, $mailType->id, $this->rtmParams());
             }
         }
         $this->template->header = $message;
-    }
-
-    public function utmParams(): array
-    {
-        return parent::utmParams();
     }
 }

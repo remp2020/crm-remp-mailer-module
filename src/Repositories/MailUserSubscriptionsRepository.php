@@ -37,16 +37,16 @@ class MailUserSubscriptionsRepository
         return $mailSubscriptions;
     }
 
-    final public function subscribeUser($user, $mailTypeId, $variantId = null, $utmParams = [])
+    final public function subscribeUser($user, $mailTypeId, $variantId = null, $rtmParams = [])
     {
-        $result = $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $utmParams);
+        $result = $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $rtmParams);
         $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
         return $result;
     }
 
-    final public function unSubscribeUser($user, $mailTypeId, $utmParams = [])
+    final public function unSubscribeUser($user, $mailTypeId, $rtmParams = [])
     {
-        $result = $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $utmParams);
+        $result = $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $rtmParams);
         $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
         return $result;
     }
@@ -120,8 +120,8 @@ class MailUserSubscriptionsRepository
         return $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId);
     }
 
-    final public function unSubscribeUserVariant($user, $mailTypeId, $variantId, $utmParams = [])
+    final public function unSubscribeUserVariant($user, $mailTypeId, $variantId, $rtmParams = [])
     {
-        return $this->apiClient->unSubscribeUserVariant($user->id, $user->email, $mailTypeId, $variantId, $utmParams);
+        return $this->apiClient->unSubscribeUserVariant($user->id, $user->email, $mailTypeId, $variantId, $rtmParams);
     }
 }
