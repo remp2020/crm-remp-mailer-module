@@ -72,12 +72,12 @@
           <small class="text-muted">{$email->sent_at|userDate}</small>
         </td>
         <td>
-          <a href="{plink :RempMailer:MailTemplatesAdmin:show $email->mail_template->id}">{$email->subject}</a>
+          <a href="{plink :RempMailer:MailTemplatesAdmin:show $email->mail_template->code}">{$email->subject}</a>
           <span n:if="$email->attachment_size" class="badge badge-default">{$email->attachment_size|bytes} attachment</span>
         </td>
         <td><a href="{plink :Users:UsersAdmin:default text => $email->email}">{$email->email}</a></td>
         <td>
-          <a n:if="$email->mail_template->id" href="{plink :RempMailer:MailTemplatesAdmin:Show $email->mail_template->id}">{$email->mail_template->name}</a>
+          <a n:if="$email->mail_template->id" href="{plink :RempMailer:MailTemplatesAdmin:Show $email->mail_template->code}">{$email->mail_template->name}</a>
           <code class="muted" n:if="$email->mail_template->id"><small>{$email->mail_template->code}</small></code>
         </td>
         <td>

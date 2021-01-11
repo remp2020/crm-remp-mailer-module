@@ -3,14 +3,35 @@
 namespace Crm\RempMailerModule\Tests;
 
 use Crm\ApiModule\Authorization\NoAuthorization;
+use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\RempMailerModule\Api\MailTemplateListApiHandler;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
+use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
-use PHPUnit\Framework\TestCase;
 
-class MailTemplateListApiHandlerTest extends TestCase
+class MailTemplateListApiHandlerTest extends DatabaseTestCase
 {
+    /** @var LinkGenerator */
+    private $linkGenerator;
+
+    protected function requiredRepositories(): array
+    {
+        return [];
+    }
+
+    protected function requiredSeeders(): array
+    {
+        return [];
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->linkGenerator = $this->inject(LinkGenerator::class);
+    }
+
     public function testListing()
     {
         $mailTemplate = (object)[
@@ -30,7 +51,10 @@ class MailTemplateListApiHandlerTest extends TestCase
             ->andReturn([$mailTemplate])
             ->getMock();
 
-        $mailTemplateListApiHandler = new MailTemplateListApiHandler(new MailTemplatesRepository($client));
+        $mailTemplateListApiHandler = new MailTemplateListApiHandler(
+            new MailTemplatesRepository($client),
+            $this->linkGenerator
+        );
         $mailTemplateListApiHandler->addAllowedMailTypeCodes('test_templates');
         $response = $mailTemplateListApiHandler->handle(new NoAuthorization());
         $this->assertEquals(Response::S200_OK, $response->getHttpCode());

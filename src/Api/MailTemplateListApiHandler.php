@@ -6,17 +6,23 @@ use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
+use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 
 class MailTemplateListApiHandler extends ApiHandler
 {
     private $mailTemplatesRepository;
 
+    private $linkGenerator;
+
     private $allowedMailTypeCodes = [];
 
-    public function __construct(MailTemplatesRepository $mailTemplatesRepository)
-    {
+    public function __construct(
+        MailTemplatesRepository $mailTemplatesRepository,
+        LinkGenerator $linkGenerator
+    ) {
         $this->mailTemplatesRepository = $mailTemplatesRepository;
+        $this->linkGenerator = $linkGenerator;
     }
 
     public function params()
@@ -40,6 +46,12 @@ class MailTemplateListApiHandler extends ApiHandler
             $results[] = [
                 'code' => $mailTemplate->code,
                 'name' => $mailTemplate->name,
+                'link' => $this->linkGenerator->link(
+                    'RempMailer:MailTemplatesAdmin:show',
+                    [
+                        'code' => $mailTemplate->code,
+                    ]
+                ),
                 'description' => $mailTemplate->description ?? "",
                 'mail_type' => [
                     'code' => $mailTemplate->mail_type->code,
