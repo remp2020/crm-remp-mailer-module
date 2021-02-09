@@ -18,6 +18,7 @@ services:
 	# events
 	- Crm\RempMailerModule\Events\NotificationHandler
 	- Crm\RempMailerModule\Events\SendWelcomeEmailHandler
+	- Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler
 
 	# forms
 	- Crm\RempMailerModule\Forms\EmailSettingsFormFactory

@@ -44,6 +44,11 @@ class RempMailerModule extends CrmModule
             \Crm\UsersModule\Events\NotificationEvent::class,
             $this->getInstance(\Crm\RempMailerModule\Events\NotificationHandler::class)
         );
+
+        $emitter->addListener(
+            \Crm\RempMailerModule\Events\UserMailSubscriptionsChanged::class,
+            $this->getInstance(\Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler::class)
+        );
     }
 
     public function registerFrontendMenuItems(MenuContainerInterface $menuContainer)
