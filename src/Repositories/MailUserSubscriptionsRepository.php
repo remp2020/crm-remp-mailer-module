@@ -40,14 +40,22 @@ class MailUserSubscriptionsRepository
     final public function subscribeUser($user, $mailTypeId, $variantId = null, $rtmParams = [])
     {
         $result = $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $rtmParams);
-        $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
+        $this->emitter->emit(new UserMailSubscriptionsChanged(
+            $user->id,
+            $mailTypeId,
+            UserMailSubscriptionsChanged::SUBSCRIBED
+        ));
         return $result;
     }
 
     final public function unSubscribeUser($user, $mailTypeId, $rtmParams = [])
     {
         $result = $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $rtmParams);
-        $this->emitter->emit(new UserMailSubscriptionsChanged($user->id, $mailTypeId));
+        $this->emitter->emit(new UserMailSubscriptionsChanged(
+            $user->id,
+            $mailTypeId,
+            UserMailSubscriptionsChanged::UNSUBSCRIBED
+        ));
         return $result;
     }
 
@@ -68,9 +76,11 @@ class MailUserSubscriptionsRepository
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {
-            $this->emitter->emit(
-                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
-            );
+            $this->emitter->emit(new UserMailSubscriptionsChanged(
+                $subscribeRequest->getUserId(),
+                $subscribeRequest->getMailTypeId(),
+                UserMailSubscriptionsChanged::SUBSCRIBED
+            ));
         }
 
         return $result;
@@ -93,9 +103,11 @@ class MailUserSubscriptionsRepository
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {
-            $this->emitter->emit(
-                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
-            );
+            $this->emitter->emit(new UserMailSubscriptionsChanged(
+                $subscribeRequest->getUserId(),
+                $subscribeRequest->getMailTypeId(),
+                UserMailSubscriptionsChanged::UNSUBSCRIBED
+            ));
         }
 
         return $result;
@@ -107,9 +119,12 @@ class MailUserSubscriptionsRepository
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {
-            $this->emitter->emit(
-                new UserMailSubscriptionsChanged($subscribeRequest->getUserId(), $subscribeRequest->getMailTypeId())
-            );
+            $this->emitter->emit(new UserMailSubscriptionsChanged(
+                $subscribeRequest->getUserId(),
+                $subscribeRequest->getMailTypeId(),
+                $subscribeRequest->getSubscribed() ?
+                    UserMailSubscriptionsChanged::SUBSCRIBED : UserMailSubscriptionsChanged::UNSUBSCRIBED
+            ));
         }
 
         return $result;
