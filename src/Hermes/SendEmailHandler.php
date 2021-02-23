@@ -16,8 +16,9 @@ class SendEmailHandler implements HandlerInterface
 
     private $apiClient;
 
-    public function __construct(Client $apiClient)
-    {
+    public function __construct(
+        Client $apiClient
+    ) {
         $this->apiClient = $apiClient;
     }
 
@@ -30,12 +31,20 @@ class SendEmailHandler implements HandlerInterface
             return false;
         }
 
+        $mailTemplate = $this->apiClient->getTemplate($payload['mail_template_code']);
+        if (!$mailTemplate) {
+            Debugger::log("Could not load mail template: record with code [{$payload['mail_template_code']}] doesn't exist");
+            return false;
+        }
+
+        $attachments = $mailTemplate->attachments_enabled ? $payload['attachments'] : [];
+
         $this->apiClient->sendEmail(
             $payload['email'],
             $payload['mail_template_code'],
             $payload['params'] ?? [],
             $payload['context'] ?? null,
-            $payload['attachments'] ?? [],
+            $attachments,
             $payload['schedule_at'] ?? null
         );
 

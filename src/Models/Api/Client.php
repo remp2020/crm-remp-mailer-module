@@ -425,4 +425,18 @@ class Client
             return [];
         }
     }
+
+    public function getTemplate(string $code)
+    {
+        $query['codes'] = [$code];
+        $result = $this->apiClient->get(
+            self::MAIL_TEMPLATES,
+            [
+                    RequestOptions::QUERY => $query
+                ]
+        );
+
+        $templates = Json::decode($result->getBody());
+        return reset($templates);
+    }
 }
