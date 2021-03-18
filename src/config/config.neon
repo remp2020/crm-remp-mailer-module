@@ -43,3 +43,12 @@ services:
 	mailUserSubscriptionsRepository: Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository
 	mailTypeCategoriesRepository: Crm\RempMailerModule\Repositories\MailTypeCategoriesRepository
 	mailLogsRepository: Crm\RempMailerModule\Repositories\MailLogsRepository
+
+	sendNotificationEmailGenericEvent:
+	 	class: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
+	 	setup:
+	 		- addAllowedMailTypeCodes('system', 'system_optional')
+
+	scenariosGenericEventsManager:
+			setup:
+				- register('send_notification_email_to_addresses', @sendNotificationEmailGenericEvent)
