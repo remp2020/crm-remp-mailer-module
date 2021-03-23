@@ -7,6 +7,7 @@ use Crm\ApiModule\Router\ApiIdentifier;
 use Crm\ApiModule\Router\ApiRoute;
 use Crm\ApplicationModule\AssetsManager;
 use Crm\ApplicationModule\Authenticator\AuthenticatorManagerInterface;
+use Crm\ApplicationModule\Core;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
@@ -77,7 +78,7 @@ class RempMailerModule extends CrmModule
     {
         $mainMenu = new MenuItem($this->translator->translate('remp_mailer.menu.main'), '#', 'fa fa-rocket', 749, false);
 
-        $menuItem = new MenuItem($this->translator->translate('remp_mailer.menu.mailer'), getenv('REMP_MAILER_HOST'), 'fa fa-envelope', 2000, false);
+        $menuItem = new MenuItem($this->translator->translate('remp_mailer.menu.mailer'), Core::env('REMP_MAILER_HOST'), 'fa fa-envelope', 2000, false);
         $menuContainer->attachMenuItemToForeignModule('#remp', $mainMenu, $menuItem);
     }
 
