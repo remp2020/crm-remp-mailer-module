@@ -71,12 +71,15 @@ class Client
             ]);
 
             $data = json_decode($result->getBody(), true);
-            if (isset($data['status']) && $data['status'] == 'ok' && isset($data['email'])) {
+            if (isset($data['status']) && $data['status'] === 'ok' && isset($data['email'])) {
                 return $data['email'];
             }
             return false;
         } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() !== IResponse::S404_NOT_FOUND) {
+            if (!in_array($e->getResponse()->getStatusCode(), [
+                IResponse::S403_FORBIDDEN,
+                IResponse::S404_NOT_FOUND,
+            ], true)) {
                 Debugger::log($e);
             }
             return false;
