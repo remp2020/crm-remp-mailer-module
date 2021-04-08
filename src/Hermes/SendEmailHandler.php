@@ -37,7 +37,7 @@ class SendEmailHandler implements HandlerInterface
             return false;
         }
 
-        $attachments = $payload['attachments'];
+        $attachments = $payload['attachments'] ?? [];
         if (isset($mailTemplate->attachments_enabled) && $mailTemplate->attachments_enabled === false) {
             // If mailer explicitly doesn't allow attachments, don't include it. If the flag is not set, it's probably
             // older version of Mailer without the flag. In that case allow the attachments.
