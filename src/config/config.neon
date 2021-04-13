@@ -19,6 +19,7 @@ services:
 	- Crm\RempMailerModule\Events\NotificationHandler
 	mailerWelcomeEmailHandler: Crm\RempMailerModule\Events\SendWelcomeEmailHandler
 	- Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler
+	- Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEventHandler
 
 	# forms
 	- Crm\RempMailerModule\Forms\EmailSettingsFormFactory
@@ -44,11 +45,13 @@ services:
 	mailTypeCategoriesRepository: Crm\RempMailerModule\Repositories\MailTypeCategoriesRepository
 	mailLogsRepository: Crm\RempMailerModule\Repositories\MailLogsRepository
 
+	# scenarios
 	sendNotificationEmailGenericEvent:
 	 	class: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
 	 	setup:
 	 		- addAllowedMailTypeCodes('system', 'system_optional')
 
 	scenariosGenericEventsManager:
-			setup:
-				- register('send_notification_email_to_addresses', @sendNotificationEmailGenericEvent)
+		setup:
+			- register('send_notification_email_to_addresses', @sendNotificationEmailGenericEvent)
+			- register('change_user_newsletter_subscriptions', Crm\RempMailerModule\Scenarios\ChangeNewsletterSubscriptionsGenericEvent())
