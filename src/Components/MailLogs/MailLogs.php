@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Widget\WidgetInterface;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\User\UnclaimedUser;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nette\Utils\Html;
@@ -28,10 +29,14 @@ class MailLogs extends Control implements WidgetInterface
     /** @var VisualPaginator */
     private $paginator;
 
+    /** @var UnclaimedUser */
+    private $unclaimedUser;
+
     public function __construct(
         MailLogQueryBuilder $logQueryBuilder,
         MailLogsRepository $mailLogRepository,
         UsersRepository $usersRepository,
+        UnclaimedUser $unclaimedUser,
         Translator $translator
     ) {
         parent::__construct();
@@ -39,6 +44,7 @@ class MailLogs extends Control implements WidgetInterface
         $this->translator = $translator;
         $this->logQuery = $logQueryBuilder;
         $this->mailLogRepository = $mailLogRepository;
+        $this->unclaimedUser = $unclaimedUser;
     }
 
     public function header($id = '')
@@ -66,29 +72,33 @@ class MailLogs extends Control implements WidgetInterface
             $this->template->filter = null;
         }
 
-        $total = $this->totalCount($userId);
+        $user = $this->usersRepository->find($userId);
+        if (!$user->active || $this->unclaimedUser->isUnclaimedUser($user)) {
+            $total = 0;
+        } else {
+            $total = $this->totalCount($userId);
 
-        if ($this->paginator) {
-            $paginator = $this->paginator->getPaginator();
-            $paginator->setItemCount($total);
-            $paginator->setItemsPerPage(10);
-            $this->logQuery->setLimit($paginator->getLength())->setPage($paginator->getPage());
+            if ($this->paginator) {
+                $paginator = $this->paginator->getPaginator();
+                $paginator->setItemCount($total);
+                $paginator->setItemsPerPage(10);
+                $this->logQuery->setLimit($paginator->getLength())->setPage($paginator->getPage());
+            }
+
+            $this->logQuery->setEmail($user->email);
+
+            $logs = $this->mailLogRepository->get($this->logQuery);
+            $counts = $this->mailLogRepository->count($user->email, [
+                'delivered_at',
+                'clicked_at',
+                'opened_at',
+                'dropped_at',
+                'spam_complained_at',
+                'hard_bounced_at',
+            ]);
         }
 
-        $user = $this->usersRepository->find($userId);
-        $this->logQuery->setEmail($user->email);
-
-        $logs = $this->mailLogRepository->get($this->logQuery);
-        $counts = $this->mailLogRepository->count($user->email, [
-            'delivered_at',
-            'clicked_at',
-            'opened_at',
-            'dropped_at',
-            'spam_complained_at',
-            'hard_bounced_at',
-        ]);
-
-        $this->template->emails = $logs;
+        $this->template->emails = $logs ?? [];
         $this->template->totals = [
             'total' => $total,
             'delivered' => $counts['delivered_at'] ?? 0,
