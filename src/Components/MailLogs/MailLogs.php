@@ -73,8 +73,10 @@ class MailLogs extends Control implements WidgetInterface
         }
 
         $user = $this->usersRepository->find($userId);
-        if (!$user->active || $this->unclaimedUser->isUnclaimedUser($user)) {
+        $notLoaded = false;
+        if ($user->deleted_at !== null || $this->unclaimedUser->isUnclaimedUser($user)) {
             $total = 0;
+            $notLoaded = true;
         } else {
             $total = $this->totalCount($userId);
 
@@ -99,6 +101,7 @@ class MailLogs extends Control implements WidgetInterface
         }
 
         $this->template->emails = $logs ?? [];
+        $this->template->notLoaded = $notLoaded;
         $this->template->totals = [
             'total' => $total,
             'delivered' => $counts['delivered_at'] ?? 0,

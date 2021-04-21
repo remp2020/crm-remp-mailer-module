@@ -47,6 +47,8 @@ admin:
 		header: Odeslané e-maily
 		no_content: Žádné odeslané e-maily
 		no_content_message: Zatím nebyl odeslán žádný e-mail
+		not_loaded: Pro tento typ uživatele se emaily nenačítavají
+		not_loaded_message: Uživatel je anonymní nebo smazán
 		total: Celkem
 		success: Úspěšně
 		errors: Chybné

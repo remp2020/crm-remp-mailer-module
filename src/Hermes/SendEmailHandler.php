@@ -3,6 +3,7 @@
 namespace Crm\RempMailerModule\Hermes;
 
 use Crm\RempMailerModule\Models\Api\Client;
+use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Utils\Validators;
 use Tomaj\Hermes\Handler\HandlerInterface;
 use Tomaj\Hermes\Handler\RetryTrait;
@@ -16,10 +17,14 @@ class SendEmailHandler implements HandlerInterface
 
     private $apiClient;
 
+    private $usersRepository;
+
     public function __construct(
-        Client $apiClient
+        Client $apiClient,
+        UsersRepository $usersRepository
     ) {
         $this->apiClient = $apiClient;
+        $this->usersRepository = $usersRepository;
     }
 
     public function handle(MessageInterface $message): bool
@@ -28,6 +33,12 @@ class SendEmailHandler implements HandlerInterface
 
         if (!Validators::isEmail($payload['email'])) {
             Debugger::log('Attempt to send email through REMP Mailer with invalid email address: ' . $payload['email'], ILogger::WARNING);
+            return false;
+        }
+
+        $user = $this->usersRepository->getByEmail($payload['email']);
+        if (!$user->active) {
+            Debugger::log('Attempt to send email through REMP Mailer with inactive email address: ' . $payload['email'], ILogger::WARNING);
             return false;
         }
 

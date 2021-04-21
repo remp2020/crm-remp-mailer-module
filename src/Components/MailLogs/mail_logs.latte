@@ -1,7 +1,12 @@
 {if $totals['total'] == 0}
   <div class="bs-callout bs-callout-info">
-    <h4>{_remp_mailer.admin.mail_logs_component.no_content}</h4>
-    <p class="lead">{_remp_mailer.admin.mail_logs_component.no_content_message}.</p>
+      {if $notLoaded}
+          <h4>{_remp_mailer.admin.mail_logs_component.not_loaded}</h4>
+          <p class="lead">{_remp_mailer.admin.mail_logs_component.not_loaded_message}.</p>
+      {else}
+          <h4>{_remp_mailer.admin.mail_logs_component.no_content}</h4>
+          <p class="lead">{_remp_mailer.admin.mail_logs_component.no_content_message}.</p>
+      {/if}
   </div>
 {else}
 

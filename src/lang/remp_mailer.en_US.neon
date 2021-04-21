@@ -47,6 +47,8 @@ admin:
 		header: Sent emails
 		no_content: No sent emails
 		no_content_message: No messages have been sent yet
+		not_loaded: Emails are not loaded for this account type
+		not_loaded_message: User is unclaimed or deleted
 		total: Total
 		success: Success
 		errors: Errors
