@@ -37,7 +37,7 @@ class SendEmailHandler implements HandlerInterface
         }
 
         $user = $this->usersRepository->getByEmail($payload['email']);
-        if (!$user->active) {
+        if ($user && !$user->active) {
             Debugger::log('Attempt to send email through REMP Mailer with inactive email address: ' . $payload['email'], ILogger::WARNING);
             return false;
         }
