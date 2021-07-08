@@ -28,6 +28,7 @@ frontend:
 		subscribe_success: Byli jste úspěšně zařazeni do odběru
 		unsubscribe_success: Byli jste úspěšně odstraněni z odběru
 		preview: Prohlédněte si ukázku
+		page: Vydání
 		subscribe_all: Přihlásit všechny
 		unsubscribe_all: Odhlásit všechny
 		active: Aktivní

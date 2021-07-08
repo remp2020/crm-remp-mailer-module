@@ -28,6 +28,7 @@ frontend:
 		subscribe_success: You have been successfully subscribed.
 		unsubscribe_success: You have been successfully un-subscribed.
 		preview: See sample
+		page: Editions
 		subscribe_all: Subscribe all
 		unsubscribe_all: Unsubscribe all
 		active: Subscribed
