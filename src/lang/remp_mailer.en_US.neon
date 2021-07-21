@@ -60,3 +60,4 @@ admin:
 		actualized_message: Settings was actualied
 		unsubscribed: Unsubsribed %time%
 		subscribed: Subscribed %time%
+		not_loaded: User is not allowed to change mail settings. It is either unclaimed or deleted.

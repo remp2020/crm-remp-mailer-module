@@ -60,3 +60,4 @@ admin:
 		actualized_message: Nastavení bylo aktualizováno
 		unsubscribed: Odhlásený %time%
 		subscribed: Přihlášený %time%
+		not_loaded: Pro tento typ uživatele se nastavení e-mailů nenačítavají.<br>Uživatel je anonymní nebo smazán.

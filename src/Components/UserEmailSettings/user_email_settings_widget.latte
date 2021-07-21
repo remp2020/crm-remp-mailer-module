@@ -12,8 +12,14 @@
   <div class="panel-heading">{_remp_mailer.admin.mail_settings.header}</div>
   <div class="panel-body">
 
-    <div id="mailer-user-settings">
-      {control userEmailForm}
-    </div>
+    {if $isAnonymous}
+      <p class="bg-warning">
+        {_remp_mailer.admin.mail_settings.not_loaded|noescape}
+      </p>
+    {else}
+      <div id="mailer-user-settings">
+        {control userEmailForm}
+      </div>
+    {/if}
   </div>
 </div>

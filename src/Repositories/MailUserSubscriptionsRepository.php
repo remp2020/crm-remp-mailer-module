@@ -25,11 +25,14 @@ class MailUserSubscriptionsRepository
 
     final public function userPreferences(int $userId, ?bool $subscribed = null)
     {
+        $user = $this->usersRepository->find($userId);
+        if ($user->deleted_at) {
+            return [];
+        }
+
+        $preferences = $this->apiClient->getUserPreferences($user->id, $user->email, $subscribed);
+
         $mailSubscriptions = [];
-
-        $email = $this->usersRepository->find($userId)->email;
-        $preferences = $this->apiClient->getUserPreferences($userId, $email, $subscribed);
-
         foreach ($preferences as $preference) {
             $mailSubscriptions[$preference['id']] = $preference;
         }

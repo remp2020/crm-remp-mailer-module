@@ -5,6 +5,8 @@ namespace Crm\RempMailerModule\Components\UserEmailSettings;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
+use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\User\UnclaimedUser;
 use Kdyby\Translation\Translator;
 
 class UserEmailSettingsWidget extends BaseWidget
@@ -17,11 +19,22 @@ class UserEmailSettingsWidget extends BaseWidget
 
     private $userId;
 
-    public function __construct(WidgetManager $widgetManager, EmailSettingsFormFactory $emailSettingsFormFactory, Translator $translator)
-    {
+    private $usersRepository;
+
+    private $unclaimedUser;
+
+    public function __construct(
+        WidgetManager $widgetManager,
+        EmailSettingsFormFactory $emailSettingsFormFactory,
+        Translator $translator,
+        UsersRepository $usersRepository,
+        UnclaimedUser $unclaimedUser
+    ) {
         parent::__construct($widgetManager);
         $this->emailSettingsFormFactory = $emailSettingsFormFactory;
         $this->translator = $translator;
+        $this->usersRepository = $usersRepository;
+        $this->unclaimedUser = $unclaimedUser;
     }
 
     public function header($id = '')
@@ -37,8 +50,10 @@ class UserEmailSettingsWidget extends BaseWidget
     public function render(int $userId)
     {
         $this->userId = $userId;
+        $user = $this->usersRepository->find($userId);
 
         $this->template->userId = $userId;
+        $this->template->isAnonymous = $user->deleted_at || $this->unclaimedUser->isUnclaimedUser($user);
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
         $this->template->render();
     }
