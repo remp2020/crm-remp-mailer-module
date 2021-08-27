@@ -238,7 +238,7 @@ class Client
                 RequestOptions::JSON => $data
             ]);
 
-            return Json::decode($logsCount->getBody()->getContents(), true);
+            return Json::decode($logsCount->getBody()->getContents(), Json::FORCE_ARRAY);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() == IResponse::S400_BAD_REQUEST) {
                 Debugger::log($e, ILogger::ERROR);
