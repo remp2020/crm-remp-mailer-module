@@ -39,7 +39,6 @@ class MailLogs extends Control implements WidgetInterface
         UnclaimedUser $unclaimedUser,
         Translator $translator
     ) {
-        parent::__construct();
         $this->usersRepository = $usersRepository;
         $this->translator = $translator;
         $this->logQuery = $logQueryBuilder;

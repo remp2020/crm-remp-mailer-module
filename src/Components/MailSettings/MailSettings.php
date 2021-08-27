@@ -38,7 +38,6 @@ class MailSettings extends Control
         UserManager $userManager,
         ITranslator $translator
     ) {
-        parent::__construct();
         $this->emailSettingsFormFactory = $emailSettingsFormFactory;
         $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
         $this->mailTypesRepository = $mailTypesRepository;
