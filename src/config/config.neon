@@ -1,7 +1,7 @@
 services:
 	# api
 	mailTemplateListApiHandler:
-		class: Crm\RempMailerModule\Api\MailTemplateListApiHandler
+		factory: Crm\RempMailerModule\Api\MailTemplateListApiHandler
 		setup:
 			- addAllowedMailTypeCodes('system', 'system_optional')
 
@@ -50,7 +50,7 @@ services:
 
 	# scenarios
 	sendNotificationEmailGenericEvent:
-		class: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
+		factory: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
 		setup:
 			- addAllowedMailTypeCodes('system', 'system_optional')
 
