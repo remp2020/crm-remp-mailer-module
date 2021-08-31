@@ -4,7 +4,6 @@ namespace Crm\RempMailerModule\DI;
 
 use Crm\RempMailerModule\RempMailerModule;
 use Kdyby\Translation\DI\ITranslationProvider;
-use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -36,8 +35,7 @@ final class RempMailerModuleExtension extends CompilerExtension implements ITran
         }
 
         // load services from config and register them to Nette\DI Container
-        Compiler::loadDefinitions(
-            $builder,
+        $this->compiler->loadDefinitionsFromConfig(
             $this->loadFromFile(__DIR__.'/../config/config.neon')['services']
         );
 
