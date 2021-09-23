@@ -35,7 +35,10 @@ class SendWelcomeEmailHandler extends AbstractListener
         if ($event->sendEmail()) {
             $user = $event->getUser();
             $token = $this->userEmailConfirmationsRepository->getToken($user->id);
-            $link = $token ? $this->linkGenerator->link('Users:Users:EmailConfirm', ['token' => $token]) : null;
+            $link = $token ? $this->linkGenerator->link('Users:Users:EmailConfirm', [
+                'token' => $token,
+                'redirectUrl' => $user->referer,
+            ]) : null;
             
             $this->hermesEmitter->emit(new HermesMessage('mailer-send-email', [
                 'email' => $user->email,
