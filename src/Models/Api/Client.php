@@ -82,11 +82,11 @@ class Client
                 IResponse::S403_FORBIDDEN,
                 IResponse::S404_NOT_FOUND,
             ], true)) {
-                Debugger::log($e);
+                Debugger::log($e, Debugger::ERROR);
             }
             return false;
         } catch (\Exception $e) {
-            Debugger::log($e);
+            Debugger::log($e, Debugger::ERROR);
             return false;
         }
     }
@@ -103,7 +103,7 @@ class Client
 
             return true;
         } catch (\Exception $e) {
-            Debugger::log($e->getMessage());
+            Debugger::log($e->getMessage(), Debugger::ERROR);
             return false;
         }
     }
@@ -120,7 +120,7 @@ class Client
 
             return true;
         } catch (\Exception $e) {
-            Debugger::log($e->getMessage());
+            Debugger::log($e->getMessage(), Debugger::ERROR);
             return false;
         }
     }
@@ -172,7 +172,7 @@ class Client
 
             return true;
         } catch (ClientException $e) {
-            Debugger::log($e->getResponse()->getBody()->getContents());
+            Debugger::log($e->getResponse()->getBody()->getContents(), Debugger::ERROR);
             throw new MailerException($e->getMessage());
         }
     }
@@ -331,7 +331,7 @@ class Client
             ]);
             return true;
         } catch (ServerException | ConnectException $e) {
-            Debugger::log($e->getMessage());
+            Debugger::log($e->getMessage(), Debugger::ERROR);
             throw new MailerException($e->getMessage());
         }
     }

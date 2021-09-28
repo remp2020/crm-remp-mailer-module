@@ -15,25 +15,11 @@ use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\WidgetManagerInterface;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
-use Crm\RempMailerModule\DI\Config;
-use Kdyby\Translation\Translator;
 use League\Event\Emitter;
-use Nette\DI\Container;
 use Tomaj\Hermes\Dispatcher;
 
 class RempMailerModule extends CrmModule
 {
-    private $config;
-
-    public function __construct(
-        Container $container,
-        Translator $translator,
-        Config $config
-    ) {
-        parent::__construct($container, $translator);
-        $this->config = $config;
-    }
-
     public function registerUserData(UserDataRegistrator $dataRegistrator)
     {
         $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\RempMailerModule\Models\User\RempMailerUserDataProvider::class));
