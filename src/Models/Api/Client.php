@@ -21,6 +21,8 @@ class Client
 
     private const USER_REGISTERED = '/api/v1/users/user-registered';
 
+    private const USER_DELETE = '/api/v1/users/delete';
+
     private const SEND_EMAIL = '/api/v1/mailers/send-email';
 
     private const LOGS = '/api/v1/users/logs';
@@ -119,6 +121,33 @@ class Client
             return true;
         } catch (\Exception $e) {
             Debugger::log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function userDelete($email)
+    {
+        try {
+            $this->apiClient->post(self::USER_DELETE, [
+                'json' => [
+                    'email' => $email,
+                ],
+            ]);
+
+            return true;
+        } catch (ClientException $e) {
+            if ($e->getResponse() && $e->getResponse()->getStatusCode() === IResponse::S404_NOT_FOUND) {
+                $response = Json::decode($e->getResponse()->getBody(), Json::FORCE_ARRAY);
+                if ($response['code'] === 'user_not_found') {
+                    // user had zero emails sent from Mailer or was removed in past
+                    return true;
+                }
+            }
+
+            Debugger::log($e->getMessage(), Debugger::ERROR);
+            return false;
+        } catch (\Exception $e) {
+            Debugger::log($e->getMessage(), Debugger::ERROR);
             return false;
         }
     }

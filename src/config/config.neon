@@ -15,6 +15,9 @@ services:
 	# DI
 	- Crm\RempMailerModule\DI\Config
 
+	# data providers
+	- Crm\RempMailerModule\Models\User\RempMailerUserDataProvider
+
 	# events
 	- Crm\RempMailerModule\Events\NotificationHandler
 	mailerWelcomeEmailHandler: Crm\RempMailerModule\Events\SendWelcomeEmailHandler

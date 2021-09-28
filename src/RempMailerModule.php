@@ -11,6 +11,7 @@ use Crm\ApplicationModule\Core;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
+use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\WidgetManagerInterface;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
@@ -31,6 +32,11 @@ class RempMailerModule extends CrmModule
     ) {
         parent::__construct($container, $translator);
         $this->config = $config;
+    }
+
+    public function registerUserData(UserDataRegistrator $dataRegistrator)
+    {
+        $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\RempMailerModule\Models\User\RempMailerUserDataProvider::class));
     }
 
     public function registerEventHandlers(Emitter $emitter)
