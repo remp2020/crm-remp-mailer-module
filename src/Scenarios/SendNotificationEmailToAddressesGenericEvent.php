@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;
 use Crm\UsersModule\Events\NotificationEvent;
+use Crm\UsersModule\Repository\AddressesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use League\Event\Emitter;
 
@@ -23,16 +24,20 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
 
     private $allowedMailTypeCodes = [];
 
+    private $addressesRepository;
+
     public function __construct(
         UsersRepository $usersRepository,
         PaymentsRepository $paymentsRepository,
         Emitter $emitter,
-        MailTemplatesRepository $mailTemplatesRepository
+        MailTemplatesRepository $mailTemplatesRepository,
+        AddressesRepository $addressesRepository
     ) {
         $this->emitter = $emitter;
         $this->usersRepository = $usersRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->mailTemplatesRepository = $mailTemplatesRepository;
+        $this->addressesRepository = $addressesRepository;
     }
 
     public function addAllowedMailTypeCodes(string ...$mailTypeCodes): void
@@ -68,12 +73,22 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
 
         $user = $this->usersRepository->find($params->user_id);
         $payment = isset($params->payment_id) ? $this->paymentsRepository->find($params->payment_id) : null;
+        $address = isset($params->address_id) ? $this->addressesRepository->find($params->address_id) : null;
 
         if ($user) {
             $templateParams['user'] = $user->toArray();
         }
         if ($payment) {
             $templateParams['payment'] = $payment->toArray();
+        }
+        if ($address) {
+            $templateParams['address'] = $address->toArray();
+        }
+        if (isset($payment->subscription)) {
+            $templateParams['subscription'] = $payment->subscription->toArray();
+        }
+        if (isset($payment->subscription_type)) {
+            $templateParams['subscription_type'] = $payment->subscription_type->toArray();
         }
 
         $events = [];
