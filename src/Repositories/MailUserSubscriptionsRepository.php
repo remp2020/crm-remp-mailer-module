@@ -100,7 +100,7 @@ class MailUserSubscriptionsRepository
             $subscribeRequests[] = (new MailSubscribeRequest())
                 ->setUser($user)
                 ->setSubscribed(false)
-                ->setMailTypeCode($subscribedMailType['code']);
+                ->setMailTypeId($subscribedMailType['id']);
         }
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
 
