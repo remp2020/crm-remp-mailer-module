@@ -48,7 +48,8 @@ class ChangeUserNewsletterSubscriptionsEventHandler extends AbstractListener
                     $subscribeRequests[] = (new MailSubscribeRequest())
                         ->setUser($user)
                         ->setMailTypeId($mailType->id)
-                        ->setSubscribed($subscribeFlag);
+                        ->setSubscribed($subscribeFlag)
+                        ->setSendAccompanyingEmails(false);
                 }
             }
         }
