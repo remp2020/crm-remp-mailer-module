@@ -12,7 +12,7 @@ data:
 			mail_template_id: E-mail
 			events: Events
 			delivered_at: Delivered
-			opened_at: Otvorené
+			opened_at: Opened
 			clicked_at: Clicked
 			dropped_at: Dropped
 			spam_complained_at: Spam
