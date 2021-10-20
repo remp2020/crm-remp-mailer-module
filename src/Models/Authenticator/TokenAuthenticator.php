@@ -10,7 +10,7 @@ use Crm\UsersModule\Auth\UserManager;
 use Crm\UsersModule\Repository\LoginAttemptsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use League\Event\Emitter;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\Request;
 use Nette\Security\AuthenticationException;
 
@@ -64,7 +64,7 @@ class TokenAuthenticator extends BaseAuthenticator
     /**
      * @throws AuthenticationException
      */
-    private function process() : IRow
+    private function process() : ActiveRow
     {
         $email = $this->apiClient->checkAutologinToken($this->mailToken);
         if (!$email) {

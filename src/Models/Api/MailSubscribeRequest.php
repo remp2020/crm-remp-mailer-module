@@ -2,7 +2,7 @@
 
 namespace Crm\RempMailerModule\Models\Api;
 
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
 class MailSubscribeRequest
 {
@@ -20,7 +20,7 @@ class MailSubscribeRequest
 
     private $sendAccompanyingEmails;
 
-    public function setUser(IRow $user)
+    public function setUser(ActiveRow $user)
     {
         $this->userId = $user->id;
         $this->email = $user->email;
