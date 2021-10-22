@@ -50,9 +50,9 @@ services:
 
 	# scenarios
 	sendNotificationEmailGenericEvent:
-	 	class: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
-	 	setup:
-	 		- addAllowedMailTypeCodes('system', 'system_optional')
+		class: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
+		setup:
+			- addAllowedMailTypeCodes('system', 'system_optional')
 
 	scenariosGenericEventsManager:
 		setup:
