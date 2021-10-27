@@ -2,8 +2,8 @@
 
 namespace Crm\RempMailerModule\Scenarios;
 
+use Crm\ApplicationModule\ActiveRowFactory;
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
-use Crm\ApplicationModule\DataRow;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;
@@ -26,18 +26,22 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
 
     private $addressesRepository;
 
+    private $activeRowFactory;
+
     public function __construct(
         UsersRepository $usersRepository,
         PaymentsRepository $paymentsRepository,
         Emitter $emitter,
         MailTemplatesRepository $mailTemplatesRepository,
-        AddressesRepository $addressesRepository
+        AddressesRepository $addressesRepository,
+        ActiveRowFactory $activeRowFactory
     ) {
         $this->emitter = $emitter;
         $this->usersRepository = $usersRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->mailTemplatesRepository = $mailTemplatesRepository;
         $this->addressesRepository = $addressesRepository;
+        $this->activeRowFactory = $activeRowFactory;
     }
 
     public function addAllowedMailTypeCodes(string ...$mailTypeCodes): void
@@ -93,7 +97,7 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
 
         $events = [];
         foreach ($options['email_addresses']->selection as $emailAddress) {
-            $userRow = new DataRow([
+            $userRow = $this->activeRowFactory->create([
                 'email' => $emailAddress,
             ]);
 
