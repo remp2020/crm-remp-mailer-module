@@ -9,7 +9,7 @@ use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\UserManager;
 use Nette\Application\UI\Control;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 /**
  * @property FrontendPresenter $presenter
@@ -27,7 +27,7 @@ class MailSettings extends Control
     private $mailTypesRepository;
 
     private $userManager;
-    
+
     private $translator;
 
     public function __construct(
@@ -36,7 +36,7 @@ class MailSettings extends Control
         MailTypeCategoriesRepository $mailTypeCategoriesRepository,
         MailTypesRepository $mailTypesRepository,
         UserManager $userManager,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->emailSettingsFormFactory = $emailSettingsFormFactory;
         $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
