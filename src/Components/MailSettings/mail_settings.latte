@@ -2,6 +2,8 @@
     <link rel="stylesheet" href="{$basePath}/layouts/mailer/css/mr_toggle.css">
 {/block}
 
+{snippetArea data}
+
 <div class="page-header row">
     <div class="col-md-6">
         <h1 n:block="title">
@@ -12,7 +14,7 @@
     <div class="col-md-6" style="padding-top: 8px;">
         <div n:snippet="buttons" class="mail-settings-top-buttons">
             <a class="subscribe-all-signal btn btn-default ajax" n:if="$showSubscribeAll" n:href="allSubscribe!">{_remp_mailer.frontend.mail_settings.subscribe_all}</a>
-            <a class="unsubscribe-all-signal btn btn-default ajax" n:if="$showUnsubsribeAll" n:href="allUnSubscribe!">{_remp_mailer.frontend.mail_settings.unsubscribe_all}</a>
+            <a class="unsubscribe-all-signal btn btn-default ajax" n:if="$showUnsubscribeAll" n:href="allUnSubscribe!">{_remp_mailer.frontend.mail_settings.unsubscribe_all}</a>
         </div>
     </div>
 </div>
@@ -26,128 +28,125 @@
 <div class="row">
     <div n:snippet="data-wrapper" class="col-sm-12">
 
-
-        {snippetArea data}
-
-            {var $mailTypes = []}
-            {foreach $types as $type}
-                {if !isset($mailTypes[$type->mail_type_category_id])}
-                    {var $mailTypes[$type->mail_type_category_id] = []}
-                {/if}
-                {var $mailTypes[$type->mail_type_category_id][] = $type}
-            {/foreach}
+        {var $mailTypes = []}
+        {foreach $types as $type}
+            {if !isset($mailTypes[$type->mail_type_category_id])}
+                {var $mailTypes[$type->mail_type_category_id] = []}
+            {/if}
+            {var $mailTypes[$type->mail_type_category_id][] = $type}
+        {/foreach}
 
         {foreach $categories as $category}
 
-        {if isset($mailTypes[$category->id])}
+            {if isset($mailTypes[$category->id])}
 
-        {if $category->show_title}
-            <h3>{$category->title}</h3>
-        {/if}
-
-        {foreach $mailTypes[$category->id] as $type}
-
-        {if $iterator->isOdd() || $iterator->first}
-            <div class="row mail-settings-row-mobile" style="margin-bottom:50px">
-        {/if}
-
-            <div class="col-xs-12 col-md-6" n:snippet="mail-type-{$type->id}">
-                {var $contentClass='col-xs-12 col-md-12'}
-
-                {if $type->image_url}
-                    <div class="col-xs-3 col-md-3">
-                        <img src="{$type->image_url}" style="width:100%;">
-                    </div>
-                    {var $contentClass = 'col-xs-9 col-md-9'}
+                {if $category->show_title}
+                    <h3>{$category->title}</h3>
                 {/if}
 
-                <div class="{$contentClass} mail-settings-item-body" style="padding-bottom:1em">
-                    <h5>{$type->title}</h5>
-                    <p>{$type->description|breaklines|noescape}</p>
+                {foreach $mailTypes[$category->id] as $type}
 
-                    <div class="radio" n:foreach="$type->variants ?? [] as $id => $variant" style="margin-left:20px;">
-                        {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1 && in_array($id, array_column($userSubscriptions[$type->id]['variants'], 'id'))}
-                            <strong>
-                                <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px" checked="checked">
-                                <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
-                            </strong>
-                        {else}
-                            <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px">
-                            <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
+                    {if $iterator->isOdd() || $iterator->first}
+                        <div class="row mail-settings-row-mobile" style="margin-bottom:50px">
+                    {/if}
+
+                    <div class="col-xs-12 col-md-6" n:snippet="mail-type-{$type->id}">
+                        {var $contentClass='col-xs-12 col-md-12'}
+
+                        {if $type->image_url}
+                            <div class="col-xs-3 col-md-3">
+                                <img src="{$type->image_url}" style="width:100%;">
+                            </div>
+                            {var $contentClass = 'col-xs-9 col-md-9'}
                         {/if}
-                        <br>
-                    </div>
 
-                    <div class="mail-settings-wrap-button-preview">
-                        {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1}
-                            {if $type->locked}
-                                <button type="button" class="btn btn-default disabled">{_remp_mailer.frontend.mail_settings.unsubscribe}</button>
-                            {else}
-                                <span class="mr_toggle unsubscribe-signal subscribe-toggle">
+                        <div class="{$contentClass} mail-settings-item-body" style="padding-bottom:1em">
+                            <h5>{$type->title}</h5>
+                            <p>{$type->description|breaklines|noescape}</p>
+
+                            <div class="radio" n:foreach="$type->variants ?? [] as $id => $variant" style="margin-left:20px;">
+                                {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1 && in_array($id, array_column($userSubscriptions[$type->id]['variants'], 'id'))}
+                                    <strong>
+                                        <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px" checked="checked">
+                                        <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
+                                    </strong>
+                                {else}
+                                    <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px">
+                                    <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
+                                {/if}
+                                <br>
+                            </div>
+
+                            <div class="mail-settings-wrap-button-preview">
+                                {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1}
+                                    {if $type->locked}
+                                        <button type="button" class="btn btn-default disabled">{_remp_mailer.frontend.mail_settings.unsubscribe}</button>
+                                    {else}
+                                        <span class="mr_toggle unsubscribe-signal subscribe-toggle">
                                     <div class="mr_toggle_tooltip mr_toggle_tooltip_active fadeMe" n:if="isset($changedId) && $changedId == $type->id">
                                         <span>{_remp_mailer.frontend.mail_settings.active}</span>
                                     </div>
                                     <input type="checkbox" name="change_{$type->id}" checked="checked" onchange="$(this).parent().siblings('a.change').click()">
                                     <span><span></span></span>
                                 </span>
-                                <a n:href="UnSubscribe! $type->id" class="change hidden btn btn-default btn-large ajax">{_remp_mailer.frontend.mail_settings.unsubscribe}</a>
-                            {/if}
-                        {else}
-                            {if $type->locked}
-                                <button type="button" class="btn btn-primary disabled">{_remp_mailer.frontend.mail_settings.subscribe}</button>
-                            {else}
-                                <span class="mr_toggle subscribe-signal">
+                                        <a n:href="UnSubscribe! $type->id" class="change hidden btn btn-default btn-large ajax">{_remp_mailer.frontend.mail_settings.unsubscribe}</a>
+                                    {/if}
+                                {else}
+                                    {if $type->locked}
+                                        <button type="button" class="btn btn-primary disabled">{_remp_mailer.frontend.mail_settings.subscribe}</button>
+                                    {else}
+                                        <span class="mr_toggle subscribe-signal">
                                     <div class="mr_toggle_tooltip fadeMe" n:if="isset($changedId) && $changedId == $type->id">
                                         <span>{_remp_mailer.frontend.mail_settings.inactive}</span>
                                     </div>
                                     <input type="checkbox" name="change_{$type->id}" onchange="$(this).parent().siblings('a.change').click()">
                                     <span><span></span></span>
                                 </span>
-                                <a n:href="Subscribe! $type->id" class="change hidden btn btn-primary btn-large ajax">{_remp_mailer.frontend.mail_settings.subscribe}</a>
-                            {/if}
-                        {/if}
+                                        <a n:href="Subscribe! $type->id" class="change hidden btn btn-primary btn-large ajax">{_remp_mailer.frontend.mail_settings.subscribe}</a>
+                                    {/if}
+                                {/if}
 
 
-                        <a n:if="$type->preview_url" target="_blank" href="{$type->preview_url}" class="btn btn-large" style="text-decoration: underline" onclick="window.open($(this).attr('href'),'_blank','resizable=no, toolbar=no, menubar=no, status=no, directories=no, width=720, height=6000, left=100, top=100'); return false;">
-                            {_remp_mailer.frontend.mail_settings.preview}
-                        </a>
-                        <a n:ifset="$type->page_url" target="_blank" href="{$type->page_url}" class="btn btn-large" style="text-decoration: underline">
-                            {_remp_mailer.frontend.mail_settings.page}
-                        </a>
+                                <a n:if="$type->preview_url" target="_blank" href="{$type->preview_url}" class="btn btn-large" style="text-decoration: underline" onclick="window.open($(this).attr('href'),'_blank','resizable=no, toolbar=no, menubar=no, status=no, directories=no, width=720, height=6000, left=100, top=100'); return false;">
+                                    {_remp_mailer.frontend.mail_settings.preview}
+                                </a>
+                                <a n:ifset="$type->page_url" target="_blank" href="{$type->page_url}" class="btn btn-large" style="text-decoration: underline">
+                                    {_remp_mailer.frontend.mail_settings.page}
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-        {if $iterator->isEven() || $iterator->last}
-            </div>
-
-        {/if}
-        {/foreach}
-        <hr>
-        {/if}
+                    {if $iterator->isEven() || $iterator->last}
+                        </div>
+                    {/if}
+                {/foreach}
+                <hr>
+            {/if}
         {/foreach}
 
-            <script>
-                $('.variant-selector').on('click', function() {
-                    $(this).siblings('a').trigger('click');
+        <script>
+            $('.variant-selector').on('click', function() {
+                $(this).siblings('a').trigger('click');
+            });
+
+            if (typeof ga !== "undefined") {
+                $('.subscribe-signal').on('click', function() {
+                    ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_single');
                 });
+                $('.unsubscribe-signal').on('click', function() {
+                    ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_single');
+                });
+                $('.subscribe-all-signal').on('click', function() {
+                    ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_all');
+                });
+                $('.unsubscribe-all-signal').on('click', function() {
+                    ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_all');
+                });
+            }
+        </script>
 
-                if (typeof ga !== "undefined") {
-                    $('.subscribe-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_single');
-                    });
-                    $('.unsubscribe-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_single');
-                    });
-                    $('.subscribe-all-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_all');
-                    });
-                    $('.unsubscribe-all-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_all');
-                    });
-                }
-            </script>
-
-        {/snippetArea}
     </div>
 </div>
+
+{/snippetArea}

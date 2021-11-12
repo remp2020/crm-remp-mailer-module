@@ -33,6 +33,7 @@ frontend:
 		unsubscribe_all: Odhlásit všechny
 		active: Aktivní
 		inactive: Neaktivní
+		actualized_message: Nastavení bylo aktualizováno
 
 	mail_subscribe:
 		header: Přihlášení do newslettru

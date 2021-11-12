@@ -33,6 +33,7 @@ frontend:
 		unsubscribe_all: Unsubscribe all
 		active: Subscribed
 		inactive: Unsubscribed
+		actualized_message: Settings were updated
 
 	mail_subscribe:
 		header: Subsribed to newsletter

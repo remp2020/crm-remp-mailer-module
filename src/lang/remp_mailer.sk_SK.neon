@@ -34,6 +34,7 @@ frontend:
 		unsubscribe_all: Odhlásiť všetky
 		active: Aktívne
 		inactive: Neaktívne
+		actualized_message: Nastavenia boli aktualizované
 
 	mail_subscribe:
 		header: Prihlásenie do newslettra
