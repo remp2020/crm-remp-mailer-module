@@ -3,7 +3,7 @@
 namespace Crm\RempMailerModule\Events;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\UsersModule\Events\UserCreatedEvent;
+use Crm\UsersModule\Events\UserRegisteredEvent;
 use Crm\UsersModule\Repository\UserEmailConfirmationsRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
@@ -28,8 +28,8 @@ class SendWelcomeEmailHandler extends AbstractListener
 
     public function handle(EventInterface $event)
     {
-        if (!$event instanceof UserCreatedEvent) {
-            throw new \Exception("Unable to handle event, expected UserCreatedEvent, received [" . get_class($event) . "]");
+        if (!$event instanceof UserRegisteredEvent) {
+            throw new \Exception("Unable to handle event, expected UserRegisteredEvent, received [" . get_class($event) . "]");
         }
         
         if ($event->sendEmail()) {

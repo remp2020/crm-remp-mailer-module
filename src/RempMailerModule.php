@@ -28,7 +28,7 @@ class RempMailerModule extends CrmModule
     public function registerEventHandlers(Emitter $emitter)
     {
         $emitter->addListener(
-            \Crm\UsersModule\Events\UserCreatedEvent::class,
+            \Crm\UsersModule\Events\UserRegisteredEvent::class,
             $this->getInstance(\Crm\RempMailerModule\Events\SendWelcomeEmailHandler::class)
         );
 
@@ -58,8 +58,8 @@ class RempMailerModule extends CrmModule
     public function registerHermesHandlers(Dispatcher $dispatcher)
     {
         $dispatcher->registerHandler(
-            'user-created',
-            $this->getInstance(\Crm\RempMailerModule\Hermes\UserCreatedHandler::class)
+            'user-registered',
+            $this->getInstance(\Crm\RempMailerModule\Hermes\UserRegisteredHandler::class)
         );
         $dispatcher->registerHandler(
             'email-changed',
