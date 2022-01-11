@@ -25,7 +25,7 @@ class MailTemplateListApiHandler extends ApiHandler
         $this->linkGenerator = $linkGenerator;
     }
 
-    public function params()
+    public function params(): array
     {
         return [];
     }
