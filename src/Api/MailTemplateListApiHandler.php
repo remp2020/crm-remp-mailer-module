@@ -4,7 +4,7 @@ namespace Crm\RempMailerModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
+use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
@@ -37,7 +37,7 @@ class MailTemplateListApiHandler extends ApiHandler
         }
     }
 
-    public function handle(ApiAuthorizationInterface $authorization)
+    public function handle(array $params): ApiResponseInterface
     {
         $mailTemplates = $this->mailTemplatesRepository->all($this->allowedMailTypeCodes, true);
         $results = [];
