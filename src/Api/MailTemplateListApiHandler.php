@@ -13,8 +13,6 @@ class MailTemplateListApiHandler extends ApiHandler
 {
     private $mailTemplatesRepository;
 
-    private $linkGenerator;
-
     private $allowedMailTypeCodes = [];
 
     public function __construct(
