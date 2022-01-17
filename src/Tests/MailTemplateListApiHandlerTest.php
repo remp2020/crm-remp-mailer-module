@@ -56,7 +56,8 @@ class MailTemplateListApiHandlerTest extends DatabaseTestCase
             $this->linkGenerator
         );
         $mailTemplateListApiHandler->addAllowedMailTypeCodes('test_templates');
-        $response = $mailTemplateListApiHandler->handle(new NoAuthorization());
+        $mailTemplateListApiHandler->setAuthorization(new NoAuthorization());
+        $response = $mailTemplateListApiHandler->handle([]); // TODO: fix params
         $this->assertEquals(Response::S200_OK, $response->getHttpCode());
 
         $payload = $response->getPayload();
