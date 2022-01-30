@@ -7,7 +7,7 @@ use Crm\UsersModule\Repository\UsersRepository;
 use Tomaj\Hermes\Handler\HandlerInterface;
 use Tomaj\Hermes\MessageInterface;
 
-class UserCreatedHandler implements HandlerInterface
+class UserRegisteredHandler implements HandlerInterface
 {
     private $usersRepository;
 

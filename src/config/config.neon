@@ -29,7 +29,7 @@ services:
 
 	# hermes
 	- Crm\RempMailerModule\Hermes\EmailChangedHandler
-	- Crm\RempMailerModule\Hermes\UserCreatedHandler
+	- Crm\RempMailerModule\Hermes\UserRegisteredHandler
 	- Crm\RempMailerModule\Hermes\SendEmailHandler
 	mailerLogRedact: Crm\RempMailerModule\Hermes\LogRedact
 	hermesLogger:
