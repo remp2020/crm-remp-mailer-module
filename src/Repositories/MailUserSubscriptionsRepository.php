@@ -5,6 +5,7 @@ namespace Crm\RempMailerModule\Repositories;
 use Crm\RempMailerModule\Events\UserMailSubscriptionsChanged;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
+use Crm\RempMailerModule\Models\MailerException;
 use Crm\UsersModule\Repository\UsersRepository;
 use League\Event\Emitter;
 
@@ -40,6 +41,15 @@ class MailUserSubscriptionsRepository
         return $mailSubscriptions;
     }
 
+    /**
+     * @param $user
+     * @param $mailTypeId
+     * @param null $variantId
+     * @param array $rtmParams
+     * @return bool
+     * @throws MailerException
+     * @deprecated Recommended to use MailUserSubscriptionsRepository::subscribe method instead.
+     */
     final public function subscribeUser($user, $mailTypeId, $variantId = null, $rtmParams = [])
     {
         $result = $this->apiClient->subscribeUser($user->id, $user->email, $mailTypeId, $variantId, $rtmParams);
@@ -51,6 +61,14 @@ class MailUserSubscriptionsRepository
         return $result;
     }
 
+    /**
+     * @param $user
+     * @param $mailTypeId
+     * @param array $rtmParams
+     * @return bool
+     * @throws MailerException
+     * @deprecated Recommended to use MailUserSubscriptionsRepository::unsubscribe method instead.
+     */
     final public function unSubscribeUser($user, $mailTypeId, $rtmParams = [])
     {
         $result = $this->apiClient->unSubscribeUser($user->id, $user->email, $mailTypeId, $rtmParams);
@@ -60,6 +78,40 @@ class MailUserSubscriptionsRepository
             UserMailSubscriptionsChanged::UNSUBSCRIBED
         ));
         return $result;
+    }
+
+    /**
+     * @param MailSubscribeRequest $msr
+     * @param array $utmParams
+     * @return bool
+     * @throws MailerException
+     */
+    final public function subscribe(MailSubscribeRequest $msr, array $utmParams = []): bool
+    {
+        $msr = $msr->setSubscribed(true);
+        $this->emitter->emit(new UserMailSubscriptionsChanged(
+            $msr->getUserId(),
+            $msr->getMailTypeId(),
+            UserMailSubscriptionsChanged::SUBSCRIBED
+        ));
+        return $this->apiClient->subscribe($msr, $utmParams);
+    }
+
+    /**
+     * @param MailSubscribeRequest $msr
+     * @param array $utmParams
+     * @return bool
+     * @throws MailerException
+     */
+    final public function unsubscribe(MailSubscribeRequest $msr, array $utmParams = []): bool
+    {
+        $msr = $msr->setSubscribed(false);
+        $this->emitter->emit(new UserMailSubscriptionsChanged(
+            $msr->getUserId(),
+            $msr->getMailTypeId(),
+            UserMailSubscriptionsChanged::UNSUBSCRIBED
+        ));
+        return $this->apiClient->unsubscribe($msr, $utmParams);
     }
 
     final public function subscribeUserAll($user)

@@ -5,6 +5,8 @@ services:
 		setup:
 			- addAllowedMailTypeCodes('system', 'system_optional')
 
+	- Crm\RempMailerModule\Api\EmailSubscriptionApiHandler
+
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
 	- Crm\RempMailerModule\Components\MailSettings\MailSettings

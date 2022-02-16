@@ -18,7 +18,7 @@ class MailTypesRepository
         return $this->apiClient->getMailTypes(null, $publicListing);
     }
 
-    final public function getByCode($code)
+    final public function getByCode(string $code)
     {
         $mailTypes = $this->apiClient->getMailTypes($code);
         if (!$mailTypes) {

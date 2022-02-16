@@ -18,6 +18,8 @@ class MailSubscribeRequest
 
     private $variantId;
 
+    private $variantCode;
+
     private $sendAccompanyingEmails;
 
     public function setUser(IRow $user)
@@ -51,6 +53,12 @@ class MailSubscribeRequest
         return $this;
     }
 
+    public function setVariantCode(string $variantCode)
+    {
+        $this->variantCode = $variantCode;
+        return $this;
+    }
+
     public function setSendAccompanyingEmails(bool $sendAccompanyingEmails)
     {
         $this->sendAccompanyingEmails = $sendAccompanyingEmails;
@@ -66,6 +74,7 @@ class MailSubscribeRequest
             'list_id' => $this->mailTypeId,
             'list_code' => $this->mailTypeCode,
             'variant_id' => $this->variantId,
+            'variant_code' => $this->variantCode,
             'send_accompanying_emails' => $this->sendAccompanyingEmails,
         ], function ($item) {
             return $item !== null;
@@ -98,6 +107,11 @@ class MailSubscribeRequest
     }
 
     public function getVariantId()
+    {
+        return $this->variantId;
+    }
+
+    public function getVariantCode()
     {
         return $this->variantId;
     }

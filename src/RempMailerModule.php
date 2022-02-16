@@ -115,5 +115,12 @@ class RempMailerModule extends CrmModule
                 \Crm\ApiModule\Authorization\BearerTokenAuthorization::class
             )
         );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(new ApiIdentifier('1', 'mailer', 'unsubscribe'), 'Crm\RempMailerModule\Api\EmailSubscriptionApiHandler', 'Crm\UsersModule\Auth\UserTokenAuthorization')
+        );
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(new ApiIdentifier('1', 'mailer', 'subscribe'), 'Crm\RempMailerModule\Api\EmailSubscriptionApiHandler', 'Crm\UsersModule\Auth\UserTokenAuthorization')
+        );
     }
 }
