@@ -285,6 +285,78 @@ class Client
         }
     }
 
+    /**
+     * @param MailSubscribeRequest $msr
+     * @param array $rtmParams
+     * @return bool|null
+     * @throws MailerException
+     */
+    private function mailSubscribeRequest(MailSubscribeRequest $msr, $rtmParams = []): ?bool
+    {
+        try {
+            $data = $msr->getRequestData();
+            if (!empty($rtmParams)) {
+                $data['rtm_params'] = $rtmParams;
+
+                // transition-period (UTM -> RTM), will be removed
+                $utmParams = [];
+                foreach ($rtmParams as $paramName => $value) {
+                    $utmParams['utm_' . substr($paramName, 4)] = $value;
+                }
+                $data['utm_params'] = $utmParams;
+            }
+            unset($data['subscribe']);
+            $this->apiClient->post($msr->getSubscribed() ? self::SUBSCRIBE : self::UNSUBSCRIBE, ['json' =>
+                $data
+            ]);
+            return true;
+        } catch (ServerException | ConnectException $e) {
+            Debugger::log($e->getMessage(), Debugger::ERROR);
+            throw new MailerException($e->getMessage());
+        } catch (ClientException $e) {
+            $response = Json::decode($e->getResponse()->getBody());
+            throw new MailerException($response->message, $e->getResponse()->getStatusCode());
+        }
+    }
+
+    /**
+     * @param MailSubscribeRequest $msr
+     * @param array $rtmParams
+     * @return bool|null
+     * @throws MailerException
+     */
+    public function subscribe(MailSubscribeRequest $msr, $rtmParams = []): ?bool
+    {
+        if (!$msr->getSubscribed()) {
+            throw new \Exception('Invalid MailSubscribeRequest provided: calling subscribe() with $msr::subscribed == FALSE.');
+        }
+        return $this->mailSubscribeRequest($msr, $rtmParams);
+    }
+
+    /**
+     * @param MailSubscribeRequest $msr
+     * @param array $rtmParams
+     * @return bool|null
+     * @throws MailerException
+     */
+    public function unsubscribe(MailSubscribeRequest $msr, $rtmParams = []): ?bool
+    {
+        if ($msr->getSubscribed()) {
+            throw new \Exception('Invalid MailSubscribeRequest provided: calling unsubscribe() with $msr::subscribed == TRUE.');
+        }
+        return $this->mailSubscribeRequest($msr, $rtmParams);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $email
+     * @param int $mailTypeId
+     * @param int|null $variantId
+     * @param array $rtmParams
+     * @return bool
+     * @throws MailerException
+     * @deprecated Recommended to use Client::subscribe method instead.
+     */
     public function subscribeUser(int $userId, string $email, int $mailTypeId, ?int $variantId = null, array $rtmParams = [])
     {
         try {
@@ -308,6 +380,15 @@ class Client
         }
     }
 
+    /**
+     * @param int $userId
+     * @param string $email
+     * @param int $mailTypeId
+     * @param array $rtmParams
+     * @return bool
+     * @throws MailerException
+     * @deprecated Recommended to use Client::unsubscribe method instead.
+     */
     public function unSubscribeUser(int $userId, string $email, int $mailTypeId, array $rtmParams = [])
     {
         try {
@@ -354,6 +435,16 @@ class Client
         }
     }
 
+    /**
+     * @param int $userId
+     * @param string $email
+     * @param int $mailTypeId
+     * @param int $variantId
+     * @param array $rtmParams
+     * @return bool
+     * @throws MailerException
+     * @deprecated Recommended to use Client::unsubscribe method instead.
+     */
     public function unSubscribeUserVariant(int $userId, string $email, int $mailTypeId, int $variantId, array $rtmParams = [])
     {
         try {
