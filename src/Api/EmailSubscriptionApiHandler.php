@@ -4,9 +4,8 @@ namespace Crm\RempMailerModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
 use Crm\ApiModule\Params\InputParam;
-use Crm\ApiModule\Params\ParamsProcessor;
+use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
@@ -33,7 +32,7 @@ class EmailSubscriptionApiHandler extends ApiHandler
         $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
     }
 
-    public function params()
+    public function params(): array
     {
         return [
             new InputParam(InputParam::TYPE_POST, 'mail_type_code', InputParam::REQUIRED),
@@ -42,12 +41,13 @@ class EmailSubscriptionApiHandler extends ApiHandler
     }
 
     /**
-     * @param ApiAuthorizationInterface $authorization
-     * @return JsonResponse|\Nette\Application\IResponse
+     * @param array $params
+     * @return ApiResponseInterface
      * @throws \Exception
      */
-    public function handle(ApiAuthorizationInterface $authorization)
+    public function handle(array $params): ApiResponseInterface
     {
+        $authorization = $this->getAuthorization();
         if (!$authorization instanceof UsersApiAuthorizationInterface) {
             throw new \Exception('Invalid authorization configured for EmailSubscriptionApiHandler');
         }
@@ -63,18 +63,6 @@ class EmailSubscriptionApiHandler extends ApiHandler
             return $response;
         }
         $user = reset($authorizedUsers);
-
-        $paramsProcessor = new ParamsProcessor($this->params());
-        if ($paramsProcessor->isError()) {
-            $result = [
-                'status' => 'error',
-                'message' => $paramsProcessor->isError(),
-            ];
-            $response = new JsonResponse($result);
-            $response->setHttpCode(Response::S400_BAD_REQUEST);
-            return $response;
-        }
-        $params = $paramsProcessor->getValues();
 
         $mailType = $this->mailTypesRepository->getByCode($params['mail_type_code']);
         if (!$mailType) {
