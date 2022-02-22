@@ -39,7 +39,7 @@ frontend:
 		header: Přihlášení do newslettru
 
 	mail_unsubscribe:
-		header: 'Úspěšně jste se odhlásili z vybraného newslettru '
+		header: 'Úspěšně jste se odhlásili z vybraného newslettru'
 		header_alt: Email <i>%email%</i> byl úspěšně odhlášen z vybraného newslettru
 		header_no_account: "Email <i>%email%</i> se v systému nenachází<br><small>(není možné ho odhlásit z vybraného newsletteru)</small>"
 		other_email_settings: Podívejte se na další nastavení vašich e-mailů
