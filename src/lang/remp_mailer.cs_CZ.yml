@@ -1,0 +1,64 @@
+menu:
+    main: REMP
+    mailer: Mailer
+    email_settings: Newsletter
+
+data:
+    mail_logs:
+        fields:
+            created_at: Odeslané
+            subject: Předmět
+            email: E-mailová adresa
+            mail_template_id: E-mail
+            events: Události
+            delivered_at: Doručené
+            opened_at: Otevřené
+            clicked_at: Kliknuté
+            dropped_at: Vyhozené
+            spam_complained_at: Spam
+            hard_bounced_at: Odražené
+            conversions: Konverze
+
+frontend:
+    mail_settings:
+        header: Nastavení e-mailů
+        your_email: Váš e-mail
+        subscribe: Odebírat
+        unsubscribe: Zrušit odběr
+        subscribe_success: Byli jste úspěšně zařazeni do odběru
+        unsubscribe_success: Byli jste úspěšně odstraněni z odběru
+        preview: Prohlédněte si ukázku
+        page: Vydání
+        subscribe_all: Přihlásit všechny
+        unsubscribe_all: Odhlásit všechny
+        active: Aktivní
+        inactive: Neaktivní
+        actualized_message: Nastavení bylo aktualizováno
+
+    mail_subscribe:
+        header: Přihlášení do newslettru
+
+    mail_unsubscribe:
+        header: 'Úspěšně jste se odhlásili z vybraného newslettru'
+        header_alt: Email <i>%email%</i> byl úspěšně odhlášen z vybraného newslettru
+        header_no_account: "Email <i>%email%</i> se v systému nenachází<br><small>(není možné ho odhlásit z vybraného newsletteru)</small>"
+        other_email_settings: Podívejte se na další nastavení vašich e-mailů
+
+admin:
+    mail_logs_component:
+        header: Odeslané e-maily
+        no_content: Žádné odeslané e-maily
+        no_content_message: Zatím nebyl odeslán žádný e-mail
+        not_loaded: Pro tento typ uživatele se emaily nenačítavají
+        not_loaded_message: Uživatel je anonymní nebo smazán
+        total: Celkem
+        success: Úspěšně
+        errors: Chybné
+
+    mail_settings:
+        header: Nastavení e-mailů
+        frontend_header: Jaké emaily chcete dostávat?
+        actualized_message: Nastavení bylo aktualizováno
+        unsubscribed: Odhlásený %time%
+        subscribed: Přihlášený %time%
+        not_loaded: Pro tento typ uživatele se nastavení e-mailů nenačítavají.<br>Uživatel je anonymní nebo smazán.
