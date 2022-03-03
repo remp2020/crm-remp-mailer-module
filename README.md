@@ -1,5 +1,7 @@
 # CRM REMP Mailer Module
 
+[![Translation status @ Weblate](https://hosted.weblate.org/widgets/remp-crm/-/remp_mailer-module/svg-badge.svg)](https://hosted.weblate.org/projects/remp-crm/remp_mailer-module/)
+
 REMP Mailer Module is an integration module connecting CRM with [REMP Mailer](https://github.com/remp2020/remp/tree/master/Mailer).
 
 Module adds listener for `NotificationEvent` to send emails, and attaches widgets to allow users/admins to configure newsletter subscriptions and to see logs of all sent emails in administration.
