@@ -33,7 +33,7 @@ frontend:
         unsubscribe_all: Unsubscribe all
         active: Subscribed
         inactive: Unsubscribed
-        actualized_message: Settings were updated
+        actualized_message: Settings were updated.
 
     mail_subscribe:
         header: Subsribed to newsletter
@@ -57,8 +57,8 @@ admin:
 
     mail_settings:
         header: Mail settings
-        frontend_header: Choose groups you want to recieve
-        actualized_message: Settings was actualied
+        frontend_header: What emails do you want to receive?
+        actualized_message: Settings were updated.
         unsubscribed: Unsubsribed %time%
         subscribed: Subscribed %time%
         not_loaded: User is not allowed to change mail settings. It is either unclaimed or deleted.

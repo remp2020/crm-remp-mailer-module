@@ -25,15 +25,15 @@ frontend:
         your_email: Váš e-mail
         subscribe: Odebírat
         unsubscribe: Zrušit odběr
-        subscribe_success: Byli jste úspěšně zařazeni do odběru
-        unsubscribe_success: Byli jste úspěšně odstraněni z odběru
+        subscribe_success: Byli jste úspěšně zařazeni do odběru.
+        unsubscribe_success: Byli jste úspěšně odstraněni z odběru.
         preview: Prohlédněte si ukázku
         page: Vydání
         subscribe_all: Přihlásit všechny
         unsubscribe_all: Odhlásit všechny
         active: Aktivní
         inactive: Neaktivní
-        actualized_message: Nastavení bylo aktualizováno
+        actualized_message: Nastavení bylo aktualizováno.
 
     mail_subscribe:
         header: Přihlášení do newslettru
@@ -58,7 +58,7 @@ admin:
     mail_settings:
         header: Nastavení e-mailů
         frontend_header: Jaké emaily chcete dostávat?
-        actualized_message: Nastavení bylo aktualizováno
+        actualized_message: Nastavení bylo aktualizováno.
         unsubscribed: Odhlásený %time%
         subscribed: Přihlášený %time%
         not_loaded: Pro tento typ uživatele se nastavení e-mailů nenačítavají.<br>Uživatel je anonymní nebo smazán.
