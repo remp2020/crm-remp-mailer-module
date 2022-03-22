@@ -12,12 +12,10 @@ final class RempMailerModuleExtension extends CompilerExtension implements ITran
 {
     private const PARAM_HOST = 'host';
     private const PARAM_API_TOKEN = 'api_token';
-    private const PARAM_ENABLED = 'enabled';
 
     private $defaults = [
         self::PARAM_HOST => null,
         self::PARAM_API_TOKEN => null,
-        self::PARAM_ENABLED => true,
     ];
 
     public function loadConfiguration()
@@ -43,10 +41,6 @@ final class RempMailerModuleExtension extends CompilerExtension implements ITran
         $builder->getDefinitionByType(Config::class)
             ->addSetup('setHost', [$this->config[self::PARAM_HOST]])
             ->addSetup('setApiToken', [$this->config[self::PARAM_API_TOKEN]]);
-
-        if (!$this->config[self::PARAM_ENABLED]) {
-            return;
-        }
 
         // enable module
         $module = $builder->addDefinition($this->prefix('module'))
