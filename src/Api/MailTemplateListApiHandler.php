@@ -3,11 +3,11 @@
 namespace Crm\RempMailerModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 
 class MailTemplateListApiHandler extends ApiHandler
 {
@@ -35,7 +35,7 @@ class MailTemplateListApiHandler extends ApiHandler
         }
     }
 
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
         $mailTemplates = $this->mailTemplatesRepository->all($this->allowedMailTypeCodes, true);
         $results = [];
@@ -60,8 +60,7 @@ class MailTemplateListApiHandler extends ApiHandler
             ];
         }
 
-        $response = new JsonResponse(['status' => 'ok', 'mail_templates' => $results]);
-        $response->setHttpCode(Response::S200_OK);
+        $response = new JsonApiResponse(Response::S200_OK, ['status' => 'ok', 'mail_templates' => $results]);
 
         return $response;
     }

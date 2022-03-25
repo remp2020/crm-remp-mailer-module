@@ -3,9 +3,7 @@
 namespace Crm\RempMailerModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Params\InputParam;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
@@ -13,6 +11,8 @@ use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\UsersApiAuthorizationInterface;
 use Nette\Http\Request;
 use Nette\Http\Response;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 
 class EmailSubscriptionApiHandler extends ApiHandler
 {
@@ -41,11 +41,9 @@ class EmailSubscriptionApiHandler extends ApiHandler
     }
 
     /**
-     * @param array $params
-     * @return ApiResponseInterface
      * @throws \Exception
      */
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
         $authorization = $this->getAuthorization();
         if (!$authorization instanceof UsersApiAuthorizationInterface) {
@@ -54,12 +52,11 @@ class EmailSubscriptionApiHandler extends ApiHandler
 
         $authorizedUsers = $authorization->getAuthorizedUsers();
         if (count($authorizedUsers) > 1) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S401_UNAUTHORIZED, [
                 'status' => 'error',
                 'code' => 'unauthorized',
                 'message' => 'Unable to authorize specific user.',
             ]);
-            $response->setHttpCode(Response::S401_UNAUTHORIZED);
             return $response;
         }
         $user = reset($authorizedUsers);
@@ -70,8 +67,7 @@ class EmailSubscriptionApiHandler extends ApiHandler
                 'status' => 'error',
                 'message' => "Mail type '{$params['mail_type_code']}' doesn't exist.",
             ];
-            $response = new JsonResponse($result);
-            $response->setHttpCode(Response::S404_NOT_FOUND);
+            $response = new JsonApiResponse(Response::S404_NOT_FOUND, $result);
             return $response;
         }
 
@@ -90,20 +86,18 @@ class EmailSubscriptionApiHandler extends ApiHandler
                 $this->mailUserSubscriptionsRepository->unsubscribe($msr);
             }
         } catch (MailerException $exception) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse($code, [
                 'status' => 'error',
                 'message' => $exception->getMessage()
             ]);
 
             $code = $exception->getCode() ?: Response::S400_BAD_REQUEST;
-            $response->setHttpCode($code);
             return $response;
         }
 
-        $response = new JsonResponse([
+        $response = new JsonApiResponse(Response::S200_OK, [
             'status' => 'ok'
         ]);
-        $response->setHttpCode(Response::S200_OK);
         return $response;
     }
 
