@@ -86,12 +86,11 @@ class EmailSubscriptionApiHandler extends ApiHandler
                 $this->mailUserSubscriptionsRepository->unsubscribe($msr);
             }
         } catch (MailerException $exception) {
+            $code = $exception->getCode() ?: Response::S400_BAD_REQUEST;
             $response = new JsonApiResponse($code, [
                 'status' => 'error',
                 'message' => $exception->getMessage()
             ]);
-
-            $code = $exception->getCode() ?: Response::S400_BAD_REQUEST;
             return $response;
         }
 
