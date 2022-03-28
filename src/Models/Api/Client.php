@@ -389,13 +389,6 @@ class Client
             ];
             if (!empty($rtmParams)) {
                 $data['rtm_params'] = $rtmParams;
-
-                // transition-period (UTM -> RTM), will be removed
-                $utmParams = [];
-                foreach ($rtmParams as $paramName => $value) {
-                    $utmParams['utm_' . substr($paramName, 4)] = $value;
-                }
-                $data['utm_params'] = $utmParams;
             }
             $this->apiClient->post(self::UNSUBSCRIBE, ['json' =>
                 $data
