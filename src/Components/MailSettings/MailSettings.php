@@ -47,12 +47,17 @@ class MailSettings extends Control
         $this->translator = $translator;
     }
 
-    public function render()
+    public function render(array $mailTypeCategoryCodes = null)
     {
         $categories = $this->mailTypeCategoriesRepository->all();
         $this->template->categories = $categories;
 
-        $mailTypes = $this->mailTypesRepository->all(true);
+        if ($mailTypeCategoryCodes) {
+            $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($mailTypeCategoryCodes, true);
+        } else {
+            $mailTypes = $this->mailTypesRepository->all(true);
+        }
+
         $this->template->types = $mailTypes;
 
         $mappedMailTypes = [];

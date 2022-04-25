@@ -262,7 +262,7 @@ class Client
         }
     }
 
-    public function getMailTypes(?string $code = null, ?int $publicListing = null): ?array
+    public function getMailTypes(?array $codes = null, ?array $categoryCodes = null, ?int $publicListing = null): ?array
     {
         try {
             $data = [];
@@ -270,8 +270,11 @@ class Client
             if ($publicListing !== null) {
                 $data['public_listing'] = 1;
             }
-            if ($code !== null) {
-                $data['code'] = $code;
+            if ($codes !== null) {
+                $data['code'] = $codes;
+            }
+            if ($categoryCodes !== null) {
+                $data['mail_type_category_code'] = $categoryCodes;
             }
 
             $types = $this->apiClient->get(self::MAIL_TYPES, [
