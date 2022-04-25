@@ -292,19 +292,24 @@ class Client
     {
         try {
             $data = $msr->getRequestData();
-            if (!empty($rtmParams)) {
-                // this is intentional to avoid passing any extra rtmParams that shouldn't be there
-                $data['rtm_params'] = array_filter([
-                    'rtm_source' => $rtmParams['rtm_source'] ?? null,
-                    'rtm_medium' => $rtmParams['rtm_medium'] ?? null,
-                    'rtm_campaign' => $rtmParams['rtm_campaign'] ?? null,
-                    'rtm_content' => $rtmParams['rtm_content'] ?? null,
-                ]);
-            }
             unset($data['subscribe']);
-            $this->apiClient->post($msr->getSubscribed() ? self::SUBSCRIBE : self::UNSUBSCRIBE, ['json' =>
-                $data
-            ]);
+
+            if ($msr->getSubscribed()) {
+                $this->apiClient->post(self::SUBSCRIBE, ['json' => $data]);
+            } else {
+                if (!empty($rtmParams)) {
+                    // Mailer supports RTM params tracking only for unsubscribe request
+                    $data['rtm_params'] = array_filter([
+                        'rtm_source' => $rtmParams['rtm_source'] ?? null,
+                        'rtm_medium' => $rtmParams['rtm_medium'] ?? null,
+                        'rtm_campaign' => $rtmParams['rtm_campaign'] ?? null,
+                        'rtm_content' => $rtmParams['rtm_content'] ?? null,
+                    ]);
+                }
+
+                $this->apiClient->post(self::UNSUBSCRIBE, ['json' => $data]);
+            }
+
             return true;
         } catch (ServerException | ConnectException $e) {
             Debugger::log($e->getMessage(), Debugger::ERROR);

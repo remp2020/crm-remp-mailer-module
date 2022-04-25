@@ -4,6 +4,7 @@ namespace Crm\RempMailerModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface;
+use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\AutoLogin\AutoLogin;
@@ -45,13 +46,17 @@ class MailSettingsPresenter extends FrontendPresenter
         $this->onlyLoggedIn();
 
         $mailType = $this->mailTypesRepository->getByCode($id);
-
         if (!$mailType) {
             $this->redirect('mailSettings');
         }
+        $user = $this->userManager->loadUser($this->getUser());
 
         $this->template->mailType = $mailType;
-        $this->mailUserSubscriptionsRepository->subscribeUser($this->getUser()->getIdentity(), $mailType->id, null, $this->rtmParams());
+        $msr = (new MailSubscribeRequest)
+            ->setMailTypeCode($mailType->code)
+            ->setMailTypeId($mailType->id)
+            ->setUser($user);
+        $this->mailUserSubscriptionsRepository->subscribe($msr, $this->rtmParams());
 
         $this->redirect('MailSettings:subscribeEmailSuccess', [
             'id' => $id,
@@ -87,7 +92,7 @@ class MailSettingsPresenter extends FrontendPresenter
 
         $message = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header');
 
-        $userToUnsubscribe = $this->getUser()->getIdentity();
+        $userToUnsubscribe = $this->userManager->loadUser($this->getUser());
         $token = false;
         if (isset($this->params['token'])) {
             $token = $this->autoLogin->getValidToken($this->params['token']);
@@ -107,11 +112,16 @@ class MailSettingsPresenter extends FrontendPresenter
         }
 
         if (!$this->mailUserSubscriptionsRepository->isUserUnsubscribed($userToUnsubscribe, $mailType->id)) {
+            $msr = (new MailSubscribeRequest)
+                ->setMailTypeCode($mailType->code)
+                ->setMailTypeId($mailType->id)
+                ->setUser($userToUnsubscribe);
+
             if ($variantId) {
-                $this->mailUserSubscriptionsRepository->unSubscribeUserVariant($userToUnsubscribe, $mailType->id, $variantId, $this->rtmParams());
-            } else {
-                $this->mailUserSubscriptionsRepository->unSubscribeUser($userToUnsubscribe, $mailType->id, $this->rtmParams());
+                $msr->setVariantId($variantId);
             }
+
+            $this->mailUserSubscriptionsRepository->unsubscribe($msr, $this->rtmParams());
         }
         $this->template->header = $message;
     }

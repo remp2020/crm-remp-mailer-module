@@ -4,6 +4,7 @@ namespace Crm\RempMailerModule\Components\MailSettings;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
+use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypeCategoriesRepository;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
@@ -93,8 +94,16 @@ class MailSettings extends Control
     public function handleSubscribe($id, $variantId = null)
     {
         $this->getPresenter()->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->presenter->getUser());
 
-        $this->mailUserSubscriptionsRepository->subscribeUser($this->presenter->getUser()->getIdentity(), $id, $variantId, $this->presenter->rtmParams());
+        $msr = (new MailSubscribeRequest)
+            ->setMailTypeId($id)
+            ->setUser($user);
+        if ($variantId) {
+            $msr->setVariantId($variantId);
+        }
+
+        $this->mailUserSubscriptionsRepository->subscribe($msr, $this->presenter->rtmParams());
         $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
         $this->template->changedId = (int)$id;
 
@@ -110,8 +119,13 @@ class MailSettings extends Control
     public function handleUnSubscribe($id)
     {
         $this->getPresenter()->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->presenter->getUser());
 
-        $this->mailUserSubscriptionsRepository->unSubscribeUser($this->presenter->getUser()->getIdentity(), $id, $this->presenter->rtmParams());
+        $msr = (new MailSubscribeRequest)
+            ->setMailTypeId($id)
+            ->setUser($user);
+
+        $this->mailUserSubscriptionsRepository->unsubscribe($msr, $this->presenter->rtmParams());
         $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
         $this->template->changedId = (int)$id;
 

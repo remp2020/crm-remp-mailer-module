@@ -82,11 +82,11 @@ class MailUserSubscriptionsRepository
 
     /**
      * @param MailSubscribeRequest $msr
-     * @param array $utmParams
+     * @param array $rtmParams
      * @return bool
      * @throws MailerException
      */
-    final public function subscribe(MailSubscribeRequest $msr, array $utmParams = []): bool
+    final public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): bool
     {
         $msr = $msr->setSubscribed(true);
         $this->emitter->emit(new UserMailSubscriptionsChanged(
@@ -94,16 +94,16 @@ class MailUserSubscriptionsRepository
             $msr->getMailTypeId(),
             UserMailSubscriptionsChanged::SUBSCRIBED
         ));
-        return $this->apiClient->subscribe($msr, $utmParams);
+        return $this->apiClient->subscribe($msr, $rtmParams);
     }
 
     /**
      * @param MailSubscribeRequest $msr
-     * @param array $utmParams
+     * @param array $rtmParams
      * @return bool
      * @throws MailerException
      */
-    final public function unsubscribe(MailSubscribeRequest $msr, array $utmParams = []): bool
+    final public function unsubscribe(MailSubscribeRequest $msr, array $rtmParams = []): bool
     {
         $msr = $msr->setSubscribed(false);
         $this->emitter->emit(new UserMailSubscriptionsChanged(
@@ -111,7 +111,7 @@ class MailUserSubscriptionsRepository
             $msr->getMailTypeId(),
             UserMailSubscriptionsChanged::UNSUBSCRIBED
         ));
-        return $this->apiClient->unsubscribe($msr, $utmParams);
+        return $this->apiClient->unsubscribe($msr, $rtmParams);
     }
 
     final public function subscribeUserAll($user)
@@ -188,7 +188,8 @@ class MailUserSubscriptionsRepository
 
     final public function isUserUnsubscribed($user, $mailTypeId)
     {
-        return $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId);
+        $response = $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId);
+        return $response->is_unsubscribed;
     }
 
     final public function unSubscribeUserVariant($user, $mailTypeId, $variantId, $rtmParams = [])
