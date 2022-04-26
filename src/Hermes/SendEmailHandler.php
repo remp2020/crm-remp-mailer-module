@@ -61,7 +61,8 @@ class SendEmailHandler implements HandlerInterface
             $payload['params'] ?? [],
             $payload['context'] ?? null,
             $attachments,
-            $payload['schedule_at'] ?? null
+            $payload['schedule_at'] ?? null,
+            $user->locale ?? null
         );
 
         return true;

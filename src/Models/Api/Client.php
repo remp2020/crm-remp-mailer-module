@@ -152,12 +152,13 @@ class Client
         }
     }
 
-    public function sendEmail(string $email, string $templateCode, array $params = [], string $context = null, array $attachments = [], $scheduleAt = null)
+    public function sendEmail(string $email, string $templateCode, array $params = [], string $context = null, array $attachments = [], $scheduleAt = null, string $locale = null)
     {
         try {
             $json = array_filter([
                 'email' => $email,
                 'mail_template_code' => $templateCode,
+                'locale' => $locale,
                 'params' => count($params) ? $params : null, // don't send empty params at all, it would be encoded as array instead of object
                 'context' => $context,
                 'attachments' => $attachments,
