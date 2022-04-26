@@ -14,8 +14,8 @@ data:
             spam_complained_at: Spam
             conversions: Konverziók
             delivered_at: Beérkező
-            clicked_at: Kattintva
-            opened_at: Megnyitva
+            clicked_at: Megnyitott hivatkozás
+            opened_at: Olvasott
             hard_bounced_at: Kézbesítetlen
 frontend:
     mail_settings:
@@ -52,7 +52,7 @@ admin:
     mail_settings:
         header: E-mail beállítások
         frontend_header: Milyen e-maileket szeretne kapni?
-        actualized_message: A beállítások frissítésre kerültek.
+        actualized_message: A beállítások frissültek.
         unsubscribed: Kijelentkezés ideje %time%
         subscribed: Bejelentkezés ideje %time%
         not_loaded: Az alábbi felhasználó típus számára az e-mail beállítások nem olvashatók be.<br>Névtelen vagy törölt felhasználó.
