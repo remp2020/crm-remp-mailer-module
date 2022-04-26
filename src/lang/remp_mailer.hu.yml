@@ -1,0 +1,58 @@
+menu:
+    main: REMP
+    mailer: Mailer
+    email_settings: Hírlevelek
+data:
+    mail_logs:
+        fields:
+            created_at: Elküldött
+            subject: Tárgy
+            dropped_at: Törölt
+            email: E-mail cím
+            mail_template_id: E-mail
+            events: Események
+            spam_complained_at: Spam
+            conversions: Konverziók
+            delivered_at: Beérkező
+            clicked_at: Megnyitott hivatkozás
+            opened_at: Olvasott
+            hard_bounced_at: Kézbesítetlen
+frontend:
+    mail_settings:
+        header: E-mail beállítások
+        your_email: Az ön e-mail címe
+        subscribe: Feliratkozás
+        unsubscribe: Leiratkozás
+        subscribe_success: Besoroltuk a feliratkozók közé.
+        preview: Előnézet
+        page: Kiadás
+        active: Aktív
+        actualized_message: A beállítások frissültek.
+        subscribe_all: Feliratkozás az összes hírlevélre
+        unsubscribe_all: Leiratkozás az összes hírlevélről
+        inactive: Inaktív
+        unsubscribe_success: Sikeresen leiratkozott.
+    mail_unsubscribe:
+        other_email_settings: Az e-mailek további beállításainak megtekintése
+        header: A kiválasztott hírlevélről sikeresen leiratkozott
+        header_no_account: Az alábbi e-mail <i>%email%</i> a rendszerben már nem található<br><small>(a kiválasztott hírlevélről nem tudjuk leiratkoztatni)</small>
+        header_alt: Az alábbi e-mail <i>%email%</i> a kiválasztott hírlevélről sikeresen leiratkozott
+    mail_subscribe:
+        header: Feliratkozás a hírlevélre
+admin:
+    mail_logs_component:
+        no_content: Nincs elküldött e-mail
+        no_content_message: Még nincs elküldött e-mail
+        not_loaded_message: Névtelen vagy törölt felhasználó
+        total: Összesen
+        success: Sikeres
+        errors: Hibás
+        not_loaded: Az alábbi felhasználó típus számára az e-mailek beolvasása nem elérhető
+        header: Elküldött e-mailek
+    mail_settings:
+        header: E-mail beállítások
+        frontend_header: Milyen e-maileket szeretne kapni?
+        actualized_message: A beállítások frissültek.
+        unsubscribed: Kijelentkezés ideje %time%
+        subscribed: Bejelentkezés ideje %time%
+        not_loaded: Az alábbi felhasználó típus számára az e-mail beállítások nem olvashatók be.<br>Névtelen vagy törölt felhasználó.
