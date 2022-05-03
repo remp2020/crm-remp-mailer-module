@@ -126,7 +126,8 @@ class MailUserSubscriptionsRepository
                 ->setUser($user)
                 ->setSubscribed(true)
                 ->setMailTypeId($subscribedMailType['id'])
-                ->setMailTypeCode($subscribedMailType['code']);
+                ->setMailTypeCode($subscribedMailType['code'])
+                ->setSendAccompanyingEmails(false);
         }
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
 
@@ -153,7 +154,8 @@ class MailUserSubscriptionsRepository
             $subscribeRequests[] = (new MailSubscribeRequest())
                 ->setUser($user)
                 ->setSubscribed(false)
-                ->setMailTypeId($subscribedMailType['id']);
+                ->setMailTypeId($subscribedMailType['id'])
+                ->setSendAccompanyingEmails(false);
         }
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
 
