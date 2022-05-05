@@ -87,6 +87,7 @@ class MailSettings extends Control
             }
         }
 
+        $this->template->mailTypeCategoryCodes = $mailTypeCategoryCodes;
         $this->template->showUnsubscribeAll = $showUnsubscribeAll;
         $this->template->showSubscribeAll = $showSubscribeAll;
         $this->template->userSubscriptions = $userSubscriptions;
@@ -117,7 +118,7 @@ class MailSettings extends Control
             $this->redrawControl('buttons');
             $this->redrawControl('mail-type-' . $id);
         } else {
-            $this->presenter->redirect(':Mailer:MailSettings:mailSettings');
+            $this->presenter->redirect('this');
         }
     }
 
@@ -139,39 +140,74 @@ class MailSettings extends Control
             $this->redrawControl('buttons');
             $this->redrawControl('mail-type-' . $id);
         } else {
-            $this->presenter->redirect(':Mailer:MailSettings:mailSettings');
+            $this->presenter->redirect('this');
         }
     }
 
-    public function handleAllSubscribe()
+    public function handleAllSubscribe(array $cat = null)
     {
         $this->getPresenter()->onlyLoggedIn();
 
         $user = $this->userManager->loadUser($this->presenter->user);
-        $this->mailUserSubscriptionsRepository->subscribeUserAll($user);
+
+        if ($cat) {
+            $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($cat, true);
+            $msrs = [];
+            foreach ($mailTypes as $mailType) {
+                if ($mailType->locked) {
+                    continue;
+                }
+                $msr = (new MailSubscribeRequest)
+                    ->setSubscribed(true)
+                    ->setMailTypeId($mailType->id)
+                    ->setMailTypeCode($mailType->code)
+                    ->setUser($user);
+                $msrs[] = $msr;
+            }
+            $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($msrs);
+        } else {
+            $this->mailUserSubscriptionsRepository->subscribeUserAll($user);
+        }
 
         $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
-        if ($this->presenter->isAjax()) {
+        if ($this->presenter->isAjax() && !$cat) {
             $this->redrawControl('data-wrapper');
             $this->redrawControl('buttons');
         } else {
-            $this->presenter->redirect(':RempMailer:MailSettings:mailSettings');
+            $this->presenter->redirect('this');
         }
     }
 
-    public function handleAllUnSubscribe()
+    public function handleAllUnSubscribe(array $cat = null)
     {
         $this->presenter->onlyLoggedIn();
         $user = $this->userManager->loadUser($this->presenter->user);
 
-        $this->mailUserSubscriptionsRepository->unsubscribeUserAll($user);
+        if ($cat) {
+            $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($cat, true);
+            $msrs = [];
+            foreach ($mailTypes as $mailType) {
+                if ($mailType->locked) {
+                    continue;
+                }
+                $msr = (new MailSubscribeRequest)
+                    ->setSubscribed(false)
+                    ->setMailTypeId($mailType->id)
+                    ->setMailTypeCode($mailType->code)
+                    ->setUser($user);
+                $msrs[] = $msr;
+            }
+            $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($msrs);
+        } else {
+            $this->mailUserSubscriptionsRepository->unsubscribeUserAll($user);
+        }
 
         $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
-        if ($this->presenter->isAjax()) {
+        if ($this->presenter->isAjax() && !$cat) {
             $this->redrawControl('data-wrapper');
             $this->redrawControl('buttons');
         } else {
-            $this->presenter->redirect(':RempMailer:MailSettings:mailSettings');
+            $this->presenter->redirect('this');
         }
     }
 
@@ -181,7 +217,7 @@ class MailSettings extends Control
 
         $this->emailSettingsFormFactory->onUpdate = function () {
             $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.actualized_message'));
-            $this->presenter->redirect(':RempMailer:MailSettings:mailSettings');
+            $this->presenter->redirect('this');
         };
 
         return $form;
