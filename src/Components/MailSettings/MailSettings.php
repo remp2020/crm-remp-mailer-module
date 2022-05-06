@@ -161,7 +161,8 @@ class MailSettings extends Control
                     ->setSubscribed(true)
                     ->setMailTypeId($mailType->id)
                     ->setMailTypeCode($mailType->code)
-                    ->setUser($user);
+                    ->setUser($user)
+                    ->setSendAccompanyingEmails(false);
                 $msrs[] = $msr;
             }
             $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($msrs);
@@ -194,7 +195,8 @@ class MailSettings extends Control
                     ->setSubscribed(false)
                     ->setMailTypeId($mailType->id)
                     ->setMailTypeCode($mailType->code)
-                    ->setUser($user);
+                    ->setUser($user)
+                    ->setSendAccompanyingEmails(false);
                 $msrs[] = $msr;
             }
             $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($msrs);
