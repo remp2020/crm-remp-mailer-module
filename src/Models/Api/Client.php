@@ -31,7 +31,7 @@ class Client
 
     private const ALL_MAIL_CATEGORIES = '/api/v1/mailers/mail-type-categories';
 
-    private const MAIL_TYPES = '/api/v1/mailers/mail-types';
+    private const MAIL_TYPES = '/api/v2/mailers/mail-types';
 
     private const MAIL_TEMPLATES = '/api/v1/mailers/templates';
 
