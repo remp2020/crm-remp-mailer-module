@@ -23,9 +23,9 @@ class RempMailerUserDataProvider implements UserDataProviderInterface
         return 'remp_mailer';
     }
 
-    public function data($userId)
+    public function data($userId): ?array
     {
-        return [];
+        return null;
     }
 
     public function download($userId)
