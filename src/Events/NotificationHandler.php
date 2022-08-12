@@ -45,6 +45,7 @@ class NotificationHandler extends AbstractListener
             'params' => $event->getParams(),
             'context' => $event->getContext(),
             'attachments' => $attachments,
+            'locale' => $event->getLocale(),
         ], null, null, $scheduleAt));
     }
 }
