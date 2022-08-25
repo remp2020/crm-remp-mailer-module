@@ -2,12 +2,12 @@
 
 namespace Crm\RempMailerModule\Components\UserEmailSettings;
 
+use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\User\UnclaimedUser;
-use Kdyby\Translation\Translator;
 
 class UserEmailSettingsWidget extends BaseWidget
 {

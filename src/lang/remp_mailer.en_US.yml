@@ -34,6 +34,7 @@ frontend:
         active: Subscribed
         inactive: Unsubscribed
         actualized_message: Settings were updated.
+        categories_error: There was an issue with loading your newsletter settings. Please try again later.
 
     mail_subscribe:
         header: Subsribed to newsletter

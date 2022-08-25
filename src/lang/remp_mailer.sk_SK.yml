@@ -35,6 +35,7 @@ frontend:
         active: Aktívne
         inactive: Neaktívne
         actualized_message: Nastavenia sa zaktualizovali.
+        categories_error: Nepodarilo sa získať nastavenia vašich newslettrov. Skúste to neskôr, prosím.
 
     mail_subscribe:
         header: Prihlásenie do newslettra

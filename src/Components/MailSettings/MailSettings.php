@@ -49,8 +49,17 @@ class MailSettings extends Control
 
     public function render(array $mailTypeCategoryCodes = null)
     {
+        $this->template->setFile(__DIR__ . '/' . $this->view);
+
         $categories = $this->mailTypeCategoriesRepository->all();
         $this->template->categories = $categories;
+
+        if ($categories === null) {
+            $this->template->showUnsubscribeAll = false;
+            $this->template->showSubscribeAll = false;
+            $this->template->render();
+            return;
+        }
 
         if ($mailTypeCategoryCodes) {
             $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($mailTypeCategoryCodes, true);
@@ -92,7 +101,6 @@ class MailSettings extends Control
         $this->template->showSubscribeAll = $showSubscribeAll;
         $this->template->userSubscriptions = $userSubscriptions;
 
-        $this->template->setFile(__DIR__ . '/' . $this->view);
         $this->template->render();
     }
 

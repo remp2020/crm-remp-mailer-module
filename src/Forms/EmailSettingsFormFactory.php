@@ -2,11 +2,11 @@
 
 namespace Crm\RempMailerModule\Forms;
 
+use Contributte\Translation\Translator;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
-use Kdyby\Translation\Translator;
 use Nette\Application\UI\Form;
 use Nette\Utils\Html;
 use Tomaj\Form\Renderer\BootstrapRenderer;

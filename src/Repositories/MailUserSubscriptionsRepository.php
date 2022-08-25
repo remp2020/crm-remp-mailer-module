@@ -31,7 +31,7 @@ class MailUserSubscriptionsRepository
             return [];
         }
 
-        $preferences = $this->apiClient->getUserPreferences($user->id, $user->email, $subscribed);
+        $preferences = $this->apiClient->getUserPreferences($user->id, $user->email, $subscribed) ?? [];
 
         $mailSubscriptions = [];
         foreach ($preferences as $preference) {

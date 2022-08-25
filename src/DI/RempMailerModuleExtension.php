@@ -2,13 +2,13 @@
 
 namespace Crm\RempMailerModule\DI;
 
+use Contributte\Translation\DI\TranslationProviderInterface;
 use Crm\RempMailerModule\RempMailerModule;
-use Kdyby\Translation\DI\ITranslationProvider;
 use Nette\DI\CompilerExtension;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
-final class RempMailerModuleExtension extends CompilerExtension implements ITranslationProvider
+final class RempMailerModuleExtension extends CompilerExtension implements TranslationProviderInterface
 {
     private const PARAM_HOST = 'host';
     private const PARAM_API_TOKEN = 'api_token';
@@ -62,7 +62,7 @@ final class RempMailerModuleExtension extends CompilerExtension implements ITran
      * Return array of directories, that contain resources for translator.
      * @return string[]
      */
-    public function getTranslationResources()
+    public function getTranslationResources(): array
     {
         return [__DIR__ . '/../lang/'];
     }

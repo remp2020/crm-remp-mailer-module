@@ -456,7 +456,7 @@ class Client
         }
     }
 
-    public function getUserPreferences($userId, $email, ?bool $subscribed = null)
+    public function getUserPreferences($userId, $email, ?bool $subscribed = null): ?array
     {
         $data = [
             'user_id' => $userId,
