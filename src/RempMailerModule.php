@@ -12,7 +12,7 @@ use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
 use Crm\ApplicationModule\User\UserDataRegistrator;
-use Crm\ApplicationModule\Widget\WidgetManagerInterface;
+use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
 use League\Event\Emitter;
@@ -87,16 +87,16 @@ class RempMailerModule extends CrmModule
         );
     }
 
-    public function registerWidgets(WidgetManagerInterface $widgetManager)
+    public function registerLazyWidgets(LazyWidgetManagerInterface $widgetManager)
     {
         $widgetManager->registerWidget(
             'admin.user.detail.mainbox',
-            $this->getInstance(UserEmailSettingsWidget::class),
+            UserEmailSettingsWidget::class,
             200
         );
         $widgetManager->registerWidget(
             'admin.user.detail.bottom',
-            $this->getInstance(MailLogs::class),
+            MailLogs::class,
             700
         );
     }

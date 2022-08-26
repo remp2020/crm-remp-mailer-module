@@ -3,13 +3,13 @@
 namespace Crm\RempMailerModule\Components\UserEmailSettings;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\User\UnclaimedUser;
 
-class UserEmailSettingsWidget extends BaseWidget
+class UserEmailSettingsWidget extends BaseLazyWidget
 {
     private $templateName = 'user_email_settings_widget.latte';
 
@@ -24,13 +24,13 @@ class UserEmailSettingsWidget extends BaseWidget
     private $unclaimedUser;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         EmailSettingsFormFactory $emailSettingsFormFactory,
         Translator $translator,
         UsersRepository $usersRepository,
         UnclaimedUser $unclaimedUser
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->emailSettingsFormFactory = $emailSettingsFormFactory;
         $this->translator = $translator;
         $this->usersRepository = $usersRepository;
