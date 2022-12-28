@@ -3,6 +3,7 @@
 namespace Crm\RempMailerModule\Tests;
 
 use Crm\ApiModule\Authorization\NoAuthorization;
+use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\RempMailerModule\Api\MailTemplateListApiHandler;
 use Crm\RempMailerModule\Models\Api\Client;
@@ -12,8 +13,9 @@ use Nette\Http\Response;
 
 class MailTemplateListApiHandlerTest extends DatabaseTestCase
 {
-    /** @var LinkGenerator */
-    private $linkGenerator;
+    use ApiTestTrait;
+
+    private LinkGenerator $linkGenerator;
 
     protected function requiredRepositories(): array
     {
@@ -57,7 +59,7 @@ class MailTemplateListApiHandlerTest extends DatabaseTestCase
         );
         $mailTemplateListApiHandler->addAllowedMailTypeCodes('test_templates');
         $mailTemplateListApiHandler->setAuthorization(new NoAuthorization());
-        $response = $mailTemplateListApiHandler->handle([]); // TODO: fix params
+        $response = $this->runApi($mailTemplateListApiHandler);
         $this->assertEquals(Response::S200_OK, $response->getCode());
 
         $payload = $response->getPayload();

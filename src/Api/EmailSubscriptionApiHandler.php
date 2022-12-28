@@ -3,7 +3,6 @@
 namespace Crm\RempMailerModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Params\InputParam;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
@@ -11,32 +10,25 @@ use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\UsersApiAuthorizationInterface;
 use Nette\Http\Request;
 use Nette\Http\Response;
+use Tomaj\NetteApi\Params\PostInputParam;
 use Tomaj\NetteApi\Response\JsonApiResponse;
 use Tomaj\NetteApi\Response\ResponseInterface;
 
 class EmailSubscriptionApiHandler extends ApiHandler
 {
-    private $mailUserSubscriptionsRepository;
-
-    private $mailTypesRepository;
-
-    private $request;
-
     public function __construct(
-        Request $request,
-        MailTypesRepository $mailTypesRepository,
-        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository
+        private Request $request,
+        private MailTypesRepository $mailTypesRepository,
+        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository
     ) {
-        $this->request = $request;
-        $this->mailTypesRepository = $mailTypesRepository;
-        $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
+        parent::__construct();
     }
 
     public function params(): array
     {
         return [
-            new InputParam(InputParam::TYPE_POST, 'mail_type_code', InputParam::REQUIRED),
-            new InputParam(InputParam::TYPE_POST, 'variant_code', InputParam::OPTIONAL),
+            (new PostInputParam('mail_type_code'))->setRequired(),
+            (new PostInputParam('variant_code')),
         ];
     }
 
