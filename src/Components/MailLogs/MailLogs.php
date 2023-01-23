@@ -14,44 +14,34 @@ use Nette\Utils\Html;
 
 class MailLogs extends Control implements WidgetInterface
 {
-    private $view = 'mail_logs';
+    private string $view = 'mail_logs';
 
-    private $usersRepository;
+    private VisualPaginator $paginator;
 
-    private $translator;
+    private int $totalCount;
 
-    private $logQuery;
-
-    private $mailLogRepository;
-
-    private $totalCount;
-
-    /** @var VisualPaginator */
-    private $paginator;
-
-    /** @var UnclaimedUser */
-    private $unclaimedUser;
+    private bool $enabled = true;
 
     public function __construct(
-        MailLogQueryBuilder $logQueryBuilder,
-        MailLogsRepository $mailLogRepository,
-        UsersRepository $usersRepository,
-        UnclaimedUser $unclaimedUser,
-        Translator $translator
+        private MailLogQueryBuilder $logQuery,
+        private MailLogsRepository $mailLogRepository,
+        private UsersRepository $usersRepository,
+        private UnclaimedUser $unclaimedUser,
+        private Translator $translator,
     ) {
-        $this->usersRepository = $usersRepository;
-        $this->translator = $translator;
-        $this->logQuery = $logQueryBuilder;
-        $this->mailLogRepository = $mailLogRepository;
-        $this->unclaimedUser = $unclaimedUser;
     }
 
     public function header($id = '')
     {
         $header = $this->translator->translate('remp_mailer.admin.mail_logs_component.header');
-        if ($id) {
-            $header .= Html::el('small')->setHtml(' (' . $this->totalCount($id) . ')');
+
+        $user = $this->usersRepository->find($id);
+        if ($user->deleted_at !== null || $this->unclaimedUser->isUnclaimedUser($user)) {
+            $this->enabled = false;
+            return $header;
         }
+
+        $header .= Html::el('small')->setHtml(' (' . $this->totalCount($id) . ')');
         return $header;
     }
 
@@ -72,14 +62,12 @@ class MailLogs extends Control implements WidgetInterface
         }
 
         $user = $this->usersRepository->find($userId);
-        $notLoaded = false;
-        if ($user->deleted_at !== null || $this->unclaimedUser->isUnclaimedUser($user)) {
+        if (!$this->enabled) {
             $total = 0;
-            $notLoaded = true;
         } else {
             $total = $this->totalCount($userId);
 
-            if ($this->paginator) {
+            if (isset($this->paginator)) {
                 $paginator = $this->paginator->getPaginator();
                 $paginator->setItemCount($total);
                 $paginator->setItemsPerPage(10);
@@ -100,7 +88,7 @@ class MailLogs extends Control implements WidgetInterface
         }
 
         $this->template->emails = $logs ?? [];
-        $this->template->notLoaded = $notLoaded;
+        $this->template->notLoaded = !$this->enabled;
         $this->template->totals = [
             'total' => $total,
             'delivered' => $counts['delivered_at'] ?? 0,
@@ -117,7 +105,7 @@ class MailLogs extends Control implements WidgetInterface
 
     private function totalCount($userId)
     {
-        if ($this->totalCount === null) {
+        if (!isset($this->totalCount)) {
             $user = $this->usersRepository->find($userId);
             $counts = $this->mailLogRepository->count($user->email, ['sent_at']);
             $this->totalCount = $counts['sent_at'] ?? 0;
