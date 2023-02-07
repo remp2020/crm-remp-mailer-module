@@ -89,12 +89,15 @@ class MailUserSubscriptionsRepository
     final public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): bool
     {
         $msr = $msr->setSubscribed(true);
+        $result = $this->apiClient->subscribe($msr, $rtmParams);
+
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $msr->getUserId(),
             $msr->getMailTypeId(),
             UserMailSubscriptionsChanged::SUBSCRIBED
         ));
-        return $this->apiClient->subscribe($msr, $rtmParams);
+
+        return $result;
     }
 
     /**
@@ -106,12 +109,15 @@ class MailUserSubscriptionsRepository
     final public function unsubscribe(MailSubscribeRequest $msr, array $rtmParams = []): bool
     {
         $msr = $msr->setSubscribed(false);
+        $result = $this->apiClient->unsubscribe($msr, $rtmParams);
+
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $msr->getUserId(),
             $msr->getMailTypeId(),
             UserMailSubscriptionsChanged::UNSUBSCRIBED
         ));
-        return $this->apiClient->unsubscribe($msr, $rtmParams);
+
+        return $result;
     }
 
     final public function subscribeUserAll($user)
