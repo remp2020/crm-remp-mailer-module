@@ -3,12 +3,15 @@
 namespace Crm\RempMailerModule\Components\MailSettings;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
+use Crm\RempMailerModule\Models\MailerConfig;
 use Crm\RempMailerModule\Repositories\MailTypeCategoriesRepository;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\UserManager;
+use Crm\UsersModule\Events\NotificationEvent;
+use Crm\UsersModule\Repository\UserEmailConfirmationsRepository;
+use League\Event\Emitter;
 use Nette\Application\UI\Control;
 use Nette\Localization\Translator;
 
@@ -20,12 +23,14 @@ class MailSettings extends Control
     private string $view = 'mail_settings.latte';
 
     public function __construct(
-        private EmailSettingsFormFactory $emailSettingsFormFactory,
         private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
         private MailTypeCategoriesRepository $mailTypeCategoriesRepository,
         private MailTypesRepository $mailTypesRepository,
         private UserManager $userManager,
-        private Translator $translator
+        private Translator $translator,
+        private MailerConfig $mailerConfig,
+        private Emitter $emitter,
+        private UserEmailConfirmationsRepository $userEmailConfirmationsRepository
     ) {
     }
 
@@ -92,62 +97,16 @@ class MailSettings extends Control
         $this->template->mailTypesByCategories = $mailTypesByCategories;
         $this->template->mailTypeCategoryCodes = $mailTypeCategoryCodes;
         $this->template->rtmParams = $this->presenter->rtmParams();
+        $this->template->prohibitedMode = $this->isProhibited();
 
         $this->template->render();
-    }
-
-    public function handleSubscribe($id, $variantId = null)
-    {
-        $this->presenter->onlyLoggedIn();
-        $user = $this->userManager->loadUser($this->presenter->getUser());
-
-        $msr = (new MailSubscribeRequest)
-            ->setMailTypeId($id)
-            ->setUser($user);
-        if ($variantId) {
-            $msr->setVariantId($variantId);
-        }
-
-        $this->mailUserSubscriptionsRepository->subscribe($msr, $this->presenter->rtmParams());
-        $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
-        $this->template->changedId = (int)$id;
-
-        if ($this->presenter->isAjax()) {
-            $this->redrawControl('data-wrapper');
-            $this->redrawControl('buttons');
-            $this->redrawControl('mail-type-' . $id);
-        } else {
-            $this->presenter->redirect('this');
-        }
-    }
-
-    public function handleUnSubscribe($id)
-    {
-        $this->presenter->onlyLoggedIn();
-        $user = $this->userManager->loadUser($this->presenter->getUser());
-
-        $msr = (new MailSubscribeRequest)
-            ->setMailTypeId($id)
-            ->setUser($user);
-
-        $this->mailUserSubscriptionsRepository->unsubscribe($msr, $this->presenter->rtmParams());
-        $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
-        $this->template->changedId = (int)$id;
-
-        if ($this->presenter->isAjax()) {
-            $this->redrawControl('data-wrapper');
-            $this->redrawControl('buttons');
-            $this->redrawControl('mail-type-' . $id);
-        } else {
-            $this->presenter->redirect('this');
-        }
     }
 
     public function handleAllSubscribe(array $cat = null)
     {
         $this->presenter->onlyLoggedIn();
-
         $user = $this->userManager->loadUser($this->presenter->user);
+        $this->onlyConfirmedUser();
 
         if ($cat) {
             $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($cat, true);
@@ -200,5 +159,45 @@ class MailSettings extends Control
 
         $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
         $this->presenter->redirect('this');
+    }
+
+    public function handleConfirmEmail()
+    {
+        $this->presenter->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->presenter->getUser());
+
+        $confirmationUrl = $this->presenter->link('//:Users:Users:EmailConfirm', [
+            'token' => $this->userEmailConfirmationsRepository->generate($user->id)['token'],
+        ]);
+
+        $this->emitter->emit(new NotificationEvent(
+            $this->emitter,
+            $user,
+            'email-confirmation',
+            [
+                'confirmation_url' => $confirmationUrl,
+            ]
+        ));
+
+        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.confirmation_email_sent', ['email' => $user->email]));
+        $this->redirect('this');
+    }
+
+    private function onlyConfirmedUser(): void
+    {
+        if ($this->isProhibited()) {
+            $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_not_allowed'), 'warning');
+            $this->presenter->redirect('this');
+        }
+    }
+
+    private function isProhibited(): bool
+    {
+        if (!$this->mailerConfig->getSubscribeOnlyConfirmedUser()) {
+            return false;
+        }
+
+        $user = $this->userManager->loadUser($this->presenter->getUser());
+        return $user && $user->confirmed_at === null;
     }
 }

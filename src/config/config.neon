@@ -42,6 +42,7 @@ services:
 	- Crm\RempMailerModule\Models\Api\Client
 	- Crm\RempMailerModule\Models\Api\MailLogQueryBuilder
 	- Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator
+	mailerMailerConfig: Crm\RempMailerModule\Models\MailerConfig
 
 	# repositories
 	mailTypesRepository: Crm\RempMailerModule\Repositories\MailTypesRepository

@@ -27,6 +27,9 @@ frontend:
         subscribe: Odoberať
         unsubscribe: Zrušiť odber
         subscribe_success: Zaradili sme vás medzi odberateľov.
+        subscribe_not_allowed: "Prihlásenie na odber newslettra je možný len pre potvrdených užívateľov."
+        send_confirmation_email: "Preposlať potvrdzovací email."
+        confirmation_email_sent: "Potvrdzovací email bol poslaný na mailovú adresu: <i>%email%</i>."
         unsubscribe_success: Vyradili sme vás z odberu.
         preview: Pozri ukážku
         page: Vydania

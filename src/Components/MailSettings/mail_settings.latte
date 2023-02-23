@@ -7,21 +7,23 @@
 
 <div id="mail-settings-vue">
 
-    <div class="page-header row">
-        <div class="col-md-6">
-            <h1 n:block="title">
-                {_remp_mailer.frontend.mail_settings.header}
-            </h1>
-        </div>
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 n:block="title">
+                    {_remp_mailer.frontend.mail_settings.header}
+                </h1>
+            </div>
 
-        <div class="col-md-6" style="padding-top: 8px;">
-            <div class="mail-settings-top-buttons">
-                <a n:href="allSubscribe! $mailTypeCategoryCodes" class="subscribe-all-signal btn btn-default ajax">
-                    {_remp_mailer.frontend.mail_settings.subscribe_all}
-                </a>
-                <a n:href="allUnSubscribe! $mailTypeCategoryCodes" class="unsubscribe-all-signal btn btn-default ajax" style="margin-left: 4px">
-                    {_remp_mailer.frontend.mail_settings.unsubscribe_all}
-                </a>
+            <div n:if="!$prohibitedMode" class="col-md-6" style="padding-top: 8px;">
+                <div class="mail-settings-top-buttons">
+                    <a n:href="allSubscribe! $mailTypeCategoryCodes" class="subscribe-all-signal btn btn-default ajax">
+                        {_remp_mailer.frontend.mail_settings.subscribe_all}
+                    </a>
+                    <a n:href="allUnSubscribe! $mailTypeCategoryCodes" class="unsubscribe-all-signal btn btn-default ajax" style="margin-left: 4px">
+                        {_remp_mailer.frontend.mail_settings.unsubscribe_all}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -32,6 +34,11 @@
 
     <div v-else class="row">
         <div class="col-sm-12">
+
+            <div v-if="prohibitedMode" class="alert alert-warning">
+                <p>{_remp_mailer.frontend.mail_settings.subscribe_not_allowed} <a n:href="confirmEmail!" class="link">{_remp_mailer.frontend.mail_settings.send_confirmation_email}</a></p>
+            </div>
+
             <template v-for="category in categories" :key="category.id">
 
                 <h3 v-if="category.show_title">[[ category.title ]]</h3>
@@ -50,7 +57,9 @@
                                 <h5 style="font-size: 17px">[[mailType.title]]</h5>
                                 <p>[[mailType.description]]</p>
 
-                                <mail-type-subscription-settings :mail-type="mailType"></mail-type-subscription-settings>
+                                <template v-if="!prohibitedMode">
+                                    <mail-type-subscription-settings :mail-type="mailType"></mail-type-subscription-settings>
+                                </template>
 
                             </div>
                         </div>
@@ -67,6 +76,7 @@
     var backendData = {
         mailTypesByCategories: {$mailTypesByCategories ?? []},
         categories: {$categories ?? []},
+        prohibitedMode: {$prohibitedMode}
     };
     var rtmParams =  {$rtmParams};
 </script>

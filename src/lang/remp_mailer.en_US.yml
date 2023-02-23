@@ -26,6 +26,9 @@ frontend:
         subscribe: Subscribe
         unsubscribe: Unsubscribe
         subscribe_success: You have been successfully subscribed.
+        subscribe_not_allowed: Subscribe is allowed only for the confirmed users.
+        send_confirmation_email: Send confirmation email.
+        confirmation_email_sent: "The confirmation email has been sent to the email address: <i>%email%</i>."
         unsubscribe_success: You have been successfully un-subscribed.
         preview: See sample
         page: Editions
