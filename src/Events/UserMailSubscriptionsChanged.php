@@ -26,7 +26,7 @@ class UserMailSubscriptionsChanged extends AbstractEvent
         $this->userId = $userId;
         $this->mailTypeId = $mailTypeId;
 
-        if (!in_array($subscribed, [self::SUBSCRIBED, self::UNSUBSCRIBED])) {
+        if (!in_array($subscribed, [self::SUBSCRIBED, self::UNSUBSCRIBED], true)) {
             throw new \Exception("User can subscribe or unsubscribe. [{$subscribed}] received.");
         }
         $this->subscribed = $subscribed;
