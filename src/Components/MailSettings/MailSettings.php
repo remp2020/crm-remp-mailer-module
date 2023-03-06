@@ -107,7 +107,7 @@ class MailSettings extends Control
 
     public function handleSubscribe($id, $variantId = null)
     {
-        $this->getPresenter()->onlyLoggedIn();
+        $this->presenter->onlyLoggedIn();
         $user = $this->userManager->loadUser($this->presenter->getUser());
 
         $msr = (new MailSubscribeRequest)
@@ -132,7 +132,7 @@ class MailSettings extends Control
 
     public function handleUnSubscribe($id)
     {
-        $this->getPresenter()->onlyLoggedIn();
+        $this->presenter->onlyLoggedIn();
         $user = $this->userManager->loadUser($this->presenter->getUser());
 
         $msr = (new MailSubscribeRequest)
@@ -154,7 +154,7 @@ class MailSettings extends Control
 
     public function handleAllSubscribe(array $cat = null)
     {
-        $this->getPresenter()->onlyLoggedIn();
+        $this->presenter->onlyLoggedIn();
 
         $user = $this->userManager->loadUser($this->presenter->user);
 

@@ -8,6 +8,7 @@ use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
+use Nette\Utils\ArrayHash;
 use Nette\Utils\Html;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
@@ -58,6 +59,7 @@ class EmailSettingsFormFactory
             $form->addGroup('remp_mailer.admin.mail_settings.frontend_header');
         }
 
+        /** @var \stdClass[]|null $mailTypes */
         $mailTypes = $this->mailTypesRepository->all();
         if (!$mailTypes) {
             $form->addError($this->translator->translate('mailer.admin.mail_settings.mail_types_error'));
@@ -125,7 +127,7 @@ class EmailSettingsFormFactory
         return $form;
     }
 
-    public function formSucceeded($form, $values)
+    public function formSucceeded(Form $form, ArrayHash $values)
     {
         if ($this->simple) {
             $userId = $values['user_id'];
