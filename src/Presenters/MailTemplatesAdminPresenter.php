@@ -17,6 +17,6 @@ class MailTemplatesAdminPresenter extends FrontendPresenter
 
     public function actionShow($code)
     {
-        $this->redirectUrl("{$this->config->getHost()}/template/show-by-code/{$code}");
+        $this->redirectUrl("{$this->config->getHost()}/mailer/template/show-by-code/{$code}");
     }
 }
