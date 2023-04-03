@@ -13,7 +13,10 @@
         {if $medium === email}
         <script type="text/javascript">
             $(function() {
-                ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_emailcta');
+                dataLayer.push({
+                    event : 'n_newsletter_settings',
+                    newsletter_action : 'mail_settings_subscribe_emailcta'
+                });
             })
         </script>
         {/if}

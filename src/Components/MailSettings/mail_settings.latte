@@ -137,16 +137,28 @@
 
                 if (typeof ga !== "undefined") {
                     $('.subscribe-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_single');
+                        dataLayer.push({
+                            event : 'n_newsletter_settings',
+                            newsletter_action : 'mail_settings_subscribe_single'
+                        });
                     });
                     $('.unsubscribe-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_single');
+                        dataLayer.push({
+                            event : 'n_newsletter_settings',
+                            newsletter_action : 'mail_settings_unsubscribe_single'
+                        });
                     });
                     $('.subscribe-all-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_subscribe_all');
+                        dataLayer.push({
+                            event : 'n_newsletter_settings',
+                            newsletter_action : 'mail_settings_subscribe_all'
+                        });
                     });
                     $('.unsubscribe-all-signal').on('click', function() {
-                        ga('globalTracker.send', 'event', 'newsletter_settings', 'mail_settings_unsubscribe_all');
+                        dataLayer.push({
+                            event : 'n_newsletter_settings',
+                            newsletter_action : 'mail_settings_unsubscribe_all'
+                        });
                     });
                 }
             </script>
