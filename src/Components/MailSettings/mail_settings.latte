@@ -135,35 +135,34 @@
                     $(this).siblings('a').trigger('click');
                 });
 
-                if (typeof ga !== "undefined") {
-                    $('.subscribe-signal').on('click', function() {
-                        dataLayer.push({
-                            event : 'n_newsletter_settings',
-                            newsletter_action : 'mail_settings_subscribe_single'
-                        });
+                $('.subscribe-signal').on('click', function() {
+                    dataLayer.push({
+                        event : 'n_newsletter_settings',
+                        newsletter_action : 'mail_settings_subscribe_single'
                     });
-                    $('.unsubscribe-signal').on('click', function() {
-                        dataLayer.push({
-                            event : 'n_newsletter_settings',
-                            newsletter_action : 'mail_settings_unsubscribe_single'
-                        });
+                });
+                $('.unsubscribe-signal').on('click', function() {
+                    dataLayer.push({
+                        event : 'n_newsletter_settings',
+                        newsletter_action : 'mail_settings_unsubscribe_single'
                     });
-                    $('.subscribe-all-signal').on('click', function() {
-                        dataLayer.push({
-                            event : 'n_newsletter_settings',
-                            newsletter_action : 'mail_settings_subscribe_all'
-                        });
+                });
+                $('.subscribe-all-signal').on('click', function() {
+                    dataLayer.push({
+                        event : 'n_newsletter_settings',
+                        newsletter_action : 'mail_settings_subscribe_all'
                     });
-                    $('.unsubscribe-all-signal').on('click', function() {
-                        dataLayer.push({
-                            event : 'n_newsletter_settings',
-                            newsletter_action : 'mail_settings_unsubscribe_all'
-                        });
+                });
+                $('.unsubscribe-all-signal').on('click', function() {
+                    dataLayer.push({
+                        event : 'n_newsletter_settings',
+                        newsletter_action : 'mail_settings_unsubscribe_all'
                     });
-                }
+                });
             </script>
 
         </div>
     </div>
 {/if}
 {/snippetArea}
+
