@@ -29,6 +29,13 @@ class EmailSubscriptionApiHandler extends ApiHandler
         return [
             (new PostInputParam('mail_type_code'))->setRequired(),
             (new PostInputParam('variant_code')),
+            (new PostInputParam('variant_id')),
+            // tracker data
+            (new PostInputParam('rtm_source')),
+            (new PostInputParam('rtm_medium')),
+            (new PostInputParam('rtm_campaign')),
+            (new PostInputParam('rtm_content')),
+            (new PostInputParam('rtm_variant')),
         ];
     }
 
@@ -69,13 +76,23 @@ class EmailSubscriptionApiHandler extends ApiHandler
             ->setUser($user);
         if ($params['variant_code']) {
             $msr->setVariantCode($params['variant_code']);
+        } elseif ($params['variant_id']) {
+            $msr->setVariantId($params['variant_id']);
         }
+
+        $rtmParams = array_filter([
+            'rtm_source' => $params['rtm_source'] ?? null,
+            'rtm_medium' => $params['rtm_medium'] ?? null,
+            'rtm_campaign' => $params['rtm_campaign'] ?? null,
+            'rtm_content' => $params['rtm_content'] ?? null,
+            'rtm_variant' => $params['rtm_variant'] ?? null,
+        ]);
 
         try {
             if ($this->getAction() === 'subscribe') {
-                $this->mailUserSubscriptionsRepository->subscribe($msr);
+                $this->mailUserSubscriptionsRepository->subscribe($msr, $rtmParams);
             } else {
-                $this->mailUserSubscriptionsRepository->unsubscribe($msr);
+                $this->mailUserSubscriptionsRepository->unsubscribe($msr, $rtmParams);
             }
         } catch (MailerException $exception) {
             $code = $exception->getCode() ?: Response::S400_BAD_REQUEST;

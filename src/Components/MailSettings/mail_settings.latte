@@ -1,168 +1,329 @@
 {block #head}
     <link rel="stylesheet" href="{$basePath}/layouts/mailer/css/mr_toggle.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 {/block}
 
-{snippetArea data}
+<div id="mail-settings-vue">
 
-<div class="page-header row">
-    <div class="col-md-6">
-        <h1 n:block="title">
-            {_remp_mailer.frontend.mail_settings.header}
-        </h1>
+    <div class="page-header row">
+        <div class="col-md-6">
+            <h1 n:block="title">
+                {_remp_mailer.frontend.mail_settings.header}
+            </h1>
+        </div>
+
+        <div class="col-md-6" style="padding-top: 8px;">
+            <div class="mail-settings-top-buttons">
+                <a n:href="allSubscribe! $mailTypeCategoryCodes" class="subscribe-all-signal btn btn-default ajax">
+                    {_remp_mailer.frontend.mail_settings.subscribe_all}
+                </a>
+                <a n:href="allUnSubscribe! $mailTypeCategoryCodes" class="unsubscribe-all-signal btn btn-default ajax" style="margin-left: 4px">
+                    {_remp_mailer.frontend.mail_settings.unsubscribe_all}
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="col-md-6" style="padding-top: 8px;">
-        <div n:snippet="buttons" class="mail-settings-top-buttons">
-            <a class="subscribe-all-signal btn btn-default ajax" n:if="$showSubscribeAll" n:href="allSubscribe!, $mailTypeCategoryCodes">{_remp_mailer.frontend.mail_settings.subscribe_all}</a>
-            <a class="unsubscribe-all-signal btn btn-default ajax" n:if="$showUnsubscribeAll" n:href="allUnSubscribe! $mailTypeCategoryCodes">{_remp_mailer.frontend.mail_settings.unsubscribe_all}</a>
+    <div v-if="!categories" class="alert alert-warning">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {_remp_mailer.frontend.mail_settings.categories_error}
+    </div>
+
+    <div v-else class="row">
+        <div class="col-sm-12">
+            <template v-for="category in categories" :key="category.id">
+
+                <h3 v-if="category.show_title">[[ category.title ]]</h3>
+
+                <template v-for="tuple in makeTuples(mailTypesByCategories[category.id])">
+                    <div class="row mail-settings-row-mobile" style="margin-bottom:50px">
+
+                        <div v-for="mailType in tuple" class="col-xs-12 col-md-6">
+
+                            <div v-if="mailType.image_url" class="col-xs-3 col-md-3">
+                                <img :src="mailType.image_url" style="width:100%;" :alt="mailType.title" />
+                            </div>
+
+                            <div :class="[mailType.image_url ?  'col-xs-9 col-md-9' : 'col-xs-12 col-md-12', 'mail-settings-item-body']"
+                                 style="padding-bottom:1em">
+                                <h5 style="font-size: 17px">[[mailType.title]]</h5>
+                                <p>[[mailType.description]]</p>
+
+                                <mail-type-subscription-settings :mail-type="mailType"></mail-type-subscription-settings>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+
+            </template>
         </div>
     </div>
 </div>
 
-<style>
-    h5 {
-        font-size: 17px;
+<script>
+    var backendData = {
+        mailTypesByCategories: {$mailTypesByCategories ?? []},
+        categories: {$categories ?? []},
+    };
+    var rtmParams =  {$rtmParams};
+</script>
+<script n:syntax="double">
+    function reportToDataLayer(event) {
+        if (window.dataLayer !== undefined) {
+            dataLayer.push({
+                event : 'n_newsletter_settings',
+                newsletter_action : event
+            });
+        }
     }
-</style>
 
-{if $categories === null}
-    <div class="alert alert-warning">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {_remp_mailer.frontend.mail_settings.categories_error}
-    </div>
-{else}
-    <div class="row">
-        <div n:snippet="data-wrapper" class="col-sm-12">
+    function ajaxSubscribe(subscribe, mailTypeCode, variantId, alwaysCallback, failCallback, doneCallback) {
+        var data = {
+            mail_type_code: mailTypeCode
+        }
+        if (variantId) {
+            data.variant_id = variantId;
+        }
+        data = Object.assign(data, rtmParams);
 
-            {var $mailTypes = []}
-            {foreach $types as $type}
-                {if !isset($mailTypes[$type->mail_type_category_id])}
-                    {var $mailTypes[$type->mail_type_category_id] = []}
-                {/if}
-                {var $mailTypes[$type->mail_type_category_id][] = $type}
-            {/foreach}
+        $.ajax({
+            method: 'POST',
+            url: '/api/v1/mailer/' + (subscribe ? 'subscribe' : 'unsubscribe'),
+            data: data,
+            headers: {
+                "Authorization": "Bearer " + Cookies.get('n_token')
+            }
+        }).done(function (response) {
+            reportToDataLayer(subscribe ? 'mail_settings_subscribe_single' : 'mail_settings_unsubscribe_single');
+            if (doneCallback) {
+                doneCallback();
+            }
+        }).fail(function (jqXHR, textStatus) {
+            console.error("Unable to switch un/subscribe status of variant");
+            if (failCallback) {
+                failCallback();
+            }
+        }).always(function () {
+            if (alwaysCallback) {
+                alwaysCallback();
+            }
+        });
+    }
 
-            {foreach $categories as $category}
+    if (typeof ga !== "undefined") {
+        $('.subscribe-all-signal').on('click', function () {
+            dataLayer.push({
+                event : 'n_newsletter_settings',
+                newsletter_action : 'mail_settings_subscribe_all'
+            });
+        });
+        $('.unsubscribe-all-signal').on('click', function () {
+            dataLayer.push({
+                event : 'n_newsletter_settings',
+                newsletter_action : 'mail_settings_unsubscribe_all'
+            });
+        });
+    }
 
-                {if isset($mailTypes[$category->id])}
+    var MailSettingsVue = {
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return backendData;
+        },
+        methods: {
+            makeTuples: function(arr) {
+                if (!arr) {
+                    return [];
+                }
 
-                    {if $category->show_title}
-                        <h3>{$category->title}</h3>
-                    {/if}
+                var tuples = [];
+                var i = 0;
+                while (i < arr.length) {
+                    if (i === (arr.length - 1)) {
+                        tuples.push([arr[i]]);
+                    } else {
+                        tuples.push([arr[i], arr[i+1]]);
+                    }
+                    i = i + 2;
+                }
+                return tuples;
+            }
+        }
+    }
+    var app = Vue.createApp(MailSettingsVue);
 
-                    {foreach $mailTypes[$category->id] as $type}
+    app.component('mail-type-subscription-settings', {
+        delimiters: ['[[', ']]'],
+        props: ['mailType'],
+        data: function () {
+            return {
+                disabled: false,
+                changedAtLeastOnce: false,
+            }
+        },
+        methods: {
+            markMailTypeAsSubscribed: function() {
+                this.mailType.is_subscribed = true;
+            },
+            onToggleMailType: function (event) {
+                this.disabled = true;
+                var that = this;
 
-                        {if $iterator->isOdd() || $iterator->first}
-                            <div class="row mail-settings-row-mobile" style="margin-bottom:50px">
-                        {/if}
+                ajaxSubscribe(
+                    this.mailType.is_subscribed, this.mailType.code, null,
+                    function () { that.disabled = false; },
+                    function () { that.mailType.is_subscribed = !that.mailType.is_subscribed; },
+                    function () {
+                        that.changedAtLeastOnce = true;
+                        if (that.mailType.is_subscribed && that.mailType.default_variant_id) {
+                            // check default variant
+                            that.mailType.variants[that.mailType.default_variant_id].is_subscribed = true;
+                        } else if (!that.mailType.is_subscribed && that.mailType.variants) {
+                            // uncheck variants
+                            for (var variantId in that.mailType.variants) {
+                                that.mailType.variants[variantId].is_subscribed = false;
+                            }
+                        }
+                    }
+                );
+            }
+        },
+        template: `
+              <div v-if="mailType.is_multi_variant" class="checkbox" v-for="variant in mailType.variants">
+                <mail-variant-checkbox
+                    :mail-type="mailType"
+                    :mail-type-disabled="disabled"
+                    :variant="variant"
+                    @subscribed="markMailTypeAsSubscribed"></mail-variant-checkbox>
+              </div>
 
-                        <div class="col-xs-12 col-md-6" n:snippet="mail-type-{$type->id}">
-                            {var $contentClass='col-xs-12 col-md-12'}
+              <mail-variant-radios v-else
+                    :mail-type="mailType"
+                    :mail-type-disabled="disabled"
+                    @subscribed="markMailTypeAsSubscribed">
+              </mail-variant-radios>
 
-                            {if $type->image_url}
-                                <div class="col-xs-3 col-md-3">
-                                    <img src="{$type->image_url}" style="width:100%;">
-                                </div>
-                                {var $contentClass = 'col-xs-9 col-md-9'}
-                            {/if}
+              <div class="mail-settings-wrap-button-preview">
+                  <template v-if="mailType.locked">
+                    <button v-if="mailType.is_subscribed" type="button" class="btn btn-default disabled">{{_remp_mailer.frontend.mail_settings.unsubscribe|noescape}}</button>
+                    <button v-else type="button" class="btn btn-default disabled">{{_remp_mailer.frontend.mail_settings.subscribe|noescape}}</button>
+                  </template>
 
-                            <div class="{$contentClass} mail-settings-item-body" style="padding-bottom:1em">
-                                <h5>{$type->title}</h5>
-                                <p>{$type->description|breaklines|noescape}</p>
-
-                                <div class="radio" n:foreach="$type->variants ?? [] as $id => $variant" style="margin-left:20px;">
-                                    {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1 && in_array($id, array_column($userSubscriptions[$type->id]['variants'], 'id'))}
-                                        <strong>
-                                            <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px" checked="checked">
-                                            <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
-                                        </strong>
-                                    {else}
-                                        <input type="radio" class="variant-selector subscribe-signal" name="variant-{$type->id}" style="padding-left:20px">
-                                        <a n:href="Subscribe! $type->id, $id" class="ajax mail-settings-variant-radio">{$variant}</a>
-                                    {/if}
-                                    <br>
-                                </div>
-
-                                <div class="mail-settings-wrap-button-preview">
-                                    {if isset($userSubscriptions[$type->id]) && $userSubscriptions[$type->id]['is_subscribed'] == 1}
-                                        {if $type->locked}
-                                            <button type="button" class="btn btn-default disabled">{_remp_mailer.frontend.mail_settings.unsubscribe}</button>
-                                        {else}
-                                            <span class="mr_toggle unsubscribe-signal subscribe-toggle">
-                                        <div class="mr_toggle_tooltip mr_toggle_tooltip_active fadeMe" n:if="isset($changedId) && $changedId == $type->id">
-                                            <span>{_remp_mailer.frontend.mail_settings.active}</span>
-                                        </div>
-                                        <input type="checkbox" name="change_{$type->id}" checked="checked" onchange="$(this).parent().siblings('a.change').click()">
-                                        <span><span></span></span>
-                                    </span>
-                                            <a n:href="UnSubscribe! $type->id" class="change hidden btn btn-default btn-large ajax">{_remp_mailer.frontend.mail_settings.unsubscribe}</a>
-                                        {/if}
-                                    {else}
-                                        {if $type->locked}
-                                            <button type="button" class="btn btn-primary disabled">{_remp_mailer.frontend.mail_settings.subscribe}</button>
-                                        {else}
-                                            <span class="mr_toggle subscribe-signal">
-                                        <div class="mr_toggle_tooltip fadeMe" n:if="isset($changedId) && $changedId == $type->id">
-                                            <span>{_remp_mailer.frontend.mail_settings.inactive}</span>
-                                        </div>
-                                        <input type="checkbox" name="change_{$type->id}" onchange="$(this).parent().siblings('a.change').click()">
-                                        <span><span></span></span>
-                                    </span>
-                                            <a n:href="Subscribe! $type->id" class="change hidden btn btn-primary btn-large ajax">{_remp_mailer.frontend.mail_settings.subscribe}</a>
-                                        {/if}
-                                    {/if}
-
-
-                                    <a n:if="$type->preview_url" target="_blank" href="{$type->preview_url}" class="btn btn-large" style="text-decoration: underline" onclick="window.open($(this).attr('href'),'_blank','resizable=no, toolbar=no, menubar=no, status=no, directories=no, width=720, height=6000, left=100, top=100'); return false;">
-                                        {_remp_mailer.frontend.mail_settings.preview}
-                                    </a>
-                                    <a n:if="!empty($type->page_url)" target="_blank" href="{$type->page_url}" class="btn btn-large" style="text-decoration: underline">
-                                        {_remp_mailer.frontend.mail_settings.page}
-                                    </a>
-                                </div>
-                            </div>
+                  <template v-else>
+                     <span class="mr_toggle">
+                        <div class="mr_toggle_tooltip mr_toggle_tooltip_active fadeMe" v-if="mailType.is_subscribed && changedAtLeastOnce && !disabled">
+                          <span>{{_remp_mailer.frontend.mail_settings.active|noescape}}</span>
                         </div>
 
-                        {if $iterator->isEven() || $iterator->last}
-                            </div>
-                        {/if}
-                    {/foreach}
-                    <hr>
-                {/if}
-            {/foreach}
+                        <div class="mr_toggle_tooltip fadeMe" v-if="!mailType.is_subscribed && changedAtLeastOnce && !disabled">
+                          <span>{{_remp_mailer.frontend.mail_settings.inactive|noescape}}</span>
+                        </div>
 
-            <script>
-                $('.variant-selector').on('click', function() {
-                    $(this).siblings('a').trigger('click');
-                });
+                        <input type="checkbox" :name="'toggle-type-' + mailType.id" :disabled="disabled" @change="onToggleMailType" v-model="mailType.is_subscribed" />
+                        <span><span></span></span>
+                    </span>
+                  </template>
 
-                $('.subscribe-signal').on('click', function() {
-                    dataLayer.push({
-                        event : 'n_newsletter_settings',
-                        newsletter_action : 'mail_settings_subscribe_single'
-                    });
-                });
-                $('.unsubscribe-signal').on('click', function() {
-                    dataLayer.push({
-                        event : 'n_newsletter_settings',
-                        newsletter_action : 'mail_settings_unsubscribe_single'
-                    });
-                });
-                $('.subscribe-all-signal').on('click', function() {
-                    dataLayer.push({
-                        event : 'n_newsletter_settings',
-                        newsletter_action : 'mail_settings_subscribe_all'
-                    });
-                });
-                $('.unsubscribe-all-signal').on('click', function() {
-                    dataLayer.push({
-                        event : 'n_newsletter_settings',
-                        newsletter_action : 'mail_settings_unsubscribe_all'
-                    });
-                });
-            </script>
+                  <a v-if="mailType.preview_url" target="_blank" :href="mailType.preview_url" class="btn btn-large" style="text-decoration: underline"
+                     onclick="window.open($(this).attr('href'),'_blank','resizable=no, toolbar=no, menubar=no, status=no, directories=no, width=720, height=6000, left=100, top=100'); return false;">
+                    {{_remp_mailer.frontend.mail_settings.preview|noescape}}
+                  </a>
+                  <a v-if="!mailType.page_url" target="_blank" :href="mailType.page_url" class="btn btn-large" style="text-decoration: underline">
+                    {{_remp_mailer.frontend.mail_settings.page|noescape}}
+                  </a>
+              </div>
+          `
+    });
 
-        </div>
-    </div>
-{/if}
-{/snippetArea}
 
+    app.component('mail-variant-radios', {
+        delimiters: ['[[', ']]'],
+        props: ['mailType', 'mailTypeDisabled'],
+        emits: ['subscribed'],
+        data: function () {
+            return {
+                disabled: false
+            }
+        },
+        methods: {
+            onToggle: function (selectedVariantId) {
+                for (var variantId in this.mailType.variants) {
+                    this.mailType.variants[variantId].is_subscribed = variantId === selectedVariantId;
+                }
+
+                var selectedVariant = this.mailType.variants[selectedVariantId];
+                this.disabled = true;
+                var that = this;
+
+                ajaxSubscribe(
+                    selectedVariant.is_subscribed, this.mailType.code, selectedVariant.id,
+                    function () { that.disabled = false; },
+                    function () { selectedVariant.is_subscribed = !selectedVariant.is_subscribed; },
+                    function () {
+                        if (selectedVariant.is_subscribed) {
+                            that.$emit('subscribed');
+                        }
+                    }
+                );
+            }
+        },
+        template: `
+          <div class="radio" v-for="variant in mailType.variants">
+              <label v-else :for="'variant-' + variant.id" >
+                  <input :id="'variant-' + variant.id"
+                         :name="'mail-' + mailType.id + '-variant'"
+                         type="radio"
+                         :disabled="disabled || mailTypeDisabled"
+                         :checked="variant.is_subscribed"
+                         @change="onToggle(variant.id)"
+                         class="variant-selector subscribe-signal" style="padding-left:20px"/>
+                  <span class="mail-settings-variant-radio" style="display: inline-block">[[ variant.title ]]</span>
+              </label>
+          </div>
+`
+    });
+
+    app.component('mail-variant-checkbox', {
+        delimiters: ['[[', ']]'],
+        props: ['mailType', 'variant', 'mailTypeDisabled'],
+        emits: ['subscribed'],
+        data: function() {
+            return {
+                disabled: false
+            }
+        },
+        methods: {
+            onToggle: function (event) {
+                this.disabled = true;
+                var that = this;
+
+                ajaxSubscribe(
+                    this.variant.is_subscribed, this.mailType.code, this.variant.id,
+                    function () { that.disabled = false; },
+                    function () { that.variant.is_subscribed = !that.variant.is_subscribed; },
+                    function () {
+                        if (that.variant.is_subscribed) {
+                            that.$emit('subscribed');
+                        }
+                    }
+                );
+            }
+        },
+        template: `
+          <label :for="'variant-' + variant.id" class="mail-settings-variant-radio">
+              <input :id="'variant-' + variant.id"
+                     :name="'mail-' + mailType.id + '-variant'"
+                     type="checkbox"
+                     :disabled="disabled || mailTypeDisabled"
+                     @change="onToggle"
+                     v-model="variant.is_subscribed"
+                     class="variant-selector subscribe-signal" style="padding-left:20px"  />
+              <span class="mail-settings-variant-radio" style="display: inline-block">[[variant.title]]</span>
+          </label>`
+    });
+
+    app.mount('#mail-settings-vue');
+</script>

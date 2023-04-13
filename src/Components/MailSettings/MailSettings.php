@@ -17,34 +17,16 @@ use Nette\Localization\Translator;
  */
 class MailSettings extends Control
 {
-    private $view = 'mail_settings.latte';
-
-    private $emailSettingsFormFactory;
-
-    private $mailUserSubscriptionsRepository;
-
-    private $mailTypeCategoriesRepository;
-
-    private $mailTypesRepository;
-
-    private $userManager;
-
-    private $translator;
+    private string $view = 'mail_settings.latte';
 
     public function __construct(
-        EmailSettingsFormFactory $emailSettingsFormFactory,
-        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
-        MailTypeCategoriesRepository $mailTypeCategoriesRepository,
-        MailTypesRepository $mailTypesRepository,
-        UserManager $userManager,
-        Translator $translator
+        private EmailSettingsFormFactory $emailSettingsFormFactory,
+        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
+        private MailTypeCategoriesRepository $mailTypeCategoriesRepository,
+        private MailTypesRepository $mailTypesRepository,
+        private UserManager $userManager,
+        private Translator $translator
     ) {
-        $this->emailSettingsFormFactory = $emailSettingsFormFactory;
-        $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
-        $this->mailTypesRepository = $mailTypesRepository;
-        $this->mailTypeCategoriesRepository = $mailTypeCategoriesRepository;
-        $this->userManager = $userManager;
-        $this->translator = $translator;
     }
 
     public function render(array $mailTypeCategoryCodes = null)
@@ -52,9 +34,16 @@ class MailSettings extends Control
         $this->template->setFile(__DIR__ . '/' . $this->view);
 
         $categories = $this->mailTypeCategoriesRepository->all();
+        if ($mailTypeCategoryCodes) {
+            $categories = array_filter(
+                $categories,
+                fn($c) => in_array($c->code, $mailTypeCategoryCodes, true)
+            );
+        }
+
         $this->template->categories = $categories;
 
-        if ($categories === null) {
+        if (empty($categories)) {
             $this->template->showUnsubscribeAll = false;
             $this->template->showSubscribeAll = false;
             $this->template->render();
@@ -62,48 +51,50 @@ class MailSettings extends Control
         }
 
         if ($mailTypeCategoryCodes) {
-            $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($mailTypeCategoryCodes, true);
+            $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($mailTypeCategoryCodes, true, true);
         } else {
-            $mailTypes = $this->mailTypesRepository->all(true);
-        }
-
-        $this->template->types = $mailTypes;
-
-        $mappedMailTypes = [];
-        foreach ($mailTypes as $mailType) {
-            $mappedMailTypes[$mailType->id] = $mailType;
+            $mailTypes = $this->mailTypesRepository->all(true, true);
         }
 
         $userSubscriptions = [];
         if ($this->presenter->getUser()->isLoggedIn()) {
-            $userSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences($this->presenter->getUser()->id);
+            $userSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences(
+                $this->presenter->getUser()->id,
+                true
+            );
+            $this->template->notLogged = false;
         } else {
             $this->template->notLogged = true;
         }
 
-        $showUnsubscribeAll = false;
-        $showSubscribeAll = false;
 
-        foreach ($userSubscriptions as $mailTypeId => $userSubscription) {
-            if (isset($mappedMailTypes[$mailTypeId]) && $mappedMailTypes[$mailTypeId]->locked) {
-                continue;
+        $mailTypesByCategories = [];
+        foreach ($mailTypes as $mailType) {
+            if (!isset($mailTypesByCategories[$mailType->mail_type_category_id])) {
+                $mailTypesByCategories[$mailType->mail_type_category_id] = [];
             }
+            $mailType->is_subscribed = isset($userSubscriptions[$mailType->id]);
 
-            if ($userSubscription['is_subscribed']) {
-                $showUnsubscribeAll = true;
-            } else {
-                $showSubscribeAll = true;
+            $variants = $mailType->variants;
+            $mailType->variants = [];
+
+            foreach ($variants as $variantId => $variant) {
+                $mailType->variants[$variantId] = (object) [
+                    'id' => $variantId,
+                    'title' => $variant->title,
+                    'is_subscribed' => isset($userSubscriptions[$mailType->id]['variants'][$variantId]),
+                    'is_default' => (int) $variantId === (int) $mailType->default_variant_id,
+                ];
             }
+            $mailTypesByCategories[$mailType->mail_type_category_id][] = $mailType;
         }
 
+        $this->template->mailTypesByCategories = $mailTypesByCategories;
         $this->template->mailTypeCategoryCodes = $mailTypeCategoryCodes;
-        $this->template->showUnsubscribeAll = $showUnsubscribeAll;
-        $this->template->showSubscribeAll = $showSubscribeAll;
-        $this->template->userSubscriptions = $userSubscriptions;
+        $this->template->rtmParams = $this->presenter->rtmParams();
 
         $this->template->render();
     }
-
 
     public function handleSubscribe($id, $variantId = null)
     {
@@ -178,13 +169,8 @@ class MailSettings extends Control
             $this->mailUserSubscriptionsRepository->subscribeUserAll($user);
         }
 
-        $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
-        if ($this->presenter->isAjax() && !$cat) {
-            $this->redrawControl('data-wrapper');
-            $this->redrawControl('buttons');
-        } else {
-            $this->presenter->redirect('this');
-        }
+        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
+        $this->presenter->redirect('this');
     }
 
     public function handleAllUnSubscribe(array $cat = null)
@@ -212,13 +198,8 @@ class MailSettings extends Control
             $this->mailUserSubscriptionsRepository->unsubscribeUserAll($user);
         }
 
-        $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
-        if ($this->presenter->isAjax() && !$cat) {
-            $this->redrawControl('data-wrapper');
-            $this->redrawControl('buttons');
-        } else {
-            $this->presenter->redirect('this');
-        }
+        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
+        $this->presenter->redirect('this');
     }
 
     public function createComponentEmailSettingsForm()

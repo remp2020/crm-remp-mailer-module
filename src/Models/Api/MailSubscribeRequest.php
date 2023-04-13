@@ -22,6 +22,8 @@ class MailSubscribeRequest
 
     private $sendAccompanyingEmails;
 
+    private $keepMailTypeSubscription;
+
     public function setUser(ActiveRow $user)
     {
         $this->userId = $user->id;
@@ -65,6 +67,11 @@ class MailSubscribeRequest
         return $this;
     }
 
+    public function setKeepMailTypeSubscription(bool $keepMailTypeSubscription)
+    {
+        $this->keepMailTypeSubscription = $keepMailTypeSubscription;
+    }
+
     public function getRequestData()
     {
         return array_filter([
@@ -76,6 +83,7 @@ class MailSubscribeRequest
             'variant_id' => $this->variantId,
             'variant_code' => $this->variantCode,
             'send_accompanying_emails' => $this->sendAccompanyingEmails,
+            'keep_list_subscription' => $this->keepMailTypeSubscription,
         ], function ($item) {
             return $item !== null;
         });

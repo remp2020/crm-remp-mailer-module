@@ -16,38 +16,23 @@ use Tracy\ILogger;
 class Client
 {
     private const CHECK_AUTOLOGIN_TOKEN = '/api/v1/users/check-token';
-
     private const EMAIL_CHANGED = '/api/v1/users/email-changed';
-
     private const USER_REGISTERED = '/api/v1/users/user-registered';
-
     private const USER_DELETE = '/api/v1/users/delete';
-
     private const SEND_EMAIL = '/api/v1/mailers/send-email';
-
     private const LOGS = '/api/v1/users/logs';
-
     private const LOGS_COUNT = '/api/v1/users/logs-count-per-status';
-
     private const ALL_MAIL_CATEGORIES = '/api/v1/mailers/mail-type-categories';
-
     private const MAIL_TYPES = '/api/v2/mailers/mail-types';
-
+    private const MAIL_TYPES_V3 = '/api/v3/mailers/mail-types';
     private const MAIL_TEMPLATES = '/api/v1/mailers/templates';
-
     private const SUBSCRIBE = '/api/v1/users/subscribe';
-
     private const UNSUBSCRIBE = '/api/v1/users/un-subscribe';
-
     private const BULK_SUBSCRIBE = '/api/v1/users/bulk-subscribe';
-
     private const IS_USER_UNSUBSCRIBED = '/api/v1/users/is-unsubscribed';
-
-    private const UNSUBSCRIBE_VARIANT = '/api/v1/users/un-subscribe-variant';
-
     private const USER_PREFERENCES = '/api/v1/users/user-preferences';
 
-    private $apiClient;
+    private \GuzzleHttp\Client $apiClient;
 
     public function __construct(Config $config)
     {
@@ -60,10 +45,7 @@ class Client
         ]);
     }
 
-    /**
-     * @return bool|string
-     */
-    public function checkAutologinToken($token)
+    public function checkAutologinToken($token): bool|string
     {
         try {
             $result = $this->apiClient->post(self::CHECK_AUTOLOGIN_TOKEN, [
@@ -91,7 +73,7 @@ class Client
         }
     }
 
-    public function emailChanged(string $originalEmail, string $newEmail)
+    public function emailChanged(string $originalEmail, string $newEmail): bool
     {
         try {
             $this->apiClient->post(self::EMAIL_CHANGED, [
@@ -108,7 +90,7 @@ class Client
         }
     }
 
-    public function userRegistered(string $email, string $userId)
+    public function userRegistered(string $email, string $userId): bool
     {
         try {
             $this->apiClient->post(self::USER_REGISTERED, [
@@ -125,7 +107,7 @@ class Client
         }
     }
 
-    public function userDelete($email)
+    public function userDelete($email): bool
     {
         try {
             $this->apiClient->post(self::USER_DELETE, [
@@ -152,7 +134,7 @@ class Client
         }
     }
 
-    public function sendEmail(string $email, string $templateCode, array $params = [], string $context = null, array $attachments = [], $scheduleAt = null, string $locale = null)
+    public function sendEmail(string $email, string $templateCode, array $params = [], string $context = null, array $attachments = [], $scheduleAt = null, string $locale = null): bool
     {
         try {
             $json = array_filter([
@@ -178,7 +160,7 @@ class Client
         }
     }
 
-    public function getMailLogs(?string $email, ?string $filter, ?int $limit, ?int $page, ?array $mailTemplateIds)
+    public function getMailLogs(?string $email, ?string $filter, ?int $limit, ?int $page, ?array $mailTemplateIds): ?array
     {
         try {
             $data = [];
@@ -263,8 +245,12 @@ class Client
         }
     }
 
-    public function getMailTypes(?array $codes = null, ?array $categoryCodes = null, ?int $publicListing = null): ?array
-    {
+    public function getMailTypes(
+        ?array $codes = null,
+        ?array $categoryCodes = null,
+        ?int $publicListing = null,
+        bool $includeVariantsData = false,
+    ): ?array {
         try {
             $data = [];
 
@@ -278,7 +264,7 @@ class Client
                 $data['mail_type_category_code'] = $categoryCodes;
             }
 
-            $types = $this->apiClient->get(self::MAIL_TYPES, [
+            $types = $this->apiClient->get($includeVariantsData ? self::MAIL_TYPES_V3 : self::MAIL_TYPES, [
                 RequestOptions::QUERY => $data,
             ]);
 
@@ -356,7 +342,7 @@ class Client
      * @throws MailerException
      * @deprecated Recommended to use Client::subscribe method instead.
      */
-    public function subscribeUser(int $userId, string $email, int $mailTypeId, ?int $variantId = null, array $rtmParams = [])
+    public function subscribeUser(int $userId, string $email, int $mailTypeId, ?int $variantId = null, array $rtmParams = []): bool
     {
         try {
             $data = [
@@ -388,7 +374,7 @@ class Client
      * @throws MailerException
      * @deprecated Recommended to use Client::unsubscribe method instead.
      */
-    public function unSubscribeUser(int $userId, string $email, int $mailTypeId, array $rtmParams = [])
+    public function unSubscribeUser(int $userId, string $email, int $mailTypeId, array $rtmParams = []): bool
     {
         try {
             $data =  [
@@ -409,47 +395,19 @@ class Client
         }
     }
 
-    public function isUserUnsubscribed(int $userId, string $email, int $mailTypeId)
+    public function isUserUnsubscribed(int $userId, string $email, int $mailTypeId, ?int $variantId = null)
     {
         try {
             $result = $this->apiClient->post(self::IS_USER_UNSUBSCRIBED, ['json' =>
-                [
+                array_filter([
                     'user_id' => $userId,
                     'email' => $email,
                     'list_id' => $mailTypeId,
-                ]
+                    'variant_id' => $variantId,
+                ])
             ]);
 
             return Json::decode($result->getBody());
-        } catch (ServerException | ConnectException $e) {
-            Debugger::log($e, ILogger::ERROR);
-            throw new MailerException($e->getMessage());
-        }
-    }
-
-    /**
-     * @param int $userId
-     * @param string $email
-     * @param int $mailTypeId
-     * @param int $variantId
-     * @param array $rtmParams
-     * @return bool
-     * @throws MailerException
-     * @deprecated Recommended to use Client::unsubscribe method instead.
-     */
-    public function unSubscribeUserVariant(int $userId, string $email, int $mailTypeId, int $variantId, array $rtmParams = [])
-    {
-        try {
-            $this->apiClient->post(self::UNSUBSCRIBE_VARIANT, ['json' =>
-                [
-                    'user_id' => $userId,
-                    'user_email' => $email,
-                    'variant_id' => $variantId,
-                    'list_id' => $mailTypeId,
-                    'rtm_params' => $rtmParams
-                ]
-            ]);
-            return true;
         } catch (ServerException | ConnectException $e) {
             Debugger::log($e, ILogger::ERROR);
             throw new MailerException($e->getMessage());
@@ -494,7 +452,7 @@ class Client
     /**
      * @param MailSubscribeRequest[] $subscribeRequests
      */
-    public function bulkSubscribe(array $subscribeRequests)
+    public function bulkSubscribe(array $subscribeRequests): ?array
     {
         try {
             $payload = [

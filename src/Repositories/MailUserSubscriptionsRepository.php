@@ -11,20 +11,14 @@ use League\Event\Emitter;
 
 class MailUserSubscriptionsRepository
 {
-    public $usersRepository;
-
-    private $apiClient;
-
-    private $emitter;
-
-    public function __construct(Client $apiClient, UsersRepository $usersRepository, Emitter $emitter)
-    {
-        $this->apiClient = $apiClient;
-        $this->usersRepository = $usersRepository;
-        $this->emitter = $emitter;
+    public function __construct(
+        private Client $apiClient,
+        private UsersRepository $usersRepository,
+        private Emitter $emitter
+    ) {
     }
 
-    final public function userPreferences(int $userId, ?bool $subscribed = null)
+    final public function userPreferences(int $userId, ?bool $subscribed = null): ?array
     {
         $user = $this->usersRepository->find($userId);
         if ($user->deleted_at) {
@@ -35,6 +29,11 @@ class MailUserSubscriptionsRepository
 
         $mailSubscriptions = [];
         foreach ($preferences as $preference) {
+            $variants = $preference['variants'];
+            $preference['variants'] = [];
+            foreach ($variants as $variant) {
+                $preference['variants'][$variant['id']] = $variant;
+            }
             $mailSubscriptions[$preference['id']] = $preference;
         }
 
@@ -194,14 +193,9 @@ class MailUserSubscriptionsRepository
         return $result;
     }
 
-    final public function isUserUnsubscribed($user, $mailTypeId)
+    final public function isUserUnsubscribed($user, $mailTypeId, $variantId = null): bool
     {
-        $response = $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId);
-        return $response->is_unsubscribed;
-    }
-
-    final public function unSubscribeUserVariant($user, $mailTypeId, $variantId, $rtmParams = [])
-    {
-        return $this->apiClient->unSubscribeUserVariant($user->id, $user->email, $mailTypeId, $variantId, $rtmParams);
+        $response = $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId, $variantId);
+        return (bool) $response->is_unsubscribed;
     }
 }
