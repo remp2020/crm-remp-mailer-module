@@ -111,7 +111,7 @@ class MailSettingsPresenter extends FrontendPresenter
             $this->autoLogin->incrementTokenUse($token);
         }
 
-        if (!$this->mailUserSubscriptionsRepository->isUserUnsubscribed($userToUnsubscribe, $mailType->id)) {
+        if ($this->mailUserSubscriptionsRepository->isUserSubscribed($userToUnsubscribe, $mailType->id)) {
             $msr = (new MailSubscribeRequest)
                 ->setMailTypeCode($mailType->code)
                 ->setMailTypeId($mailType->id)

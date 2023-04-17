@@ -193,9 +193,15 @@ class MailUserSubscriptionsRepository
         return $result;
     }
 
-    final public function isUserUnsubscribed($user, $mailTypeId, $variantId = null): bool
+    final public function isUserUnsubscribed($user, $mailTypeId): bool
     {
-        $response = $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId, $variantId);
+        $response = $this->apiClient->isUserUnsubscribed($user->id, $user->email, $mailTypeId);
         return (bool) $response->is_unsubscribed;
+    }
+
+    final public function isUserSubscribed($user, $mailTypeId, $variantId = null): bool
+    {
+        $response = $this->apiClient->isUserSubscribed($user->id, $user->email, $mailTypeId, $variantId);
+        return (bool) $response->is_subscribed;
     }
 }

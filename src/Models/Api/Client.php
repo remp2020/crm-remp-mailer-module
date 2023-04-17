@@ -30,6 +30,7 @@ class Client
     private const UNSUBSCRIBE = '/api/v1/users/un-subscribe';
     private const BULK_SUBSCRIBE = '/api/v1/users/bulk-subscribe';
     private const IS_USER_UNSUBSCRIBED = '/api/v1/users/is-unsubscribed';
+    private const IS_USER_SUBSCRIBED = '/api/v1/users/is-subscribed';
     private const USER_PREFERENCES = '/api/v1/users/user-preferences';
 
     private \GuzzleHttp\Client $apiClient;
@@ -395,17 +396,40 @@ class Client
         }
     }
 
-    public function isUserUnsubscribed(int $userId, string $email, int $mailTypeId, ?int $variantId = null)
+    public function isUserUnsubscribed(int $userId, string $email, int $mailTypeId)
     {
         try {
-            $result = $this->apiClient->post(self::IS_USER_UNSUBSCRIBED, ['json' =>
+            $result = $this->apiClient->post(
+                self::IS_USER_UNSUBSCRIBED,
+                ['json' =>
                 array_filter([
                     'user_id' => $userId,
                     'email' => $email,
                     'list_id' => $mailTypeId,
-                    'variant_id' => $variantId,
                 ])
-            ]);
+                ]
+            );
+
+            return Json::decode($result->getBody());
+        } catch (ServerException | ConnectException $e) {
+            Debugger::log($e, ILogger::ERROR);
+            throw new MailerException($e->getMessage());
+        }
+    }
+
+    public function isUserSubscribed(int $userId, string $email, int $mailTypeId, ?int $variantId = null)
+    {
+        try {
+            $result = $this->apiClient->post(
+                self::IS_USER_SUBSCRIBED,
+                ['json' => array_filter([
+                    'user_id' => $userId,
+                    'email' => $email,
+                    'list_id' => $mailTypeId,
+                    'variant_id' => $variantId,
+                    ])
+                ]
+            );
 
             return Json::decode($result->getBody());
         } catch (ServerException | ConnectException $e) {
