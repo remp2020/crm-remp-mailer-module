@@ -5,6 +5,7 @@ namespace Crm\RempMailerModule\Repositories;
 use Crm\RempMailerModule\Events\UserMailSubscriptionsChanged;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
+use Crm\RempMailerModule\Models\Api\MailSubscribeResponse;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\UsersModule\Repository\UsersRepository;
 use League\Event\Emitter;
@@ -81,14 +82,15 @@ class MailUserSubscriptionsRepository
 
     /**
      * @param MailSubscribeRequest $msr
-     * @param array $rtmParams
-     * @return bool
+     * @param array                $rtmParams
+     *
+     * @return MailSubscribeResponse
      * @throws MailerException
      */
-    final public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): bool
+    final public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): MailSubscribeResponse
     {
         $msr = $msr->setSubscribed(true);
-        $result = $this->apiClient->subscribe($msr, $rtmParams);
+        $mailSubscribeResponse = $this->apiClient->subscribe($msr, $rtmParams);
 
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $msr->getUserId(),
@@ -96,7 +98,7 @@ class MailUserSubscriptionsRepository
             UserMailSubscriptionsChanged::SUBSCRIBED
         ));
 
-        return $result;
+        return $mailSubscribeResponse;
     }
 
     /**

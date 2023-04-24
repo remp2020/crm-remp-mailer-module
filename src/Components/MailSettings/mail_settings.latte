@@ -96,10 +96,10 @@
             headers: {
                 "Authorization": "Bearer " + Cookies.get('n_token')
             }
-        }).done(function (response) {
+        }).done(function (responseData) {
             reportToDataLayer(subscribe ? 'mail_settings_subscribe_single' : 'mail_settings_unsubscribe_single');
             if (doneCallback) {
-                doneCallback();
+                doneCallback(responseData);
             }
         }).fail(function (jqXHR, textStatus) {
             console.error("Unable to switch un/subscribe status of variant");
@@ -176,13 +176,17 @@
                     this.mailType.is_subscribed, this.mailType.code, null,
                     function () { that.disabled = false; },
                     function () { that.mailType.is_subscribed = !that.mailType.is_subscribed; },
-                    function () {
+                    function (responseData) {
                         that.changedAtLeastOnce = true;
-                        if (that.mailType.is_subscribed && that.mailType.default_variant_id) {
-                            // check default variant
-                            that.mailType.variants[that.mailType.default_variant_id].is_subscribed = true;
-                        } else if (!that.mailType.is_subscribed && that.mailType.variants) {
-                            // uncheck variants
+                        if (that.mailType.is_subscribed) {
+                            // subscribe - check all subscribed variants (returned by API)
+                            if (responseData.subscribed_variants) {
+                                for (var variant of responseData.subscribed_variants) {
+                                    that.mailType.variants[variant.id].is_subscribed = true;
+                                }
+                            }
+                        } else {
+                            // unsubscribe - uncheck all variants
                             for (var variantId in that.mailType.variants) {
                                 that.mailType.variants[variantId].is_subscribed = false;
                             }

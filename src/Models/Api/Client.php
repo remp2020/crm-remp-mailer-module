@@ -279,14 +279,14 @@ class Client
     /**
      * @throws MailerException
      */
-    private function mailSubscribeRequest(MailSubscribeRequest $msr, array $rtmParams = []): ?bool
+    private function mailSubscribeRequest(MailSubscribeRequest $msr, array $rtmParams = []): MailSubscribeResponse
     {
         try {
             $data = $msr->getRequestData();
             unset($data['subscribe']);
 
             if ($msr->getSubscribed()) {
-                $this->apiClient->post(self::SUBSCRIBE, ['json' => $data]);
+                $response = $this->apiClient->post(self::SUBSCRIBE, ['json' => $data]);
             } else {
                 if (!empty($rtmParams)) {
                     // Mailer supports RTM params tracking only for unsubscribe request
@@ -297,11 +297,9 @@ class Client
                         'rtm_content' => $rtmParams['rtm_content'] ?? null,
                     ]);
                 }
-
-                $this->apiClient->post(self::UNSUBSCRIBE, ['json' => $data]);
+                $response = $this->apiClient->post(self::UNSUBSCRIBE, ['json' => $data]);
             }
-
-            return true;
+            return MailSubscribeResponse::fromApiResponse(Json::decode($response->getBody()->getContents()));
         } catch (ServerException | ConnectException $e) {
             Debugger::log($e->getMessage(), Debugger::ERROR);
             throw new MailerException($e->getMessage());
@@ -314,7 +312,7 @@ class Client
     /**
      * @throws MailerException
      */
-    public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): ?bool
+    public function subscribe(MailSubscribeRequest $msr, array $rtmParams = []): MailSubscribeResponse
     {
         if (!$msr->getSubscribed()) {
             throw new \Exception('Invalid MailSubscribeRequest provided: calling subscribe() with $msr::subscribed == FALSE.');
@@ -330,7 +328,8 @@ class Client
         if ($msr->getSubscribed()) {
             throw new \Exception('Invalid MailSubscribeRequest provided: calling unsubscribe() with $msr::subscribed == TRUE.');
         }
-        return $this->mailSubscribeRequest($msr, $rtmParams);
+        $this->mailSubscribeRequest($msr, $rtmParams);
+        return true;
     }
 
     /**

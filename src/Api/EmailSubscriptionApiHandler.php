@@ -88,25 +88,27 @@ class EmailSubscriptionApiHandler extends ApiHandler
             'rtm_variant' => $params['rtm_variant'] ?? null,
         ]);
 
+        $subscribedVariants = [];
         try {
             if ($this->getAction() === 'subscribe') {
-                $this->mailUserSubscriptionsRepository->subscribe($msr, $rtmParams);
+                $mailSubscribeResponse = $this->mailUserSubscriptionsRepository->subscribe($msr, $rtmParams);
+                $subscribedVariants = $mailSubscribeResponse->getSubscribedVariants() ?? [];
             } else {
                 $this->mailUserSubscriptionsRepository->unsubscribe($msr, $rtmParams);
             }
         } catch (MailerException $exception) {
             $code = $exception->getCode() ?: Response::S400_BAD_REQUEST;
-            $response = new JsonApiResponse($code, [
+
+            return new JsonApiResponse($code, [
                 'status' => 'error',
                 'message' => $exception->getMessage()
             ]);
-            return $response;
         }
 
-        $response = new JsonApiResponse(Response::S200_OK, [
-            'status' => 'ok'
-        ]);
-        return $response;
+        return new JsonApiResponse(Response::S200_OK, array_filter([
+            'status' => 'ok',
+            'subscribed_variants' => $subscribedVariants
+        ]));
     }
 
     private function getAction()
