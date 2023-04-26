@@ -188,7 +188,12 @@ class Client
 
             $records = Json::decode($logs->getBody());
             foreach ($records as $i => $row) {
-                $records[$i]->sent_at = new \DateTime($row->sent_at);
+                $records[$i]->sent_at = $this->toDateTime($row->sent_at);
+                $records[$i]->delivered_at = $this->toDateTime($row->delivered_at);
+                $records[$i]->opened_at = $this->toDateTime($row->opened_at);
+                $records[$i]->clicked_at = $this->toDateTime($row->clicked_at);
+                $records[$i]->spam_complained_at = $this->toDateTime($row->spam_complained_at);
+                $records[$i]->hard_bounced_at = $this->toDateTime($row->hard_bounced_at);
             }
             return $records;
         } catch (ClientException $e) {
@@ -534,5 +539,14 @@ class Client
 
         $templates = Json::decode($result->getBody());
         return reset($templates);
+    }
+
+    private function toDateTime(?string $dateTime): ?\DateTime
+    {
+        if ($dateTime === null) {
+            return null;
+        }
+
+        return new \DateTime($dateTime);
     }
 }
