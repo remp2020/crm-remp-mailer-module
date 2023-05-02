@@ -235,7 +235,7 @@
                      onclick="window.open($(this).attr('href'),'_blank','resizable=no, toolbar=no, menubar=no, status=no, directories=no, width=720, height=6000, left=100, top=100'); return false;">
                     {{_remp_mailer.frontend.mail_settings.preview|noescape}}
                   </a>
-                  <a v-if="!mailType.page_url" target="_blank" :href="mailType.page_url" class="btn btn-large" style="text-decoration: underline">
+                  <a v-if="mailType.page_url" target="_blank" :href="mailType.page_url" class="btn btn-large" style="text-decoration: underline">
                     {{_remp_mailer.frontend.mail_settings.page|noescape}}
                   </a>
               </div>
