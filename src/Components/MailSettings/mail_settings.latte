@@ -276,7 +276,7 @@
         },
         template: `
           <div class="radio" v-for="variant in mailType.variants">
-              <label v-else :for="'variant-' + variant.id" >
+              <label :for="'variant-' + variant.id" >
                   <input :id="'variant-' + variant.id"
                          :name="'mail-' + mailType.id + '-variant'"
                          type="radio"
