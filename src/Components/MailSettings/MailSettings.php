@@ -201,16 +201,4 @@ class MailSettings extends Control
         $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
         $this->presenter->redirect('this');
     }
-
-    public function createComponentEmailSettingsForm()
-    {
-        $form = $this->emailSettingsFormFactory->create($this->presenter->getUser()->getId());
-
-        $this->emailSettingsFormFactory->onUpdate = function () {
-            $this->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.actualized_message'));
-            $this->presenter->redirect('this');
-        };
-
-        return $form;
-    }
 }

@@ -63,3 +63,4 @@ admin:
         unsubscribed: Unsubsribed %time%
         subscribed: Subscribed %time%
         not_loaded: User is not allowed to change mail settings. It is either unclaimed or deleted.
+        show_unsubscribed: Show not subscribed newsletters

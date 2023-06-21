@@ -1,17 +1,17 @@
-<style type="text/css">
+<style>
   #mailer-user-settings .col-sm-7 { margin-bottom:-13px; }
   #mailer-user-settings { margin-top: -13px }
-  #mailer-user-settings .button { margin-top: 10px; margin-bottom:-5px; }
+  #mailer-user-settings .btn { margin-top: 10px; margin-bottom:-5px; }
   #mailer-user-settings .col-sm-3 { display:none }
   #mailer-user-settings .col-sm-9 { width: 100%; padding-left: 20px; }
   #mailer-user-settings .form-group { margin-bottom:0px; }
   #mailer-user-settings .form-group .help-block { margin-bottom:5px; font-size:0.8em; }
+  #mailer-user-settings .mailSettingsCollapse { transition: none; }
 </style>
 
 <div class="panel panel-default">
   <div class="panel-heading">{_remp_mailer.admin.mail_settings.header}</div>
   <div class="panel-body">
-
     {if $isAnonymous}
       <p class="bg-warning">
         {_remp_mailer.admin.mail_settings.not_loaded|noescape}

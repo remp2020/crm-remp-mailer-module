@@ -64,3 +64,4 @@ admin:
         unsubscribed: Odhlásený %time%
         subscribed: Prihlásený %time%
         not_loaded: Pre tento typ používateľa sa nastavenia e-mailov nenačítavajú.<br>Používateľ je anonymný alebo zmazaný.
+        show_unsubscribed: Zobraziť aj neodoberané newslettre

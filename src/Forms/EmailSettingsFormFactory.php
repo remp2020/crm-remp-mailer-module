@@ -2,62 +2,43 @@
 
 namespace Crm\RempMailerModule\Forms;
 
-use Contributte\Translation\Translator;
+use Crm\ApplicationModule\Helpers\UserDateHelper;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
+use Nette\Localization\Translator;
 use Nette\Utils\ArrayHash;
+use Nette\Utils\DateTime;
 use Nette\Utils\Html;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class EmailSettingsFormFactory
 {
-    private $mailTypesRepository;
-
-    private $mailUserSubscriptionsRepository;
-
-    private $usersRepository;
-
-    private $translator;
-
-    /** @var integer */
-    private $userId;
-
-    private $simple = false;
-
     /* callback function */
     public $onUpdate;
 
     public function __construct(
-        MailTypesRepository $mailTypesRepository,
-        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
-        UsersRepository $usersRepository,
-        Translator $translator
+        private MailTypesRepository $mailTypesRepository,
+        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
+        private UsersRepository $usersRepository,
+        private Translator $translator,
+        private UserDateHelper $userDateHelper,
     ) {
-        $this->mailTypesRepository = $mailTypesRepository;
-        $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;
-        $this->usersRepository = $usersRepository;
-        $this->translator = $translator;
     }
 
     /**
      * @return Form
      */
-    public function create($userId, $simple = false)
+    public function create(?int $userId = null)
     {
-        $this->userId = $userId;
-        $this->simple = $simple;
-
         $form = new Form;
         $form->setTranslator($this->translator);
         $form->setRenderer(new BootstrapRenderer());
         $form->addProtection();
 
-        if (!$simple) {
-            $form->addGroup('remp_mailer.admin.mail_settings.frontend_header');
-        }
+        $form->addHidden('user_id', $userId);
 
         /** @var \stdClass[]|null $mailTypes */
         $mailTypes = $this->mailTypesRepository->all();
@@ -73,24 +54,40 @@ class EmailSettingsFormFactory
             $mailSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences($userId);
         }
 
+        $subscribedGroup = $form->addGroup('subscribed')
+            ->setOption('label', null);
+        $unsubscribedGroup = $form->addGroup('unsubscribed')
+            ->setOption('container', 'div class="collapse"')
+            ->setOption('label', null)
+            ->setOption('id', 'mailSettingsCollapse');
+        $buttonsGroup = $form->addGroup('buttons')
+            ->setOption('label', null);
+
+        $form->addHidden('user_id', $userId);
+
         foreach ($mailTypes as $mailType) {
-            if ($mailType->locked && !$simple) {
-                continue;
-            }
             $title = $mailType->title;
+            $isSubscribed = $mailSubscriptions[$mailType->id]['is_subscribed'] ?? false;
 
             if (isset($mailSubscriptions[$mailType->id])) {
-                if ($mailSubscriptions[$mailType->id]['is_subscribed']) {
-                    $title .= ' <small class="text-muted" style="font-size:0.7em">(' . $this->translator->translate('remp_mailer.admin.mail_settings.subscribed', ['time' => $mailSubscriptions[$mailType->id]['updated_at']]) . ')</small>';
+                $updatedAt = $this->userDateHelper->process(
+                    date: DateTime::from($mailSubscriptions[$mailType->id]['updated_at']),
+                );
+
+                if ($isSubscribed) {
+                    $title .= ' <small class="text-muted" style="font-size:0.7em">(' . $this->translator->translate('remp_mailer.admin.mail_settings.subscribed', ['time' => $updatedAt]) . ')</small>';
                 } else {
-                    $title .= ' <small class="text-muted" style="font-size:0.7em">(' . $this->translator->translate('remp_mailer.admin.mail_settings.unsubscribed', ['time' => $mailSubscriptions[$mailType->id]['updated_at']]) . ')</small>';
+                    $title .= ' <small class="text-muted" style="font-size:0.7em">(' . $this->translator->translate('remp_mailer.admin.mail_settings.unsubscribed', ['time' => $updatedAt]) . ')</small>';
                 }
             }
 
-            $checkbox = $form->addCheckbox('type_' . $mailType->id, Html::el('span')->setHtml($title));
-            if (!$simple) {
-                $checkbox->setOption('description', Html::el('span', ['class' => 'help-block'])->setHtml($mailType->description));
+            if ($isSubscribed) {
+                $form->setCurrentGroup($subscribedGroup);
+            } else {
+                $form->setCurrentGroup($unsubscribedGroup);
             }
+
+            $checkbox = $form->addCheckbox('type_' . $mailType->id, Html::el('span')->setHtml($title));
 
             if (!empty($mailType->variants)) {
                 if ($mailType->is_multi_variant) {
@@ -103,23 +100,31 @@ class EmailSettingsFormFactory
                 }
             }
 
+            $checkbox->setDefaultValue($isSubscribed);
+
             if (isset($mailSubscriptions[$mailType->id])) {
-                $defaults['type_' . $mailType->id] = $mailSubscriptions[$mailType->id]['is_subscribed'];
                 if (!$mailType->is_multi_variant && $mailSubscriptions[$mailType->id]['variants']) {
                     foreach ($mailSubscriptions[$mailType->id]['variants'] as $variant) {
                         $defaults['variant_' . $mailType->id] = $variant['id'];
                     }
                 }
-            } else {
-                $defaults['type_' . $mailType->id] = false;
             }
         }
 
-        if ($simple) {
-            $form->addHidden('user_id', $userId);
-        }
+        $form->setCurrentGroup($buttonsGroup);
 
-        $form->addSubmit('send', 'system.save');
+        $form->addSubmit('send')
+            ->getControlPrototype()
+            ->setName('button')
+            ->setHtml('<i class="fa fa-save"></i> ' . $this->translator->translate('system.save'));
+
+        $form->addButton('more')
+            ->setHtmlAttribute('data-toggle', 'collapse')
+            ->setHtmlAttribute('data-target', '#mailSettingsCollapse')
+            ->setHtmlAttribute('class', 'btn btn-default')
+            ->getControlPrototype()
+            ->setName('button')
+            ->setHtml('<i class="fas fa-caret-down"></i> ' . $this->translator->translate('remp_mailer.admin.mail_settings.show_unsubscribed'));
 
         $form->setDefaults($defaults);
 
@@ -129,15 +134,11 @@ class EmailSettingsFormFactory
 
     public function formSucceeded(Form $form, ArrayHash $values)
     {
-        if ($this->simple) {
-            $userId = $values['user_id'];
-        } else {
-            if (isset($values['system'])) {
-                unset($values['system']);
-            }
-
-            $userId = $this->userId;
+        if (isset($values['system'])) {
+            unset($values['system']);
         }
+
+        $userId = $values['user_id'];
 
         $parsedTypeValues = [];
         foreach ($values as $key => $value) {

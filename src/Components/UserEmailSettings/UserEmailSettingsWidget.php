@@ -60,9 +60,10 @@ class UserEmailSettingsWidget extends BaseLazyWidget
 
     public function createComponentUserEmailForm()
     {
-        $form = $this->emailSettingsFormFactory->create($this->userId, true);
+        $form = $this->emailSettingsFormFactory->create($this->userId);
         $this->emailSettingsFormFactory->onUpdate = function () {
             $this->getPresenter()->flashMessage($this->translator->translate('remp_mailer.admin.mail_settings.actualized_message'));
+            $this->getPresenter()->redirect('this');
         };
         return $form;
     }
