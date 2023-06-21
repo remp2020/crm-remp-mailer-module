@@ -63,8 +63,6 @@ class EmailSettingsFormFactory
         $buttonsGroup = $form->addGroup('buttons')
             ->setOption('label', null);
 
-        $form->addHidden('user_id', $userId);
-
         foreach ($mailTypes as $mailType) {
             $title = $mailType->title;
             $isSubscribed = $mailSubscriptions[$mailType->id]['is_subscribed'] ?? false;
@@ -156,8 +154,9 @@ class EmailSettingsFormFactory
 
         $subscribeRequests = [];
         $userPreferences = $this->mailUserSubscriptionsRepository->userPreferences($values['user_id']);
-        foreach ($userPreferences as $mailTypeId => $mailSubscription) {
-            if ($mailSubscription['is_subscribed'] === $parsedTypeValues[$mailTypeId]['is_subscribed']) {
+        foreach ($parsedTypeValues as $mailTypeId => $values) {
+            $isSubscribed = $userPreferences[$mailTypeId]['is_subscribed'] ?? false;
+            if ($isSubscribed === $parsedTypeValues[$mailTypeId]['is_subscribed']) {
                 continue;
             }
             $request = (new MailSubscribeRequest())
