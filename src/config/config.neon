@@ -61,3 +61,6 @@ services:
 		setup:
 			- register('send_notification_email_to_addresses', @sendNotificationEmailGenericEvent)
 			- register('change_user_newsletter_subscriptions', Crm\RempMailerModule\Scenarios\ChangeNewsletterSubscriptionsGenericEvent())
+
+	# seeders
+	- Crm\RempMailerModule\Seeders\SegmentsSeeder

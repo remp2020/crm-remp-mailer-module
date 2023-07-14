@@ -11,10 +11,12 @@ use Crm\ApplicationModule\Core;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
+use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
+use Crm\RempMailerModule\Seeders\SegmentsSeeder;
 use League\Event\Emitter;
 use Tomaj\Hermes\Dispatcher;
 
@@ -130,5 +132,10 @@ class RempMailerModule extends CrmModule
                 \Crm\UsersModule\Auth\UserTokenAuthorization::class
             )
         );
+    }
+
+    public function registerSeeders(SeederManager $seederManager)
+    {
+        $seederManager->addSeeder($this->getInstance(SegmentsSeeder::class));
     }
 }
