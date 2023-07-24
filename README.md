@@ -45,6 +45,17 @@ php bin/command.php api:generate_access
 php bin/command.php application:seed
 ```
 
+## Configurable services
+
+You can disallow subscription to newsletters for users which haven't been confirmed yet (based on `users.confirmed_at` DB column). The feature is disabled by default and you can enable it by adding following snippet to your `config.neon`:
+
+```neon
+services:
+	mailerMailerConfig:
+		setup:
+			- setSubscribeOnlyConfirmedUser(true)
+```
+
 ## API documentation
 
 All examples use `http://crm.press` as a base domain. Please change the host to the one you use
