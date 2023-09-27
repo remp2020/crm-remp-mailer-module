@@ -17,7 +17,6 @@ use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
 use Crm\RempMailerModule\Seeders\SegmentsSeeder;
-use League\Event\Emitter;
 use Tomaj\Hermes\Dispatcher;
 
 class RempMailerModule extends CrmModule
@@ -27,27 +26,27 @@ class RempMailerModule extends CrmModule
         $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\RempMailerModule\Models\User\RempMailerUserDataProvider::class));
     }
 
-    public function registerEventHandlers(Emitter $emitter)
+    public function registerLazyEventHandlers(\Crm\ApplicationModule\Event\LazyEventEmitter $emitter)
     {
         $emitter->addListener(
             \Crm\UsersModule\Events\UserRegisteredEvent::class,
-            $this->getInstance(\Crm\RempMailerModule\Events\SendWelcomeEmailHandler::class)
+            \Crm\RempMailerModule\Events\SendWelcomeEmailHandler::class
         );
 
         // generic notifications
         $emitter->addListener(
             \Crm\UsersModule\Events\NotificationEvent::class,
-            $this->getInstance(\Crm\RempMailerModule\Events\NotificationHandler::class)
+            \Crm\RempMailerModule\Events\NotificationHandler::class
         );
 
         $emitter->addListener(
             \Crm\RempMailerModule\Events\UserMailSubscriptionsChanged::class,
-            $this->getInstance(\Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler::class)
+            \Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler::class
         );
 
         $emitter->addListener(
             \Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEvent::class,
-            $this->getInstance(\Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEventHandler::class)
+            \Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEventHandler::class
         );
     }
 
