@@ -15,6 +15,7 @@ class MailUserSubscriptionsRepository
     public function __construct(
         private Client $apiClient,
         private UsersRepository $usersRepository,
+        private MailTypesRepository $mailTypesRepository,
         private Emitter $emitter
     ) {
     }
@@ -124,9 +125,17 @@ class MailUserSubscriptionsRepository
     final public function subscribeUserAll($user)
     {
         $subscribedMailTypes = $this->userPreferences($user->id, false);
+
+        $subscribedMailTypeCodes = array_column($subscribedMailTypes, 'code');
+        $mailTypes = [];
+        foreach ($this->mailTypesRepository->getAllByCode($subscribedMailTypeCodes) as $mailType) {
+            $mailTypes[$mailType->code] = $mailType;
+        }
+
         $subscribeRequests = [];
         foreach ($subscribedMailTypes as $subscribedMailType) {
-            if ($subscribedMailType['is_subscribed']) {
+            if ($mailTypes[$subscribedMailType['code']]->locked ||
+                $subscribedMailType['is_subscribed']) {
                 continue;
             }
             $subscribeRequests[] = (new MailSubscribeRequest())
@@ -153,9 +162,17 @@ class MailUserSubscriptionsRepository
     final public function unsubscribeUserAll($user)
     {
         $subscribedMailTypes = $this->userPreferences($user->id, true);
+
+        $subscribedMailTypeCodes = array_column($subscribedMailTypes, 'code');
+        $mailTypes = [];
+        foreach ($this->mailTypesRepository->getAllByCode($subscribedMailTypeCodes) as $mailType) {
+            $mailTypes[$mailType->code] = $mailType;
+        }
+
         $subscribeRequests = [];
         foreach ($subscribedMailTypes as $subscribedMailType) {
-            if (!$subscribedMailType['is_subscribed']) {
+            if ($mailTypes[$subscribedMailType['code']]->locked ||
+                !$subscribedMailType['is_subscribed']) {
                 continue;
             }
             $subscribeRequests[] = (new MailSubscribeRequest())
