@@ -47,10 +47,14 @@ class MailSettings extends Control
         }
 
         $this->template->categories = $categories;
+        $this->template->rtmParams = $this->presenter->rtmParams();
+        $this->template->prohibitedMode = $this->isProhibited();
 
         if (empty($categories)) {
             $this->template->showUnsubscribeAll = false;
             $this->template->showSubscribeAll = false;
+            $this->template->mailTypesByCategories = [];
+            $this->template->mailTypeCategoryCodes = [];
             $this->template->render();
             return;
         }
