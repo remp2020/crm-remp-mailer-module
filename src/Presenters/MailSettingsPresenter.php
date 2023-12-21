@@ -9,18 +9,19 @@ use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Auth\AutoLogin\AutoLogin;
 use Crm\UsersModule\Auth\UserManager;
+use Nette\DI\Attributes\Inject;
 
 class MailSettingsPresenter extends FrontendPresenter
 {
-    public $mailUserSubscriptionsRepository;
+    public MailUserSubscriptionsRepository $mailUserSubscriptionsRepository;
 
-    public $mailTypesRepository;
+    public MailTypesRepository $mailTypesRepository;
 
-    /** @var AutoLogin @inject */
-    public $autoLogin;
+    #[Inject]
+    public AutoLogin $autoLogin;
 
-    /** @var UserManager @inject */
-    public $userManager;
+    #[Inject]
+    public UserManager $userManager;
 
     public function __construct(
         MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
