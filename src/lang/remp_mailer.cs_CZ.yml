@@ -40,7 +40,7 @@ frontend:
         categories_error: Nepodařilo se získat nastavení vašich newsletterů. Zkuste to později, prosím.
 
     mail_subscribe:
-        header: Přihlášení do newslettru
+        header: Přihlášení do newsletteru
 
     mail_unsubscribe:
         header: 'Úspěšně jste se odhlásili z vybraného newslettru'
