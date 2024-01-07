@@ -2,10 +2,10 @@
 
 namespace Crm\RempMailerModule;
 
-use Crm\ApiModule\Api\ApiRoutersContainerInterface;
-use Crm\ApiModule\Authorization\BearerTokenAuthorization;
-use Crm\ApiModule\Router\ApiIdentifier;
-use Crm\ApiModule\Router\ApiRoute;
+use Crm\ApiModule\Models\Api\ApiRoutersContainerInterface;
+use Crm\ApiModule\Models\Authorization\BearerTokenAuthorization;
+use Crm\ApiModule\Models\Router\ApiIdentifier;
+use Crm\ApiModule\Models\Router\ApiRoute;
 use Crm\ApplicationModule\AssetsManager;
 use Crm\ApplicationModule\Authenticator\AuthenticatorManagerInterface;
 use Crm\ApplicationModule\Core;

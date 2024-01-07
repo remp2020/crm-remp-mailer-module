@@ -2,7 +2,7 @@
 
 namespace Crm\RempMailerModule\Api;
 
-use Crm\ApiModule\Api\ApiHandler;
+use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;

@@ -2,7 +2,7 @@
 
 namespace Crm\RempMailerModule\Api;
 
-use Crm\ApiModule\Api\ApiHandler;
+use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
