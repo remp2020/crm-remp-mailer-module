@@ -3,50 +3,68 @@
 namespace Crm\RempMailerModule;
 
 use Crm\ApiModule\Api\ApiRoutersContainerInterface;
+use Crm\ApiModule\Authorization\BearerTokenAuthorization;
 use Crm\ApiModule\Router\ApiIdentifier;
 use Crm\ApiModule\Router\ApiRoute;
 use Crm\ApplicationModule\AssetsManager;
 use Crm\ApplicationModule\Authenticator\AuthenticatorManagerInterface;
 use Crm\ApplicationModule\Core;
 use Crm\ApplicationModule\CrmModule;
+use Crm\ApplicationModule\Event\LazyEventEmitter;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
 use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
+use Crm\RempMailerModule\Api\EmailSubscriptionApiHandler;
+use Crm\RempMailerModule\Api\MailTemplateListApiHandler;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
+use Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEvent;
+use Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEventHandler;
+use Crm\RempMailerModule\Events\NotificationHandler;
+use Crm\RempMailerModule\Events\SendWelcomeEmailHandler;
+use Crm\RempMailerModule\Events\UserMailSubscriptionsChanged;
+use Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler;
+use Crm\RempMailerModule\Hermes\EmailChangedHandler;
+use Crm\RempMailerModule\Hermes\SendEmailHandler;
+use Crm\RempMailerModule\Hermes\UserRegisteredHandler;
+use Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator;
+use Crm\RempMailerModule\Models\User\RempMailerUserDataProvider;
 use Crm\RempMailerModule\Seeders\SegmentsSeeder;
+use Crm\UsersModule\Auth\UserTokenAuthorization;
+use Crm\UsersModule\Events\NotificationEvent;
+use Crm\UsersModule\Events\UserRegisteredEvent;
 use Tomaj\Hermes\Dispatcher;
 
 class RempMailerModule extends CrmModule
 {
     public function registerUserData(UserDataRegistrator $dataRegistrator)
     {
-        $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\RempMailerModule\Models\User\RempMailerUserDataProvider::class));
+        $dataRegistrator->addUserDataProvider($this->getInstance(RempMailerUserDataProvider::class));
     }
 
-    public function registerLazyEventHandlers(\Crm\ApplicationModule\Event\LazyEventEmitter $emitter)
+    public function registerLazyEventHandlers(LazyEventEmitter $emitter)
     {
         $emitter->addListener(
-            \Crm\UsersModule\Events\UserRegisteredEvent::class,
-            \Crm\RempMailerModule\Events\SendWelcomeEmailHandler::class
+            UserRegisteredEvent::class,
+            SendWelcomeEmailHandler::class
         );
 
         // generic notifications
         $emitter->addListener(
-            \Crm\UsersModule\Events\NotificationEvent::class,
-            \Crm\RempMailerModule\Events\NotificationHandler::class
+            NotificationEvent::class,
+            NotificationHandler::class
         );
 
         $emitter->addListener(
-            \Crm\RempMailerModule\Events\UserMailSubscriptionsChanged::class,
-            \Crm\RempMailerModule\Events\UserMailSubscriptionsChangedHandler::class
+            UserMailSubscriptionsChanged::class,
+            UserMailSubscriptionsChangedHandler::class
         );
 
         $emitter->addListener(
-            \Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEvent::class,
-            \Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEventHandler::class
+            ChangeUserNewsletterSubscriptionsEvent::class,
+            ChangeUserNewsletterSubscriptionsEventHandler::class
         );
     }
 
@@ -60,15 +78,15 @@ class RempMailerModule extends CrmModule
     {
         $dispatcher->registerHandler(
             'user-registered',
-            $this->getInstance(\Crm\RempMailerModule\Hermes\UserRegisteredHandler::class)
+            $this->getInstance(UserRegisteredHandler::class)
         );
         $dispatcher->registerHandler(
             'email-changed',
-            $this->getInstance(\Crm\RempMailerModule\Hermes\EmailChangedHandler::class)
+            $this->getInstance(EmailChangedHandler::class)
         );
         $dispatcher->registerHandler(
             'mailer-send-email',
-            $this->getInstance(\Crm\RempMailerModule\Hermes\SendEmailHandler::class)
+            $this->getInstance(SendEmailHandler::class)
         );
     }
 
@@ -83,7 +101,7 @@ class RempMailerModule extends CrmModule
     public function registerAuthenticators(AuthenticatorManagerInterface $authenticatorManager)
     {
         $authenticatorManager->registerAuthenticator(
-            $this->getInstance(\Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator::class),
+            $this->getInstance(TokenAuthenticator::class),
             300
         );
     }
@@ -112,23 +130,23 @@ class RempMailerModule extends CrmModule
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'mail-template', 'list'),
-                \Crm\RempMailerModule\Api\MailTemplateListApiHandler::class,
-                \Crm\ApiModule\Authorization\BearerTokenAuthorization::class
+                MailTemplateListApiHandler::class,
+                BearerTokenAuthorization::class
             )
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'mailer', 'unsubscribe'),
-                \Crm\RempMailerModule\Api\EmailSubscriptionApiHandler::class,
-                \Crm\UsersModule\Auth\UserTokenAuthorization::class
+                EmailSubscriptionApiHandler::class,
+                UserTokenAuthorization::class
             )
         );
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'mailer', 'subscribe'),
-                \Crm\RempMailerModule\Api\EmailSubscriptionApiHandler::class,
-                \Crm\UsersModule\Auth\UserTokenAuthorization::class
+                EmailSubscriptionApiHandler::class,
+                UserTokenAuthorization::class
             )
         );
     }
