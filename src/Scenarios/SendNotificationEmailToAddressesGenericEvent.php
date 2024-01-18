@@ -4,9 +4,9 @@ namespace Crm\RempMailerModule\Scenarios;
 
 use Crm\ApplicationModule\ActiveRowFactory;
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
-use Crm\PaymentsModule\RecurrentPaymentsResolver;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Crm\ScenariosModule\Events\NotificationTemplateParamsTrait;
 use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;
