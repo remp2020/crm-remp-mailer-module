@@ -7,7 +7,7 @@ use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\Api\MailSubscribeResponse;
 use Crm\RempMailerModule\Models\MailerException;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use League\Event\Emitter;
 
 class MailUserSubscriptionsRepository

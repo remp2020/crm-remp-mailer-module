@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Helpers\UserDateHelper;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Nette\Utils\ArrayHash;

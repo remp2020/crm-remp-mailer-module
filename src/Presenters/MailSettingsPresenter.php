@@ -8,7 +8,7 @@ use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
-use Crm\UsersModule\Auth\UserManager;
+use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\DI\Attributes\Inject;
 
 class MailSettingsPresenter extends FrontendPresenter

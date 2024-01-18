@@ -6,7 +6,7 @@ use Crm\ApplicationModule\User\UserDataProviderInterface;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use DateTimeInterface;
 
 class RempMailerUserDataProvider implements UserDataProviderInterface

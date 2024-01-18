@@ -7,8 +7,8 @@ use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\Widget\WidgetInterface;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
-use Crm\UsersModule\Repository\UsersRepository;
-use Crm\UsersModule\User\UnclaimedUser;
+use Crm\UsersModule\Models\User\UnclaimedUser;
+use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Control;
 use Nette\Utils\Html;
 

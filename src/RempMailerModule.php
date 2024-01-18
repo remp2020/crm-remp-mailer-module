@@ -32,9 +32,9 @@ use Crm\RempMailerModule\Hermes\UserRegisteredHandler;
 use Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator;
 use Crm\RempMailerModule\Models\User\RempMailerUserDataProvider;
 use Crm\RempMailerModule\Seeders\SegmentsSeeder;
-use Crm\UsersModule\Auth\UserTokenAuthorization;
 use Crm\UsersModule\Events\NotificationEvent;
 use Crm\UsersModule\Events\UserRegisteredEvent;
+use Crm\UsersModule\Models\Auth\UserTokenAuthorization;
 use Tomaj\Hermes\Dispatcher;
 
 class RempMailerModule extends CrmModule

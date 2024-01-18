@@ -3,7 +3,7 @@
 namespace Crm\RempMailerModule\Hermes;
 
 use Crm\RempMailerModule\Models\Api\Client;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Utils\Validators;
 use Tomaj\Hermes\Handler\HandlerInterface;
 use Tomaj\Hermes\Handler\RetryTrait;

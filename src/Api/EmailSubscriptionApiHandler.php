@@ -7,7 +7,7 @@ use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\MailerException;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
-use Crm\UsersModule\Auth\UsersApiAuthorizationInterface;
+use Crm\UsersModule\Models\Auth\UsersApiAuthorizationInterface;
 use Nette\Http\Request;
 use Nette\Http\Response;
 use Tomaj\NetteApi\Params\PostInputParam;

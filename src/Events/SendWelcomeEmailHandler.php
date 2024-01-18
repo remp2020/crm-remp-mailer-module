@@ -4,7 +4,7 @@ namespace Crm\RempMailerModule\Events;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\UsersModule\Events\UserRegisteredEvent;
-use Crm\UsersModule\Repository\UserEmailConfirmationsRepository;
+use Crm\UsersModule\Repositories\UserEmailConfirmationsRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 use Nette\Application\LinkGenerator;
