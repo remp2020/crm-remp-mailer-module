@@ -10,7 +10,7 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
 use Crm\ScenariosModule\Events\NotificationTemplateParamsTrait;
 use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;
-use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use Crm\UsersModule\Repository\AddressesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
