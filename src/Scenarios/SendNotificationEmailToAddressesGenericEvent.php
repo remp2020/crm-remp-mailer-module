@@ -2,8 +2,8 @@
 
 namespace Crm\RempMailerModule\Scenarios;
 
-use Crm\ApplicationModule\ActiveRowFactory;
-use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
+use Crm\ApplicationModule\Models\Criteria\ScenarioParams\StringLabeledArrayParam;
+use Crm\ApplicationModule\Models\Database\ActiveRowFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;

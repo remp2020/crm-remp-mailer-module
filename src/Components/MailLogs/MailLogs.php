@@ -3,8 +3,8 @@
 namespace Crm\RempMailerModule\Components\MailLogs;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Components\VisualPaginator;
-use Crm\ApplicationModule\Widget\WidgetInterface;
+use Crm\ApplicationModule\Components\VisualPaginator\VisualPaginator;
+use Crm\ApplicationModule\Models\Widget\WidgetInterface;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
 use Crm\UsersModule\Models\User\UnclaimedUser;

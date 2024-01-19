@@ -3,8 +3,8 @@
 namespace Crm\RempMailerModule\Components\UserEmailSettings;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\ApplicationModule\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\RempMailerModule\Forms\EmailSettingsFormFactory;
 use Crm\UsersModule\Models\User\UnclaimedUser;
 use Crm\UsersModule\Repositories\UsersRepository;

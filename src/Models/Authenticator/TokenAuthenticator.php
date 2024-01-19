@@ -2,8 +2,8 @@
 
 namespace Crm\RempMailerModule\Models\Authenticator;
 
-use Crm\ApplicationModule\Authenticator\AuthenticatorInterface;
-use Crm\ApplicationModule\Authenticator\BaseAuthenticator;
+use Crm\ApplicationModule\Models\Authenticator\AuthenticatorInterface;
+use Crm\ApplicationModule\Models\Authenticator\BaseAuthenticator;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\UsersModule\Models\Auth\UserAuthenticator;
 use Crm\UsersModule\Models\Auth\UserManager;

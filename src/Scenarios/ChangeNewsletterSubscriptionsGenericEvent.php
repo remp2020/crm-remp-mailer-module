@@ -2,7 +2,7 @@
 
 namespace Crm\RempMailerModule\Scenarios;
 
-use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
+use Crm\ApplicationModule\Models\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEvent;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;

@@ -2,7 +2,7 @@
 
 namespace Crm\RempMailerModule\Models\User;
 
-use Crm\ApplicationModule\User\UserDataProviderInterface;
+use Crm\ApplicationModule\Models\User\UserDataProviderInterface;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
