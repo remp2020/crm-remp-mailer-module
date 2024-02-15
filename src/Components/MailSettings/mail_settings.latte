@@ -192,7 +192,9 @@
                             // subscribe - check all subscribed variants (returned by API)
                             if (responseData.subscribed_variants) {
                                 for (var variant of responseData.subscribed_variants) {
-                                    that.mailType.variants[variant.id].is_subscribed = true;
+                                    if (variant.id in that.mailType.variants) {
+                                        that.mailType.variants[variant.id].is_subscribed = true;
+                                    }
                                 }
                             }
                         } else {
