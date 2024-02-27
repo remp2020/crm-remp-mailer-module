@@ -49,6 +49,9 @@ frontend:
         header_no_account: "Email <i>%email%</i> sa už v systéme nenachádza<br><small>(nie je možné ho odhlásiť zo zvoleného newslettra)</small>"
         other_email_settings: Pozrite si ostatné nastavenia vašich e-mailov
 
+    subscribe_email:
+        subscribe_success: "Úspešne ste sa prihlásili k odberu newslettra '%mail_type_title%'."
+
 admin:
     mail_logs_component:
         header: Odoslané e-maily

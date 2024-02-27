@@ -3,6 +3,7 @@
 namespace Crm\RempMailerModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
+use Crm\ApplicationModule\Router\RedirectValidator;
 use Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
@@ -10,11 +11,15 @@ use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\DI\Attributes\Inject;
+use Nette\Http\Url;
 
 class MailSettingsPresenter extends FrontendPresenter
 {
     #[Inject]
     public UserManager $userManager;
+
+    #[Inject]
+    public RedirectValidator $redirectValidator;
 
     public function __construct(
         protected MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
@@ -34,7 +39,7 @@ class MailSettingsPresenter extends FrontendPresenter
         $this->onlyLoggedIn();
     }
 
-    public function renderSubscribeEmail($id)
+    public function renderSubscribeEmail($id, string $successUrl = null)
     {
         $this->onlyLoggedIn();
 
@@ -50,6 +55,22 @@ class MailSettingsPresenter extends FrontendPresenter
             ->setMailTypeId($mailType->id)
             ->setUser($user);
         $this->mailUserSubscriptionsRepository->subscribe($msr, $this->rtmParams());
+
+        // if successUrl is valid, add flashmessage and redirect
+        if ($successUrl !== null && $this->redirectValidator->isAllowed($successUrl)) {
+            $this->flashMessage($this->translator->translate(
+                'remp_mailer.frontend.subscribe_email.subscribe_success',
+                ['mail_type_title' => $mailType->title],
+            ));
+
+            $url = new Url($successUrl);
+            // store flash key for destination page to display flashmessage after redirect
+            // (flashmessage will be displayed automatically if destination is within CRM)
+            $url->setQueryParameter(self::FLASH_KEY, $this->getParameter(self::FlashKey));
+            // store mail type code of subscribed email for destination page
+            $url->setQueryParameter('mail_type_code', $mailType->code);
+            $this->redirectUrl($url->getAbsoluteUrl());
+        }
 
         $this->redirect('MailSettings:subscribeEmailSuccess', [
             'id' => $id,

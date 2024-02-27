@@ -48,6 +48,9 @@ frontend:
         header_no_account: "Email <i>%email%</i> is no longer present in the system<br><small>(it's not possible to unsubscribe it anymore)</small>"
         other_email_settings: Other email settings
 
+    subscribe_email:
+        subscribe_success: "You have successfully subscribed to the newsletter '%mail_type_title%'."
+
 admin:
     mail_logs_component:
         header: Sent emails

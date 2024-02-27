@@ -39,6 +39,10 @@ frontend:
         header_alt: Az alábbi e-mail <i>%email%</i> a kiválasztott hírlevélről sikeresen leiratkozott
     mail_subscribe:
         header: Feliratkozás a hírlevélre
+
+    subscribe_email:
+        subscribe_success: "Sikeresen feliratkoztál a '%mail_type_title%' hírlevélre!"
+
 admin:
     mail_logs_component:
         no_content: Nincs elküldött e-mail
