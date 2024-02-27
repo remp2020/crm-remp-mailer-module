@@ -57,7 +57,7 @@ class MailSettingsPresenter extends FrontendPresenter
         ]);
     }
 
-    public function renderSubscribeEmailSuccess($id)
+    public function renderSubscribeEmailSuccess($id, array $mailTypeCategoryCodes = null)
     {
         $this->onlyLoggedIn();
 
@@ -68,6 +68,7 @@ class MailSettingsPresenter extends FrontendPresenter
         }
 
         $this->template->mailType = $mailType;
+        $this->template->mailTypeCategoryCodes = $mailTypeCategoryCodes;
         $this->template->medium = $this->getParameter('medium');
     }
 
