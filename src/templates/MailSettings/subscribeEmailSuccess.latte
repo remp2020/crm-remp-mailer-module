@@ -8,7 +8,7 @@
   <div class="col-md-12">
     <p>
         {capture $emailSettingsLink}{link :RempMailer:MailSettings:mailSettings}{/capture}
-        {control snippet 'mail-subscribe-success-text', 'mail_type_title' => $mailType->title, 'email_settings_link' => $emailSettingsLink, 'locale' => $locale}
+        {control snippet 'mail-subscribe-success-text', 'mail_type_title' => $mailType->title, 'email_settings_link' => $emailSettingsLink}
 
         {if $medium === email}
         <script type="text/javascript">
