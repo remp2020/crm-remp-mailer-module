@@ -44,7 +44,7 @@ class SendEmailHandler implements HandlerInterface
 
         $mailTemplate = $this->apiClient->getTemplate($payload['mail_template_code']);
         if (!$mailTemplate) {
-            Debugger::log("Could not load mail template: record with code [{$payload['mail_template_code']}] doesn't exist");
+            Debugger::log("Could not load mail template: record with code [{$payload['mail_template_code']}] doesn't exist", ILogger::ERROR);
             return false;
         }
 
