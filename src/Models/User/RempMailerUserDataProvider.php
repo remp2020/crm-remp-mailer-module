@@ -38,7 +38,7 @@ class RempMailerUserDataProvider implements UserDataProviderInterface
         $emailLogs = $this->mailLogsRepository->get($logQuery);
 
         $result = [];
-        foreach ($emailLogs as $log) {
+        foreach ($emailLogs ?? [] as $log) {
             $result[] = array_filter([
                 'email' => $log->email,
                 'subject' => $log->subject,
