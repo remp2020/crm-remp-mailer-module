@@ -95,8 +95,6 @@ class MailSettingsPresenter extends FrontendPresenter
 
     public function renderUnSubscribeEmail($id, $variantId = null)
     {
-        $this->onlyLoggedIn();
-
         $mailType = $this->mailTypesRepository->getByCode($id);
         if (!$mailType) {
             $this->redirect('mailSettings');
@@ -107,8 +105,12 @@ class MailSettingsPresenter extends FrontendPresenter
 
         $message = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header');
 
-        $userToUnsubscribe = $this->userManager->loadUser($this->getUser());
+        $userToUnsubscribe = null;
+        if ($this->getUser()->isLoggedIn()) {
+            $userToUnsubscribe = $this->userManager->loadUser($this->getUser());
+        }
 
+        // unsubscribing other user than actually logged in
         $email = null;
         if (isset($this->params['token'])) {
             $email = $this->mailerApiClient->checkAutologinToken($this->params['token']);
@@ -116,14 +118,16 @@ class MailSettingsPresenter extends FrontendPresenter
             $email = $this->mailerApiClient->checkAutologinToken($this->params['login_t']);
         }
 
-        // unsubscribing other user than actually logged in
-        if ($email && $userToUnsubscribe->email !== $email) {
+        if ($email) {
             $userToUnsubscribe = $this->userManager->loadUserByEmail($email);
-            if (!$userToUnsubscribe) {
-                $this->template->header = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_no_account', ['email' => $email]);
-                return;
+            if ($userToUnsubscribe->email !== $email) {
+                $message = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_alt', ['email' => $userToUnsubscribe->email]);
             }
-            $message = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_alt', ['email' => $userToUnsubscribe->email]);
+        }
+
+        if (!$userToUnsubscribe) {
+            $this->template->header = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_no_account', ['email' => $email]);
+            return;
         }
 
         if ($this->mailUserSubscriptionsRepository->isUserSubscribed($userToUnsubscribe, $mailType->id)) {
