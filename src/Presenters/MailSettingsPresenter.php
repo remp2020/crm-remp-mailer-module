@@ -132,7 +132,7 @@ class MailSettingsPresenter extends FrontendPresenter
 
         if (!$userToUnsubscribe) {
             $this->template->header = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_no_account', [
-                'email' => escapehtml($email),
+                'email' => escapehtml($email ?? ''),
             ]);
             return;
         }
