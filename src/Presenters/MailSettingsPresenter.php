@@ -2,6 +2,7 @@
 
 namespace Crm\RempMailerModule\Presenters;
 
+use Crm\ApplicationModule\LatteFunctions\EscapeHTML;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\ApplicationModule\Router\RedirectValidator;
 use Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface;
@@ -12,7 +13,6 @@ use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\DI\Attributes\Inject;
 use Nette\Http\Url;
-use function Crm\ApplicationModule\LatteFunctions\escapehtml;
 
 class MailSettingsPresenter extends FrontendPresenter
 {
@@ -62,7 +62,7 @@ class MailSettingsPresenter extends FrontendPresenter
             $this->flashMessage($this->translator->translate(
                 'remp_mailer.frontend.subscribe_email.subscribe_success',
                 [
-                    'mail_type_title' => escapehtml($mailType->title),
+                    'mail_type_title' => EscapeHTML::escape($mailType->title),
                 ],
             ));
 
@@ -125,14 +125,14 @@ class MailSettingsPresenter extends FrontendPresenter
             $userToUnsubscribe = $this->userManager->loadUserByEmail($email);
             if ($userToUnsubscribe->email !== $email) {
                 $message = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_alt', [
-                    'email' => escapehtml($userToUnsubscribe->email),
+                    'email' => EscapeHTML::escape($userToUnsubscribe->email),
                 ]);
             }
         }
 
         if (!$userToUnsubscribe) {
             $this->template->header = $this->translator->translate('remp_mailer.frontend.mail_unsubscribe.header_no_account', [
-                'email' => escapehtml($email ?? ''),
+                'email' => EscapeHTML::escape($email ?? ''),
             ]);
             return;
         }
