@@ -9,12 +9,8 @@ use Crm\ScenariosModule\Events\ScenarioGenericEventInterface;
 
 class ChangeNewsletterSubscriptionsGenericEvent implements ScenarioGenericEventInterface
 {
-    private $mailTypesRepository;
-
-    public function __construct(
-        MailTypesRepository $mailTypesRepository
-    ) {
-        $this->mailTypesRepository = $mailTypesRepository;
+    public function __construct(private MailTypesRepository $mailTypesRepository)
+    {
     }
 
     public function getLabel(): string
@@ -35,12 +31,14 @@ class ChangeNewsletterSubscriptionsGenericEvent implements ScenarioGenericEventI
             new StringLabeledArrayParam(
                 'subscribe_newsletter_codes',
                 'Subscribe newsletter codes',
-                $mailTypeOptions
+                $mailTypeOptions,
+                'and',
             ),
             new StringLabeledArrayParam(
                 'unsubscribe_newsletter_codes',
                 'Unsubscribe newsletter codes',
-                $mailTypeOptions
+                $mailTypeOptions,
+                'and'
             ),
         ];
     }
