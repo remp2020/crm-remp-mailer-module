@@ -8,7 +8,7 @@ class MailLogQueryBuilder
 {
     private ?array $filter = null;
     private int $limit = 300;
-    private int $page;
+    private int $page = 1;
     private string $email;
     private array $mailTemplateIds = [];
     private array $mailTemplateCodes = [];
