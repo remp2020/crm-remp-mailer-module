@@ -70,3 +70,12 @@ admin:
         subscribed: Subscribed %time%
         not_loaded: User is not allowed to change mail settings. It is either unclaimed or deleted.
         show_unsubscribed: Show not subscribed newsletters
+
+    scenarios:
+        mail_received:
+            label: Mail received
+            template_param:
+                label: Mail template
+            timeframe_param:
+                amount_label: Amount
+                units_label: Units

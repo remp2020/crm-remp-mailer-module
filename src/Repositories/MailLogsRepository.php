@@ -21,7 +21,8 @@ class MailLogsRepository
             $queryBuilder->getFilter(),
             $queryBuilder->getLimit(),
             $queryBuilder->getPage(),
-            $queryBuilder->getMailTemplateIds()
+            $queryBuilder->getMailTemplateIds(),
+            $queryBuilder->getMailTemplateCodes(),
         );
     }
 

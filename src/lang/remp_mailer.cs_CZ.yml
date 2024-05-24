@@ -67,3 +67,12 @@ admin:
         subscribed: Přihlášený %time%
         not_loaded: Pro tento typ uživatele se nastavení e-mailů nenačítavají.<br>Uživatel je anonymní nebo smazán.
         show_unsubscribed: Zobrazit také neodebírané newslettery
+
+    scenarios:
+        mail_received:
+            label: Doručený e-mail
+            template_param:
+                label: Mail template
+            timeframe_param:
+                amount_label: Jednotka
+                units_label: Počet

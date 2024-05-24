@@ -11,6 +11,7 @@ use Crm\ApplicationModule\Application\Managers\AssetsManager;
 use Crm\ApplicationModule\Application\Managers\SeederManager;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Models\Authenticator\AuthenticatorManagerInterface;
+use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaStorage;
 use Crm\ApplicationModule\Models\Event\LazyEventEmitter;
 use Crm\ApplicationModule\Models\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Models\Menu\MenuItem;
@@ -31,6 +32,7 @@ use Crm\RempMailerModule\Hermes\SendEmailHandler;
 use Crm\RempMailerModule\Hermes\UserRegisteredHandler;
 use Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator;
 use Crm\RempMailerModule\Models\User\RempMailerUserDataProvider;
+use Crm\RempMailerModule\Scenarios\MailReceivedCriteria;
 use Crm\RempMailerModule\Seeders\SegmentsSeeder;
 use Crm\UsersModule\Events\NotificationEvent;
 use Crm\UsersModule\Events\UserRegisteredEvent;
@@ -154,5 +156,10 @@ class RempMailerModule extends CrmModule
     public function registerSeeders(SeederManager $seederManager)
     {
         $seederManager->addSeeder($this->getInstance(SegmentsSeeder::class));
+    }
+
+    public function registerScenariosCriteria(ScenariosCriteriaStorage $scenariosCriteriaStorage)
+    {
+        $scenariosCriteriaStorage->register('user', MailReceivedCriteria::KEY, $this->getInstance(MailReceivedCriteria::class));
     }
 }

@@ -52,6 +52,11 @@ services:
 	mailLogsRepository: Crm\RempMailerModule\Repositories\MailLogsRepository
 
 	# scenarios
+	mailReceivedCriteria:
+	    factory: Crm\RempMailerModule\Scenarios\MailReceivedCriteria
+	    setup:
+	        - addAllowedMailTypeCodes('system', 'system_optional')
+
 	sendNotificationEmailGenericEvent:
 		factory: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent
 		setup:

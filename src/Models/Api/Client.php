@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
 use Nette\Http\IResponse;
+use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -161,13 +162,21 @@ class Client
         }
     }
 
-    public function getMailLogs(?string $email, ?string $filter, ?int $limit, ?int $page, ?array $mailTemplateIds): ?array
+    public function getMailLogs(?string $email, ?array $filter, ?int $limit, ?int $page, ?array $mailTemplateIds, ?array $mailTemplateCodes): ?array
     {
         try {
             $data = [];
 
             if ($filter !== null) {
-                $data['filter'] = [$filter];
+                foreach ($filter as $filterBy => $filterTimeFrame) {
+                    $filter[$filterBy] = array_map(function ($item) {
+                        if ($item instanceof DateTime) {
+                            $item = $item->format(\DateTimeInterface::RFC3339);
+                        }
+                        return $item;
+                    }, $filterTimeFrame);
+                }
+                $data['filter'] = $filter;
             }
             if ($limit !== null) {
                 $data['limit'] = $limit;
@@ -178,8 +187,11 @@ class Client
             if ($email !== null) {
                 $data['email'] = $email;
             }
-            if ($mailTemplateIds !== null) {
+            if (!empty($mailTemplateIds)) {
                 $data['mail_template_ids'] = $mailTemplateIds;
+            }
+            if (!empty($mailTemplateCodes)) {
+                $data['mail_template_codes'] = $mailTemplateCodes;
             }
 
             $logs = $this->apiClient->post(self::LOGS, [
