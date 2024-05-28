@@ -92,7 +92,7 @@ class RempMailerModule extends CrmModule
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
     {
-        $mainMenu = new MenuItem($this->translator->translate('remp_mailer.menu.main'), '#', 'fa fa-rocket', 749, false);
+        $mainMenu = new MenuItem($this->translator->translate('remp_mailer.menu.main'), '#remp', 'fa fa-rocket', 749, false);
 
         $menuItem = new MenuItem($this->translator->translate('remp_mailer.menu.mailer'), Core::env('REMP_MAILER_HOST'), 'fa fa-envelope', 2000, false);
         $menuContainer->attachMenuItemToForeignModule('#remp', $mainMenu, $menuItem);
