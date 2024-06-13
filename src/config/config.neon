@@ -1,4 +1,7 @@
 services:
+	# extension is registered (addModule(Crm\RempMailerModule\RempMailerModule())) within RempMailerModuleExtension
+	# because we want to load module only if configuration is valid
+
 	# api
 	mailTemplateListApiHandler:
 		factory: Crm\RempMailerModule\Api\MailTemplateListApiHandler
