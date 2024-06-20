@@ -9,25 +9,21 @@ use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaInterface;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
 use Crm\RempMailerModule\Repositories\MailTemplatesRepository;
+use Crm\ScenariosModule\Scenarios\TimeframeScenarioTrait;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
-use Nette\Utils\DateTime;
-use Nette\Utils\Json;
 
 class MailReceivedCriteria implements ScenariosCriteriaInterface
 {
-    const KEY = 'mail_received';
-    const TEMPLATE_KEY = 'mail_received_template';
-    const TIMEFRAME_KEY = 'mail_received_timeframe';
+    use TimeframeScenarioTrait;
 
-    public const OPERATOR_IN_THE_LAST = 'in the last';
+    public const KEY = 'mail_received';
+    public const TEMPLATE_KEY = 'mail_received_template';
+    public const TIMEFRAME_KEY = self::KEY . '_timeframe';
+    public const UNITS = ['days', 'weeks', 'months', 'years'];
     public const OPERATOR_BEFORE = 'before';
-    private const OPERATORS = [
-        self::OPERATOR_IN_THE_LAST,
-        self::OPERATOR_BEFORE,
-    ];
-
-    private const UNITS = ['days', 'weeks', 'months', 'years'];
+    public const OPERATOR_IN_THE_LAST = 'in the last';
+    public const OPERATORS = [self::OPERATOR_IN_THE_LAST, self::OPERATOR_BEFORE];
 
     private array $allowedMailTypeCodes = [];
 
@@ -76,47 +72,28 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
     {
         $templateCodes = $paramValues[self::TEMPLATE_KEY]->selection;
 
-        if (isset(
-            $paramValues[self::TIMEFRAME_KEY],
-            $paramValues[self::TIMEFRAME_KEY]->operator,
-            $paramValues[self::TIMEFRAME_KEY]->unit,
-            $paramValues[self::TIMEFRAME_KEY]->selection
-        )) {
-            $timeframeOperator = array_search($paramValues[self::TIMEFRAME_KEY]->operator, self::OPERATORS, true);
-            if ($timeframeOperator === false) {
-                throw new \Exception("Timeframe operator [{$timeframeOperator}] is not a valid operator out of: " . Json::encode(array_values(self::OPERATORS)));
-            }
-            $timeframeUnit = $paramValues[self::TIMEFRAME_KEY]->unit;
-            if (!in_array($timeframeUnit, self::UNITS, true)) {
-                throw new \Exception("Timeframe unit [{$timeframeUnit}] is not a valid unit out of: " . Json::encode(self::UNITS));
-            }
-            $timeframeValue = $paramValues[self::TIMEFRAME_KEY]->selection;
-            if (filter_var($timeframeValue, FILTER_VALIDATE_INT, array("options" => array("min_range"=> 0))) === false) {
-                throw new \Exception("Timeframe value [{$timeframeValue}] is not a valid value. It has to be positive integer.");
-            }
+        $timeframe = $this->getTimeframe($paramValues, self::UNITS, self::OPERATORS, self::TIMEFRAME_KEY);
+        if (!$timeframe) {
+            return false;
+        }
 
+        $deliveredAtTimeFilter = [];
+        if ($timeframe['operator'] === self::OPERATOR_BEFORE) {
+            $deliveredAtTimeFilter['to'] = $timeframe['limit'];
+        } elseif ($timeframe['operator'] === self::OPERATOR_IN_THE_LAST) {
+            $deliveredAtTimeFilter['from'] = $timeframe['limit'];
+        }
 
-            $limitAt = (new DateTime())->modify('-' . $timeframeValue . $timeframeUnit);
-            $timeframeOperator = self::OPERATORS[$timeframeOperator];
+        $logQuery = new MailLogQueryBuilder();
+        $logQuery->setEmail($criterionItemRow->email)
+            ->setMailTemplateCodes($templateCodes)
+            ->setFilter('delivered_at', $deliveredAtTimeFilter)
+            ->setPage(1);
 
-            $deliveredAtTimeFilter = [];
-            if ($timeframeOperator === self::OPERATOR_BEFORE) {
-                $deliveredAtTimeFilter['to'] = $limitAt;
-            } elseif ($timeframeOperator === self::OPERATOR_IN_THE_LAST) {
-                $deliveredAtTimeFilter['from'] = $limitAt;
-            }
+        $result = $this->mailLogsRepository->get($logQuery);
 
-            $logQuery = new MailLogQueryBuilder();
-            $logQuery->setEmail($criterionItemRow->email)
-                ->setMailTemplateCodes($templateCodes)
-                ->setFilter('delivered_at', $deliveredAtTimeFilter)
-                ->setPage(1);
-
-            $result = $this->mailLogsRepository->get($logQuery);
-
-            if (!empty($result)) {
-                return true;
-            }
+        if (!empty($result)) {
+            return true;
         }
 
         return false;
