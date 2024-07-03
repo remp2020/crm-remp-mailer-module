@@ -48,6 +48,8 @@ frontend:
         header_no_account: "Email <i>%email%</i> se v systému nenachází<br><small>(není možné ho odhlásit z vybraného newsletteru)</small>"
         other_email_settings: Podívejte se na další nastavení vašich e-mailů
 
+    subscribe_email:
+        subscribe_success: Úspešně jste se přihlásili k odběru newsletteru '%mail_type_title%'.
 admin:
     mail_logs_component:
         header: Odeslané e-maily
