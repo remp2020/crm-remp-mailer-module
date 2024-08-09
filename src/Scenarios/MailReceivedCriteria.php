@@ -87,7 +87,11 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
         $logQuery = new MailLogQueryBuilder();
         $logQuery->setEmail($criterionItemRow->email)
             ->setMailTemplateCodes($templateCodes)
-            ->setFilter('delivered_at', $deliveredAtTimeFilter)
+            ->setFilter(
+                'delivered_at',
+                $deliveredAtTimeFilter['from'] ?? null,
+                $deliveredAtTimeFilter['to'] ?? null,
+            )
             ->setPage(1);
 
         $result = $this->mailLogsRepository->get($logQuery);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Crm\RempMailerModule\Models\Api;
 
 use Nette\Utils\DateTime;
