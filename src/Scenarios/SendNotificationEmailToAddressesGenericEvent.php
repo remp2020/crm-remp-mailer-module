@@ -2,6 +2,7 @@
 
 namespace Crm\RempMailerModule\Scenarios;
 
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Models\Database\ActiveRowFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
@@ -23,15 +24,16 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
     private array $allowedMailTypeCodes = [];
 
     public function __construct(
-        private UsersRepository $usersRepository,
-        private Emitter $emitter,
-        private MailTemplatesRepository $mailTemplatesRepository,
-        private AddressesRepository $addressesRepository,
-        private ActiveRowFactory $activeRowFactory,
-        private SubscriptionsRepository $subscriptionsRepository,
-        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        private PaymentsRepository $paymentsRepository,
-        private RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private readonly UsersRepository $usersRepository,
+        private readonly Emitter $emitter,
+        private readonly MailTemplatesRepository $mailTemplatesRepository,
+        private readonly AddressesRepository $addressesRepository,
+        private readonly ActiveRowFactory $activeRowFactory,
+        private readonly SubscriptionsRepository $subscriptionsRepository,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private readonly ApplicationConfig $applicationConfig,
     ) {
     }
 
