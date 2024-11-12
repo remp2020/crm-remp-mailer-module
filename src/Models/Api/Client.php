@@ -33,6 +33,8 @@ class Client
     private const IS_USER_UNSUBSCRIBED = '/api/v1/users/is-unsubscribed';
     private const IS_USER_SUBSCRIBED = '/api/v1/users/is-subscribed';
     private const USER_PREFERENCES = '/api/v1/users/user-preferences';
+    private const GENERATE_MAIL = '/api/v1/mailers/generate-mail';
+    private const JOBS = '/api/v2/mailers/jobs';
 
     private \GuzzleHttp\Client $apiClient;
 
@@ -551,6 +553,74 @@ class Client
 
         $templates = Json::decode($result->getBody());
         return reset($templates);
+    }
+
+    public function generateMail(array $params): array
+    {
+        try {
+            $result = $this->apiClient->post(self::GENERATE_MAIL, [
+                'form_params' => $params,
+            ]);
+
+            return Json::decode((string) $result->getBody(), forceArrays: true);
+        } catch (ServerException | ConnectException $e) {
+            Debugger::log($e->getMessage(), Debugger::ERROR);
+            throw new MailerException($e->getMessage());
+        } catch (ClientException $e) {
+            $response = Json::decode($e->getResponse()->getBody());
+            Debugger::log($response, Debugger::ERROR);
+            throw new MailerException($response->message, $e->getResponse()->getStatusCode());
+        }
+    }
+
+    public function createMailTemplate($htmlContent, $textContent, $name, $code, $description, $layoutCode, $mailTypeCode, $sender, $subject): array
+    {
+        try {
+            $result = $this->apiClient->post(self::MAIL_TEMPLATES, [
+                'form_params' => [
+                    'name' => $name,
+                    'code' => $code,
+                    'description' => $description,
+                    'mail_layout_code' => $layoutCode,
+                    'mail_type_code' => $mailTypeCode,
+                    'from' => $sender,
+                    'subject' => $subject,
+                    'template_html' => $htmlContent,
+                    'template_text' => $textContent,
+                ],
+            ]);
+            return Json::decode((string) $result->getBody(), forceArrays: true);
+        } catch (ServerException | ConnectException $e) {
+            Debugger::log($e->getMessage(), Debugger::ERROR);
+            throw new MailerException($e->getMessage());
+        } catch (ClientException $e) {
+            $response = Json::decode($e->getResponse()->getBody());
+            Debugger::log($response, Debugger::ERROR);
+            throw new MailerException($response->message, $e->getResponse()->getStatusCode());
+        }
+    }
+
+    public function createMailJob($includeSegments, $templateCode, $mailTypeVariantCode = null, $context = null, $excludeSegments = null): array
+    {
+        try {
+            $result = $this->apiClient->post(self::JOBS, [
+                'body' => Json::encode(array_filter([
+                    'include_segments' => $includeSegments,
+                    'template_code' => $templateCode,
+                    'mail_type_variant_code' => $mailTypeVariantCode,
+                    'context' => $context,
+                    'exclude_segments' => $excludeSegments,
+                ])),
+            ]);
+            return Json::decode((string) $result->getBody(), forceArrays: true);
+        } catch (ServerException | ConnectException $e) {
+            Debugger::log($e->getMessage(), Debugger::ERROR);
+            throw new MailerException($e->getMessage());
+        } catch (ClientException $e) {
+            $response = Json::decode($e->getResponse()->getBody());
+            Debugger::log($response, Debugger::ERROR);
+            throw new MailerException($response->message, $e->getResponse()->getStatusCode());
+        }
     }
 
     private function toDateTime(?string $dateTime): ?\DateTime
