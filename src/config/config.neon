@@ -10,6 +10,9 @@ services:
 
 	- Crm\RempMailerModule\Api\EmailSubscriptionApiHandler
 
+	# commands
+	- Crm\RempMailerModule\Commands\SubscribeSegmentToMailTypeCommand
+
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
 	- Crm\RempMailerModule\Components\MailSettings\MailSettings

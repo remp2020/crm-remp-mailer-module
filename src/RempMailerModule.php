@@ -6,6 +6,7 @@ use Crm\ApiModule\Models\Api\ApiRoutersContainerInterface;
 use Crm\ApiModule\Models\Authorization\BearerTokenAuthorization;
 use Crm\ApiModule\Models\Router\ApiIdentifier;
 use Crm\ApiModule\Models\Router\ApiRoute;
+use Crm\ApplicationModule\Application\CommandsContainerInterface;
 use Crm\ApplicationModule\Application\Core;
 use Crm\ApplicationModule\Application\Managers\AssetsManager;
 use Crm\ApplicationModule\Application\Managers\SeederManager;
@@ -19,6 +20,7 @@ use Crm\ApplicationModule\Models\User\UserDataRegistrator;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManagerInterface;
 use Crm\RempMailerModule\Api\EmailSubscriptionApiHandler;
 use Crm\RempMailerModule\Api\MailTemplateListApiHandler;
+use Crm\RempMailerModule\Commands\SubscribeSegmentToMailTypeCommand;
 use Crm\RempMailerModule\Components\MailLogs\MailLogs;
 use Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget;
 use Crm\RempMailerModule\Events\ChangeUserNewsletterSubscriptionsEvent;
@@ -161,5 +163,10 @@ class RempMailerModule extends CrmModule
     public function registerScenariosCriteria(ScenariosCriteriaStorage $scenariosCriteriaStorage)
     {
         $scenariosCriteriaStorage->register('user', MailReceivedCriteria::KEY, $this->getInstance(MailReceivedCriteria::class));
+    }
+
+    public function registerCommands(CommandsContainerInterface $commandsContainer)
+    {
+        $commandsContainer->registerCommand($this->getInstance(SubscribeSegmentToMailTypeCommand::class));
     }
 }
