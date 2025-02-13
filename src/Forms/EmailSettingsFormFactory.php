@@ -3,11 +3,11 @@
 namespace Crm\RempMailerModule\Forms;
 
 use Crm\ApplicationModule\Helpers\UserDateHelper;
+use Crm\ApplicationModule\UI\Form;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
