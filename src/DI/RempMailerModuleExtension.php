@@ -6,32 +6,25 @@ use Contributte\Translation\DI\TranslationProviderInterface;
 use Crm\RempMailerModule\RempMailerModule;
 use Nette\Application\IPresenterFactory;
 use Nette\DI\CompilerExtension;
-use Tracy\Debugger;
-use Tracy\ILogger;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 
 final class RempMailerModuleExtension extends CompilerExtension implements TranslationProviderInterface
 {
     private const PARAM_HOST = 'host';
     private const PARAM_API_TOKEN = 'api_token';
 
-    private $defaults = [
-        self::PARAM_HOST => null,
-        self::PARAM_API_TOKEN => null,
-    ];
+    public function getConfigSchema(): Schema
+    {
+        return Expect::structure([
+            self::PARAM_HOST => Expect::string()->dynamic()->required(),
+            self::PARAM_API_TOKEN => Expect::string()->dynamic()->required(),
+        ]);
+    }
 
     public function loadConfiguration()
     {
         $builder = $this->getContainerBuilder();
-
-        $this->config = $this->validateConfig($this->defaults);
-        if (!$this->config[self::PARAM_HOST]) {
-            Debugger::log('Unable to initialize RempMailerModuleExtension, host config option is missing', ILogger::ERROR);
-            return;
-        }
-        if (!$this->config[self::PARAM_API_TOKEN]) {
-            Debugger::log('Unable to initialize RempMailerModuleExtension, api_token config option is missing', ILogger::ERROR);
-            return;
-        }
 
         // load services from config and register them to Nette\DI Container
         $this->compiler->loadDefinitionsFromConfig(
@@ -40,8 +33,8 @@ final class RempMailerModuleExtension extends CompilerExtension implements Trans
 
         // configure API client
         $builder->getDefinitionByType(Config::class)
-            ->addSetup('setHost', [$this->config[self::PARAM_HOST]])
-            ->addSetup('setApiToken', [$this->config[self::PARAM_API_TOKEN]]);
+            ->addSetup('setHost', [$this->config->{self::PARAM_HOST}])
+            ->addSetup('setApiToken', [$this->config->{self::PARAM_API_TOKEN}]);
 
         // enable module
         $module = $builder->addDefinition($this->prefix('module'))
