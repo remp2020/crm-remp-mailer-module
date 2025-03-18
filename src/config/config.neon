@@ -25,6 +25,7 @@ services:
 
 	# data providers
 	- Crm\RempMailerModule\Models\User\RempMailerUserDataProvider
+	- Crm\RempMailerModule\Models\User\MailSubscriptionsUserDataProvider
 
 	# events
 	- Crm\RempMailerModule\Events\NotificationHandler
