@@ -3,16 +3,12 @@
 namespace Crm\RempMailerModule\Models\User;
 
 use Crm\ApplicationModule\Models\User\UserDataProviderInterface;
-use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 
 class MailSubscriptionsUserDataProvider implements UserDataProviderInterface
 {
-    private ?array $mailTypes = null;
-
     public function __construct(
         private readonly MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
-        private readonly MailTypesRepository $mailTypesRepository,
     ) {
     }
 
@@ -26,10 +22,9 @@ class MailSubscriptionsUserDataProvider implements UserDataProviderInterface
         $preferences = $this->mailUserSubscriptionsRepository->userPreferences($userId, true);
 
         $result = [];
-        foreach ($preferences as $key => $preference) {
-            $mailType = $this->getMailType($key);
+        foreach ($preferences as $preference) {
             $preferenceData = [
-                'code' => $mailType->code
+                'code' => $preference['code']
             ];
             if (count($preference['variants'])) {
                 $preferenceData['variants'] = $preference['variants'];
@@ -48,18 +43,6 @@ class MailSubscriptionsUserDataProvider implements UserDataProviderInterface
     public function downloadAttachments($userId)
     {
         return [];
-    }
-
-    private function getMailType($id)
-    {
-        if (!$this->mailTypes) {
-            $types = $this->mailTypesRepository->all();
-            $this->mailTypes = [];
-            foreach ($types as $type) {
-                $this->mailTypes[$type->id] = $type;
-            }
-        }
-        return $this->mailTypes[$id];
     }
 
     public function protect($userId): array
