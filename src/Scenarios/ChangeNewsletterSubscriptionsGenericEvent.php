@@ -20,9 +20,10 @@ class ChangeNewsletterSubscriptionsGenericEvent implements ScenarioGenericEventI
 
     public function getParams(): array
     {
-        $mailTypes = $this->mailTypesRepository->all();
+        $mailTypes = $this->mailTypesRepository->all() ?? [];
 
         $mailTypeOptions = [];
+
         foreach ($mailTypes as $mailType) {
             $mailTypeOptions[$mailType->code] = $mailType->title;
         }
