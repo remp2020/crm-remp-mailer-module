@@ -28,7 +28,7 @@ class UserEmailSettingsWidget extends BaseLazyWidget
         EmailSettingsFormFactory $emailSettingsFormFactory,
         Translator $translator,
         UsersRepository $usersRepository,
-        UnclaimedUser $unclaimedUser
+        UnclaimedUser $unclaimedUser,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->emailSettingsFormFactory = $emailSettingsFormFactory;

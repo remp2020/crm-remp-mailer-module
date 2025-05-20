@@ -45,7 +45,7 @@ class Client
             'headers' => [
                 'Authorization' => 'Bearer ' . $config->getApiToken(),
                 'Accept' => 'application/json',
-            ]
+            ],
         ]);
     }
 
@@ -83,8 +83,8 @@ class Client
             $this->apiClient->post(self::EMAIL_CHANGED, [
                 'form_params' => [
                     'original_email' => $originalEmail,
-                    'new_email' => $newEmail
-                ]
+                    'new_email' => $newEmail,
+                ],
             ]);
 
             return true;
@@ -101,7 +101,7 @@ class Client
                 'form_params' => [
                     'email' => $email,
                     'user_id' => $userId,
-                ]
+                ],
             ]);
 
             return true;
@@ -238,7 +238,7 @@ class Client
             }
 
             $logsCount = $this->apiClient->post(self::LOGS_COUNT, [
-                RequestOptions::JSON => $data
+                RequestOptions::JSON => $data,
             ]);
 
             return Json::decode($logsCount->getBody()->getContents(), Json::FORCE_ARRAY);
@@ -367,7 +367,7 @@ class Client
             $data = [
                 'email' => $email,
                 'user_id' => $userId,
-                'list_id' => $mailTypeId
+                'list_id' => $mailTypeId,
             ];
 
             if ($variantId !== null) {
@@ -375,7 +375,7 @@ class Client
             }
 
             $this->apiClient->post(self::SUBSCRIBE, [
-                RequestOptions::JSON => $data
+                RequestOptions::JSON => $data,
             ]);
             return true;
         } catch (ServerException | ConnectException $e) {
@@ -405,7 +405,7 @@ class Client
                 $data['rtm_params'] = $rtmParams;
             }
             $this->apiClient->post(self::UNSUBSCRIBE, ['json' =>
-                $data
+                $data,
             ]);
             return true;
         } catch (ServerException | ConnectException $e) {
@@ -424,8 +424,8 @@ class Client
                     'user_id' => $userId,
                     'email' => $email,
                     'list_id' => $mailTypeId,
-                ])
-                ]
+                ]),
+                ],
             );
 
             return Json::decode($result->getBody());
@@ -445,8 +445,8 @@ class Client
                     'email' => $email,
                     'list_id' => $mailTypeId,
                     'variant_id' => $variantId,
-                    ])
-                ]
+                    ]),
+                ],
             );
 
             return Json::decode($result->getBody());
@@ -460,7 +460,7 @@ class Client
     {
         $data = [
             'user_id' => $userId,
-            'email' => $email
+            'email' => $email,
         ];
 
         if ($subscribed !== null) {
@@ -471,8 +471,8 @@ class Client
             $result = $this->apiClient->post(
                 self::USER_PREFERENCES,
                 [
-                    'json' => $data
-                ]
+                    'json' => $data,
+                ],
             );
 
             return Json::decode($result->getBody(), Json::FORCE_ARRAY);
@@ -506,8 +506,8 @@ class Client
             $result = $this->apiClient->post(
                 self::BULK_SUBSCRIBE,
                 [
-                    'json' => $payload
-                ]
+                    'json' => $payload,
+                ],
             );
 
             return Json::decode($result->getBody(), Json::FORCE_ARRAY);
@@ -530,8 +530,8 @@ class Client
             $result = $this->apiClient->get(
                 self::MAIL_TEMPLATES,
                 [
-                    RequestOptions::QUERY => $query
-                ]
+                    RequestOptions::QUERY => $query,
+                ],
             );
 
             return Json::decode($result->getBody());
@@ -547,8 +547,8 @@ class Client
         $result = $this->apiClient->get(
             self::MAIL_TEMPLATES,
             [
-                    RequestOptions::QUERY => $query
-                ]
+                    RequestOptions::QUERY => $query,
+                ],
         );
 
         $templates = Json::decode($result->getBody());

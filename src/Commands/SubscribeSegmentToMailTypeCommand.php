@@ -80,7 +80,7 @@ class SubscribeSegmentToMailTypeCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             "This command will subscribe <info>{$segment->totalCount()} users</info> belonging to <info>[{$segmentCode}]</info> segment to mail type <info>{$mailType->title} - [{$mailTypeCode}]</info>. Continue? ",
-            false
+            false,
         );
         if (!$helper->ask($input, $output, $question)) {
             return Command::SUCCESS;

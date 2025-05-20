@@ -17,7 +17,7 @@ class MailTemplateListApiHandler extends ApiHandler
 
     public function __construct(
         MailTemplatesRepository $mailTemplatesRepository,
-        LinkGenerator $linkGenerator
+        LinkGenerator $linkGenerator,
     ) {
         $this->mailTemplatesRepository = $mailTemplatesRepository;
         $this->linkGenerator = $linkGenerator;
@@ -48,7 +48,7 @@ class MailTemplateListApiHandler extends ApiHandler
                     'RempMailer:MailTemplatesAdmin:show',
                     [
                         'code' => $mailTemplate->code,
-                    ]
+                    ],
                 ),
                 'description' => $mailTemplate->description ?? "",
                 'mail_type' => [

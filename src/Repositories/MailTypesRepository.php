@@ -36,12 +36,12 @@ class MailTypesRepository
     final public function getAllByCategoryCode(
         array $categoryCodes,
         $publicListing = null,
-        bool $includeVariantsData = false
+        bool $includeVariantsData = false,
     ): array {
         $mailTypes = $this->apiClient->getMailTypes(
             categoryCodes: $categoryCodes,
             publicListing: $publicListing,
-            includeVariantsData: $includeVariantsData
+            includeVariantsData: $includeVariantsData,
         );
         if (!$mailTypes) {
             return [];

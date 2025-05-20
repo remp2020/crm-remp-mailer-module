@@ -20,7 +20,7 @@ class ChangeUserNewsletterSubscriptionsEventHandler extends AbstractListener
     public function __construct(
         MailTypesRepository $mailTypesRepository,
         UsersRepository $usersRepository,
-        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository
+        MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
     ) {
         $this->usersRepository = $usersRepository;
         $this->mailUserSubscriptionsRepository = $mailUserSubscriptionsRepository;

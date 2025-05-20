@@ -52,23 +52,23 @@ class RempMailerModule extends CrmModule
     {
         $emitter->addListener(
             UserRegisteredEvent::class,
-            SendWelcomeEmailHandler::class
+            SendWelcomeEmailHandler::class,
         );
 
         // generic notifications
         $emitter->addListener(
             NotificationEvent::class,
-            NotificationHandler::class
+            NotificationHandler::class,
         );
 
         $emitter->addListener(
             UserMailSubscriptionsChanged::class,
-            UserMailSubscriptionsChangedHandler::class
+            UserMailSubscriptionsChangedHandler::class,
         );
 
         $emitter->addListener(
             ChangeUserNewsletterSubscriptionsEvent::class,
-            ChangeUserNewsletterSubscriptionsEventHandler::class
+            ChangeUserNewsletterSubscriptionsEventHandler::class,
         );
     }
 
@@ -82,15 +82,15 @@ class RempMailerModule extends CrmModule
     {
         $dispatcher->registerHandler(
             'user-registered',
-            $this->getInstance(UserRegisteredHandler::class)
+            $this->getInstance(UserRegisteredHandler::class),
         );
         $dispatcher->registerHandler(
             'email-changed',
-            $this->getInstance(EmailChangedHandler::class)
+            $this->getInstance(EmailChangedHandler::class),
         );
         $dispatcher->registerHandler(
             'mailer-send-email',
-            $this->getInstance(SendEmailHandler::class)
+            $this->getInstance(SendEmailHandler::class),
         );
     }
 
@@ -106,7 +106,7 @@ class RempMailerModule extends CrmModule
     {
         $authenticatorManager->registerAuthenticator(
             $this->getInstance(TokenAuthenticator::class),
-            300
+            300,
         );
     }
 
@@ -115,12 +115,12 @@ class RempMailerModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.user.detail.mainbox',
             UserEmailSettingsWidget::class,
-            200
+            200,
         );
         $widgetManager->registerWidget(
             'admin.user.detail.bottom',
             MailLogs::class,
-            700
+            700,
         );
     }
 
@@ -135,23 +135,23 @@ class RempMailerModule extends CrmModule
             new ApiRoute(
                 new ApiIdentifier('1', 'mail-template', 'list'),
                 MailTemplateListApiHandler::class,
-                BearerTokenAuthorization::class
-            )
+                BearerTokenAuthorization::class,
+            ),
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'mailer', 'unsubscribe'),
                 EmailSubscriptionApiHandler::class,
-                UserTokenAuthorization::class
-            )
+                UserTokenAuthorization::class,
+            ),
         );
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'mailer', 'subscribe'),
                 EmailSubscriptionApiHandler::class,
-                UserTokenAuthorization::class
-            )
+                UserTokenAuthorization::class,
+            ),
         );
     }
 

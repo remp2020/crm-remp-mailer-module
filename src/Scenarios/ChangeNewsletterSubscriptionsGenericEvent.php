@@ -39,7 +39,7 @@ class ChangeNewsletterSubscriptionsGenericEvent implements ScenarioGenericEventI
                 'unsubscribe_newsletter_codes',
                 'Unsubscribe newsletter codes',
                 $mailTypeOptions,
-                'and'
+                'and',
             ),
         ];
     }
@@ -50,8 +50,8 @@ class ChangeNewsletterSubscriptionsGenericEvent implements ScenarioGenericEventI
             new ChangeUserNewsletterSubscriptionsEvent(
                 $params->user_id,
                 $options['subscribe_newsletter_codes']->selection ?? [],
-                $options['unsubscribe_newsletter_codes']->selection ?? []
-            )
+                $options['unsubscribe_newsletter_codes']->selection ?? [],
+            ),
         ];
     }
 }

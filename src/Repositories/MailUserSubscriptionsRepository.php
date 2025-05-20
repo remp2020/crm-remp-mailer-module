@@ -16,7 +16,7 @@ class MailUserSubscriptionsRepository
         private Client $apiClient,
         private UsersRepository $usersRepository,
         private MailTypesRepository $mailTypesRepository,
-        private Emitter $emitter
+        private Emitter $emitter,
     ) {
     }
 
@@ -57,7 +57,7 @@ class MailUserSubscriptionsRepository
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $user->id,
             $mailTypeId,
-            UserMailSubscriptionsChanged::SUBSCRIBED
+            UserMailSubscriptionsChanged::SUBSCRIBED,
         ));
         return $result;
     }
@@ -76,7 +76,7 @@ class MailUserSubscriptionsRepository
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $user->id,
             $mailTypeId,
-            UserMailSubscriptionsChanged::UNSUBSCRIBED
+            UserMailSubscriptionsChanged::UNSUBSCRIBED,
         ));
         return $result;
     }
@@ -96,7 +96,7 @@ class MailUserSubscriptionsRepository
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $msr->getUserId(),
             $msr->getMailTypeId(),
-            UserMailSubscriptionsChanged::SUBSCRIBED
+            UserMailSubscriptionsChanged::SUBSCRIBED,
         ));
 
         return $mailSubscribeResponse;
@@ -116,7 +116,7 @@ class MailUserSubscriptionsRepository
         $this->emitter->emit(new UserMailSubscriptionsChanged(
             $msr->getUserId(),
             $msr->getMailTypeId(),
-            UserMailSubscriptionsChanged::UNSUBSCRIBED
+            UserMailSubscriptionsChanged::UNSUBSCRIBED,
         ));
 
         return $result;
@@ -152,7 +152,7 @@ class MailUserSubscriptionsRepository
             $this->emitter->emit(new UserMailSubscriptionsChanged(
                 $subscribeRequest->getUserId(),
                 $subscribeRequest->getMailTypeId(),
-                UserMailSubscriptionsChanged::SUBSCRIBED
+                UserMailSubscriptionsChanged::SUBSCRIBED,
             ));
         }
 
@@ -188,7 +188,7 @@ class MailUserSubscriptionsRepository
             $this->emitter->emit(new UserMailSubscriptionsChanged(
                 $subscribeRequest->getUserId(),
                 $subscribeRequest->getMailTypeId(),
-                UserMailSubscriptionsChanged::UNSUBSCRIBED
+                UserMailSubscriptionsChanged::UNSUBSCRIBED,
             ));
         }
 
@@ -205,7 +205,7 @@ class MailUserSubscriptionsRepository
                 $subscribeRequest->getUserId(),
                 $subscribeRequest->getMailTypeId(),
                 $subscribeRequest->getSubscribed() ?
-                    UserMailSubscriptionsChanged::SUBSCRIBED : UserMailSubscriptionsChanged::UNSUBSCRIBED
+                    UserMailSubscriptionsChanged::SUBSCRIBED : UserMailSubscriptionsChanged::UNSUBSCRIBED,
             ));
         }
 

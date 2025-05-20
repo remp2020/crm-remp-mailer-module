@@ -36,7 +36,7 @@ class TokenAuthenticator extends BaseAuthenticator
         \Tomaj\Hermes\Emitter $hermesEmitter,
         Request $request,
         UserManager $userManager,
-        Client $apiClient
+        Client $apiClient,
     ) {
         parent::__construct($emitter, $hermesEmitter, $request);
 

@@ -24,7 +24,7 @@ class MailSubscriptionsUserDataProvider implements UserDataProviderInterface
         $result = [];
         foreach ($preferences as $preference) {
             $preferenceData = [
-                'code' => $preference['code']
+                'code' => $preference['code'],
             ];
             foreach ($preference['variants'] ?? [] as $variant) {
                 $preferenceData['variants'][] = $variant['code'];

@@ -19,7 +19,7 @@ class EmailSubscriptionApiHandler extends ApiHandler
     public function __construct(
         private Request $request,
         private MailTypesRepository $mailTypesRepository,
-        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository
+        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
     ) {
         parent::__construct();
     }
@@ -101,13 +101,13 @@ class EmailSubscriptionApiHandler extends ApiHandler
 
             return new JsonApiResponse($code, [
                 'status' => 'error',
-                'message' => $exception->getMessage()
+                'message' => $exception->getMessage(),
             ]);
         }
 
         return new JsonApiResponse(Response::S200_OK, array_filter([
             'status' => 'ok',
-            'subscribed_variants' => $subscribedVariants
+            'subscribed_variants' => $subscribedVariants,
         ]));
     }
 

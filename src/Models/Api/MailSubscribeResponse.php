@@ -5,14 +5,14 @@ namespace Crm\RempMailerModule\Models\Api;
 class MailSubscribeResponse
 {
     private function __construct(
-        private ?array $subscribedVariants = null
+        private ?array $subscribedVariants = null,
     ) {
     }
 
     public static function fromApiResponse($decodedResponse): self
     {
         return new MailSubscribeResponse(
-            subscribedVariants: $decodedResponse->subscribed_variants ?? null
+            subscribedVariants: $decodedResponse->subscribed_variants ?? null,
         );
     }
 

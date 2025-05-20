@@ -30,7 +30,7 @@ class MailSettings extends Control
         private Translator $translator,
         private MailerConfig $mailerConfig,
         private Emitter $emitter,
-        private UserEmailConfirmationsRepository $userEmailConfirmationsRepository
+        private UserEmailConfirmationsRepository $userEmailConfirmationsRepository,
     ) {
     }
 
@@ -42,7 +42,7 @@ class MailSettings extends Control
         if ($mailTypeCategoryCodes) {
             $categories = array_filter(
                 $categories,
-                fn($c) => in_array($c->code, $mailTypeCategoryCodes, true)
+                fn($c) => in_array($c->code, $mailTypeCategoryCodes, true),
             );
         }
 
@@ -69,7 +69,7 @@ class MailSettings extends Control
         if ($this->presenter->getUser()->isLoggedIn()) {
             $userSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences(
                 $this->presenter->getUser()->id,
-                true
+                true,
             );
             $this->template->notLogged = false;
         } else {
@@ -180,7 +180,7 @@ class MailSettings extends Control
             'email-confirmation',
             [
                 'confirmation_url' => $confirmationUrl,
-            ]
+            ],
         ));
 
         $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.confirmation_email_sent', ['email' => $user->email]));

@@ -48,7 +48,7 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
                 self::TEMPLATE_KEY,
                 $this->translator->translate('remp_mailer.admin.scenarios.mail_received.template_param.label'),
                 $mailTemplateOptions,
-                'or'
+                'or',
             ),
             new TimeframeParam(
                 self::TIMEFRAME_KEY,
@@ -56,8 +56,8 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
                 $this->translator->translate('remp_mailer.admin.scenarios.mail_received.timeframe_param.amount_label'),
                 $this->translator->translate('remp_mailer.admin.scenarios.mail_received.timeframe_param.units_label'),
                 array_values(self::OPERATORS),
-                self::UNITS
-            )
+                self::UNITS,
+            ),
         ];
     }
 

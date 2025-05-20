@@ -18,7 +18,7 @@ class SegmentsSeeder implements ISeeder
 
     public function __construct(
         SegmentGroupsRepository $segmentGroupsRepository,
-        SegmentsRepository $segmentsRepository
+        SegmentsRepository $segmentsRepository,
     ) {
         $this->segmentGroupsRepository = $segmentGroupsRepository;
         $this->segmentsRepository = $segmentsRepository;
@@ -46,7 +46,7 @@ GROUP BY %table%.id
 SQL,
             null,
             'users',
-            'users.id, users.email'
+            'users.id, users.email',
         );
     }
 }

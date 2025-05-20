@@ -19,7 +19,7 @@ class SendWelcomeEmailHandler extends AbstractListener
     public function __construct(
         Emitter $hermesEmitter,
         UserEmailConfirmationsRepository $userEmailConfirmationsRepository,
-        LinkGenerator $linkGenerator
+        LinkGenerator $linkGenerator,
     ) {
         $this->hermesEmitter = $hermesEmitter;
         $this->userEmailConfirmationsRepository = $userEmailConfirmationsRepository;
@@ -46,9 +46,9 @@ class SendWelcomeEmailHandler extends AbstractListener
                 'params' => [
                     'email' => $user->email,
                     'password' => $event->getOriginalPassword(),
-                    'confirmation_url' => $link
+                    'confirmation_url' => $link,
                 ],
-                'attachments' => []
+                'attachments' => [],
             ]));
         }
     }

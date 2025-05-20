@@ -79,7 +79,7 @@ class SendNotificationEmailToAddressesGenericEvent implements ScenarioGenericEve
                     $this->emitter,
                     $userRow,
                     $emailCode,
-                    $templateParams
+                    $templateParams,
                 );
             }
         }

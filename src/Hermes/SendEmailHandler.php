@@ -21,7 +21,7 @@ class SendEmailHandler implements HandlerInterface
 
     public function __construct(
         Client $apiClient,
-        UsersRepository $usersRepository
+        UsersRepository $usersRepository,
     ) {
         $this->apiClient = $apiClient;
         $this->usersRepository = $usersRepository;
@@ -62,7 +62,7 @@ class SendEmailHandler implements HandlerInterface
             $payload['context'] ?? null,
             $attachments,
             $payload['schedule_at'] ?? null,
-            $payload['locale'] ?? $user->locale ?? null
+            $payload['locale'] ?? $user->locale ?? null,
         );
 
         return true;

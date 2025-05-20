@@ -55,7 +55,7 @@ class MailTemplateListApiHandlerTest extends DatabaseTestCase
 
         $mailTemplateListApiHandler = new MailTemplateListApiHandler(
             new MailTemplatesRepository($client),
-            $this->linkGenerator
+            $this->linkGenerator,
         );
         $mailTemplateListApiHandler->addAllowedMailTypeCodes('test_templates');
         $mailTemplateListApiHandler->setAuthorization(new NoAuthorization());
