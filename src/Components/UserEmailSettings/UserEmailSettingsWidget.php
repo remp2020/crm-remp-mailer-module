@@ -37,7 +37,7 @@ class UserEmailSettingsWidget extends BaseLazyWidget
         $this->unclaimedUser = $unclaimedUser;
     }
 
-    public function header($id = '')
+    public function header()
     {
         return $this->translator->translate('remp_mailer.admin.mail_settings.header');
     }

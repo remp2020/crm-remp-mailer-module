@@ -4,15 +4,16 @@ namespace Crm\RempMailerModule\Components\MailLogs;
 
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Components\VisualPaginator\VisualPaginator;
-use Crm\ApplicationModule\Models\Widget\WidgetInterface;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\DetailWidgetInterface;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\RempMailerModule\Models\Api\MailLogQueryBuilder;
 use Crm\RempMailerModule\Repositories\MailLogsRepository;
 use Crm\UsersModule\Models\User\UnclaimedUser;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Nette\Application\UI\Control;
 use Nette\Utils\Html;
 
-class MailLogs extends Control implements WidgetInterface
+class MailLogs extends BaseLazyWidget implements DetailWidgetInterface
 {
     private string $view = 'mail_logs';
 
@@ -23,15 +24,17 @@ class MailLogs extends Control implements WidgetInterface
     private bool $enabled = true;
 
     public function __construct(
+        LazyWidgetManager $lazyWidgetManager,
         private MailLogQueryBuilder $logQuery,
         private MailLogsRepository $mailLogRepository,
         private UsersRepository $usersRepository,
         private UnclaimedUser $unclaimedUser,
         private Translator $translator,
     ) {
+        parent::__construct($lazyWidgetManager);
     }
 
-    public function header($id = '')
+    public function header($id = ''): string
     {
         $header = $this->translator->translate('remp_mailer.admin.mail_logs_component.header');
 
