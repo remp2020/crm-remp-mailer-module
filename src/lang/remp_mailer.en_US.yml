@@ -79,3 +79,10 @@ admin:
             timeframe_param:
                 amount_label: Amount
                 units_label: Units
+        user_subscribed_newsletters_count:
+            label: User is subscribed to newsletters (count)
+            categories_param:
+                label: Newsletter categories (optional, empty = all)
+            count_param:
+                label: Minimum count
+                unit: newsletters

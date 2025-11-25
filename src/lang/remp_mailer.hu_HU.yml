@@ -60,3 +60,19 @@ admin:
         unsubscribed: Kijelentkezés ideje %time%
         subscribed: Bejelentkezés ideje %time%
         not_loaded: Az alábbi felhasználó típus számára az e-mail beállítások nem olvashatók be.<br>Névtelen vagy törölt felhasználó.
+
+    scenarios:
+        mail_received:
+            label: E-mail érkezett
+            template_param:
+                label: E-mail sablon
+            timeframe_param:
+                amount_label: Mennyiség
+                units_label: Egység
+        user_subscribed_newsletters_count:
+            label: Felhasználó feliratkozott hírlevelek (szám)
+            categories_param:
+                label: Hírlevél kategóriák (opcionális, üres = összes)
+            count_param:
+                label: Minimális szám
+                unit: hírlevelek

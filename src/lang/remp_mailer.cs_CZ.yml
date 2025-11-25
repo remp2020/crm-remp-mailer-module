@@ -78,3 +78,10 @@ admin:
             timeframe_param:
                 amount_label: Jednotka
                 units_label: Počet
+        user_subscribed_newsletters_count:
+            label: Uživatel odebírá newslettery (počet)
+            categories_param:
+                label: Kategorie newsletterů (nepovinné, prázdné = všechny)
+            count_param:
+                label: Minimální počet
+                unit: newsletterů

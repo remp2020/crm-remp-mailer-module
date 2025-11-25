@@ -46,7 +46,7 @@ services:
 			- pushProcessor(@mailerLogRedact::add(['token', 'password']))
 
 	# models
-	- Crm\RempMailerModule\Models\Api\Client
+	mailerApiClient: Crm\RempMailerModule\Models\Api\Client
 	- Crm\RempMailerModule\Models\Api\MailLogQueryBuilder
 	- Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator
 	mailerMailerConfig: Crm\RempMailerModule\Models\MailerConfig
@@ -63,6 +63,8 @@ services:
 	    factory: Crm\RempMailerModule\Scenarios\MailReceivedCriteria
 	    setup:
 	        - addAllowedMailTypeCodes('system', 'system_optional')
+
+	- Crm\RempMailerModule\Scenarios\UserSubscribedNewslettersCountCriteria
 
 	sendNotificationEmailGenericEvent:
 		factory: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent

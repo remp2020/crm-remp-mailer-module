@@ -80,3 +80,10 @@ admin:
             timeframe_param:
                 amount_label: Jednotka
                 units_label: Počet
+        user_subscribed_newsletters_count:
+            label: Používateľ odobera newslettre (počet)
+            categories_param:
+                label: Kategórie newslettrov (nepovinné, prázdne = všetky)
+            count_param:
+                label: Minimálny počet
+                unit: newslettrov
