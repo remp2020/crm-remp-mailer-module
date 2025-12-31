@@ -49,7 +49,7 @@ class SubscribeSegmentToMailTypeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $segmentCode = $input->getOption('segment');
         if ($segmentCode === null) {
