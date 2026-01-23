@@ -113,11 +113,13 @@ class MailUserSubscriptionsRepository
         $msr = $msr->setSubscribed(false);
         $result = $this->apiClient->unsubscribe($msr, $rtmParams);
 
-        $this->emitter->emit(new UserMailSubscriptionsChanged(
-            $msr->getUserId(),
-            $msr->getMailTypeId(),
-            UserMailSubscriptionsChanged::UNSUBSCRIBED,
-        ));
+        if ($result) {
+            $this->emitter->emit(new UserMailSubscriptionsChanged(
+                $msr->getUserId(),
+                $msr->getMailTypeId(),
+                UserMailSubscriptionsChanged::UNSUBSCRIBED,
+            ));
+        }
 
         return $result;
     }
@@ -145,7 +147,12 @@ class MailUserSubscriptionsRepository
                 ->setMailTypeCode($subscribedMailType['code'])
                 ->setSendAccompanyingEmails(false);
         }
+
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+        if ($result === null) {
+            // This is to prevent event emitting if subscribe wasn't successful.
+            return null;
+        }
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {
@@ -181,7 +188,12 @@ class MailUserSubscriptionsRepository
                 ->setMailTypeId($subscribedMailType['id'])
                 ->setSendAccompanyingEmails(false);
         }
+
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+        if ($result === null) {
+            // This is to prevent event emitting if subscribe wasn't successful.
+            return null;
+        }
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {
@@ -198,6 +210,10 @@ class MailUserSubscriptionsRepository
     final public function bulkSubscriptionChange(array $subscribeRequests)
     {
         $result = $this->apiClient->bulkSubscribe($subscribeRequests);
+        if ($result === null) {
+            // This is to prevent event emitting if subscribe wasn't successful.
+            return null;
+        }
 
         /** @var MailSubscribeRequest $subscribeRequest */
         foreach ($subscribeRequests as $subscribeRequest) {

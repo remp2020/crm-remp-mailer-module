@@ -21,15 +21,15 @@ class SubscribeSegmentToMailTypeCommand extends Command
     use DecoratedCommandTrait;
 
     public function __construct(
-        private MailTypesRepository $mailTypesRepository,
-        private MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
-        private SegmentFactoryInterface $segmentFactory,
-        private UsersRepository $usersRepository,
+        private readonly MailTypesRepository $mailTypesRepository,
+        private readonly MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
+        private readonly SegmentFactoryInterface $segmentFactory,
+        private readonly UsersRepository $usersRepository,
     ) {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('remp-mailer:subscribe-segment-to-mail-type')
             ->setDescription('Subscribe users from segment to mail type')
@@ -45,7 +45,15 @@ class SubscribeSegmentToMailTypeCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Mail type code to subscribe users to',
             )
+            ->addOption(
+                'chunk-size',
+                'c',
+                InputOption::VALUE_REQUIRED,
+                'Number of users to subscribe per API request (default: 1000)',
+                1000,
+            )
             ->addUsage("--segment=active_registered_users --mail-type=svetovy_newsfilter")
+            ->addUsage("--segment=active_registered_users --mail-type=svetovy_newsfilter --chunk-size=500")
         ;
     }
 
@@ -86,27 +94,29 @@ class SubscribeSegmentToMailTypeCommand extends Command
             return Command::SUCCESS;
         }
 
-        $this->line("");
-        $this->line("Subscribing:");
-
+        $chunkSize = (int) $input->getOption('chunk-size');
         $subscribed = 0;
+        $failed = 0;
         $alreadySubscribed = 0;
         $requests = [];
+        $chunkNumber = 0;
 
-        $segment->process(function ($user) use ($mailType, &$subscribed, &$alreadySubscribed, &$requests) {
+        $this->line("Subscribing, requests to Mailer will be sent every <comment>{$chunkSize}</comment> new subscribers.");
+
+        $segment->process(function ($user) use ($mailType, $chunkSize, &$subscribed, &$failed, &$alreadySubscribed, &$requests, &$chunkNumber) {
             $userPreferences = $this->mailUserSubscriptionsRepository->userPreferences($user->id);
             $isSubscribed = $userPreferences[$mailType->id]['is_subscribed'] ?? false;
 
             if ($isSubscribed) {
                 $alreadySubscribed++;
-                $this->line(" * {$user->email} - <comment>ALREADY SUBSCRIBED</comment>");
+                $this->line(" * {$user->email} - SKIPPED (already subscribed)");
                 return;
             }
 
             if (isset($userPreferences[$mailType->id]) && $userPreferences[$mailType->id]['updated_at'] !== $userPreferences[$mailType->id]['created_at']) {
                 // if user made a change in the mail subscription in the past
                 $alreadySubscribed++;
-                $this->line(" * {$user->email} - <comment>ALREADY UNSUBSCRIBED MANUALLY</comment>");
+                $this->line(" * {$user->email} - SKIPPED (already unsubscribed manually)");
                 return;
             }
 
@@ -121,17 +131,43 @@ class SubscribeSegmentToMailTypeCommand extends Command
 
             $requests[] = $request;
 
-            $this->line(" * {$user->email} - <info>SUBSCRIBING</info>");
-            $subscribed++;
+            $this->line(" * {$user->email} - <comment>WILL SUBSCRIBE</comment>");
+
+            if (count($requests) >= $chunkSize) {
+                $chunkNumber++;
+                $this->output->write("SENDING BULK SUBSCRIBE #{$chunkNumber}: ");
+                $result = $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($requests);
+
+                if ($result) {
+                    $subscribed += count($requests);
+                    $this->output->writeln("<info>OK</info>");
+                } else {
+                    $failed += count($requests);
+                    $this->output->writeln("<error>FAILED</error>");
+                }
+
+                $requests = [];
+            }
         });
 
-        $output->write("Executing bulk subscribe: ");
-        $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($requests);
-        $output->writeln("OK");
+        if (count($requests) > 0) {
+            $chunkNumber++;
+            $this->output->write("SENDING BULK SUBSCRIBE #{$chunkNumber}: ");
+            $result = $this->mailUserSubscriptionsRepository->bulkSubscriptionChange($requests);
+
+            if ($result) {
+                $subscribed += count($requests);
+                $this->output->writeln("OK");
+            } else {
+                $failed += count($requests);
+                $this->output->writeln("<error>FAILED</error>");
+            }
+        }
 
         $this->line("");
         $this->line("<comment>{$alreadySubscribed} users</comment> already subscribed.");
         $this->line("<comment>{$subscribed} users</comment> subscribed by command.");
+        $this->line("<comment>{$failed} users</comment> NOT subscribed by command.");
         $this->line("");
         $this->line("Done.");
 
