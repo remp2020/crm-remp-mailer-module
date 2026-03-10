@@ -5,7 +5,6 @@ namespace Crm\RempMailerModule\Models\Authenticator;
 use Crm\ApplicationModule\Models\Authenticator\AuthenticatorInterface;
 use Crm\ApplicationModule\Models\Authenticator\BaseAuthenticator;
 use Crm\RempMailerModule\Models\Api\Client;
-use Crm\UsersModule\Models\Auth\UserAuthenticator;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Crm\UsersModule\Repositories\LoginAttemptsRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
@@ -13,6 +12,7 @@ use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\Request;
 use Nette\Security\AuthenticationException;
+use Nette\Security\Authenticator;
 
 /**
  * TokenAuthenticator authenticates user based on mailToken.
@@ -68,16 +68,16 @@ class TokenAuthenticator extends BaseAuthenticator
     {
         $email = $this->apiClient->checkAutologinToken($this->mailToken);
         if (!$email) {
-            throw new AuthenticationException('Autologin was not successful, please try to log in with email and password', UserAuthenticator::IDENTITY_NOT_FOUND);
+            throw new AuthenticationException('Autologin was not successful, please try to log in with email and password', Authenticator::IdentityNotFound);
         }
 
         $user = $this->userManager->loadUserByEmail($email);
         if (!$user) {
             $this->addAttempt($email, null, $this->source, LoginAttemptsRepository::STATUS_TOKEN_NOT_FOUND);
-            throw new AuthenticationException('Invalid token provided', UserAuthenticator::IDENTITY_NOT_FOUND);
+            throw new AuthenticationException('Invalid token provided', Authenticator::IdentityNotFound);
         }
         if ($user->role === UsersRepository::ROLE_ADMIN) {
-            throw new AuthenticationException('Autologin for this account is disabled', UserAuthenticator::IDENTITY_NOT_FOUND);
+            throw new AuthenticationException('Autologin for this account is disabled', Authenticator::IdentityNotFound);
         }
 
         $this->addAttempt($user->email, $user, $this->source, LoginAttemptsRepository::STATUS_TOKEN_OK);
