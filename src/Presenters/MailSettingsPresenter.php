@@ -40,7 +40,7 @@ class MailSettingsPresenter extends FrontendPresenter
         $this->onlyLoggedIn();
     }
 
-    public function renderSubscribeEmail($id, string $successUrl = null)
+    public function renderSubscribeEmail($id, ?string $successUrl = null)
     {
         $this->onlyLoggedIn();
 
@@ -81,7 +81,7 @@ class MailSettingsPresenter extends FrontendPresenter
         ]);
     }
 
-    public function renderSubscribeEmailSuccess($id, array $mailTypeCategoryCodes = null)
+    public function renderSubscribeEmailSuccess($id, ?array $mailTypeCategoryCodes = null)
     {
         $this->onlyLoggedIn();
 

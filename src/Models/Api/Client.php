@@ -138,7 +138,7 @@ class Client
         }
     }
 
-    public function sendEmail(string $email, string $templateCode, array $params = [], string $context = null, array $attachments = [], $scheduleAt = null, string $locale = null): bool
+    public function sendEmail(string $email, string $templateCode, array $params = [], ?string $context = null, array $attachments = [], $scheduleAt = null, ?string $locale = null): bool
     {
         try {
             $json = array_filter([

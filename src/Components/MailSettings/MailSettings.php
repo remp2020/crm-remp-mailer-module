@@ -34,7 +34,7 @@ class MailSettings extends Control
     ) {
     }
 
-    public function render(array $mailTypeCategoryCodes = null)
+    public function render(?array $mailTypeCategoryCodes = null)
     {
         $this->template->setFile(__DIR__ . '/' . $this->view);
 
@@ -106,7 +106,7 @@ class MailSettings extends Control
         $this->template->render();
     }
 
-    public function handleAllSubscribe(array $cat = null)
+    public function handleAllSubscribe(?array $cat = null)
     {
         $this->presenter->onlyLoggedIn();
         $user = $this->userManager->loadUser($this->presenter->user);
@@ -136,7 +136,7 @@ class MailSettings extends Control
         $this->presenter->redirect('this');
     }
 
-    public function handleAllUnSubscribe(array $cat = null)
+    public function handleAllUnSubscribe(?array $cat = null)
     {
         $this->presenter->onlyLoggedIn();
         $user = $this->userManager->loadUser($this->presenter->user);
