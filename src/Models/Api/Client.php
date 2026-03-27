@@ -122,7 +122,7 @@ class Client
 
             return true;
         } catch (ClientException $e) {
-            if ($e->getResponse() && $e->getResponse()->getStatusCode() === IResponse::S404_NOT_FOUND) {
+            if ($e->getResponse()->getStatusCode() === IResponse::S404_NOT_FOUND) {
                 $response = Json::decode($e->getResponse()->getBody(), Json::FORCE_ARRAY);
                 if ($response['code'] === 'user_not_found') {
                     // user had zero emails sent from Mailer or was removed in past
