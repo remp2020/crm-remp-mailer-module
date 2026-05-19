@@ -76,7 +76,8 @@
     var backendData = {
         mailTypesByCategories: {$mailTypesByCategories ?? []},
         categories: {$categories ?? []},
-        prohibitedMode: {$prohibitedMode}
+        prohibitedMode: {$prohibitedMode},
+        notLogged: {$notLogged}
     };
     var rtmParams =  {$rtmParams};
 </script>
@@ -88,6 +89,21 @@
                 newsletter_action : event
             });
         }
+    }
+
+    function redirectGuestToSubscribe(mailType, variantId, beforeRedirect) {
+        if (!backendData.notLogged) {
+            return false;
+        }
+        if (beforeRedirect) {
+            beforeRedirect();
+        }
+        var url = mailType.subscribe_email_url;
+        if (variantId !== null && variantId !== undefined) {
+            url += (url.indexOf('?') === -1 ? '?' : '&') + 'variantId=' + encodeURIComponent(variantId);
+        }
+        window.location.href = url;
+        return true;
     }
 
     function ajaxSubscribe(subscribe, mailTypeCode, variantId, alwaysCallback, failCallback, doneCallback) {
@@ -179,6 +195,11 @@
                 this.mailType.is_subscribed = true;
             },
             onToggleMailType: function (event) {
+                if (redirectGuestToSubscribe(this.mailType, null, () => {
+                    this.mailType.is_subscribed = true;
+                })) {
+                    return;
+                }
                 this.disabled = true;
                 var that = this;
 
@@ -266,6 +287,9 @@
         },
         methods: {
             onToggle: function (selectedVariantId) {
+                if (redirectGuestToSubscribe(this.mailType, selectedVariantId)) {
+                    return;
+                }
                 for (var variantId in this.mailType.variants) {
                     this.mailType.variants[variantId].is_subscribed = variantId === selectedVariantId;
                 }
@@ -313,6 +337,11 @@
         },
         methods: {
             onToggle: function (event) {
+                if (redirectGuestToSubscribe(this.mailType, this.variant.id, () => {
+                    this.variant.is_subscribed = true;
+                })) {
+                    return;
+                }
                 this.disabled = true;
                 var that = this;
 
@@ -323,6 +352,17 @@
                     function () {
                         if (that.variant.is_subscribed) {
                             that.$emit('subscribed');
+                        } else {
+                            var anySubscribed = false;
+                            for (var vid in that.mailType.variants) {
+                                if (that.mailType.variants[vid].is_subscribed) {
+                                    anySubscribed = true;
+                                    break;
+                                }
+                            }
+                            if (!anySubscribed) {
+                                that.mailType.is_subscribed = false;
+                            }
                         }
                     }
                 );

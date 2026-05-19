@@ -37,6 +37,8 @@ class MailSettings extends Control
     public function render(?array $mailTypeCategoryCodes = null)
     {
         $this->template->setFile(__DIR__ . '/' . $this->view);
+        $isLoggedIn = $this->presenter->getUser()->isLoggedIn();
+        $this->template->notLogged = !$isLoggedIn;
 
         $categories = $this->mailTypeCategoriesRepository->all();
         if ($mailTypeCategoryCodes) {
@@ -66,14 +68,11 @@ class MailSettings extends Control
         }
 
         $userSubscriptions = [];
-        if ($this->presenter->getUser()->isLoggedIn()) {
+        if ($isLoggedIn) {
             $userSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences(
                 $this->presenter->getUser()->id,
                 true,
             );
-            $this->template->notLogged = false;
-        } else {
-            $this->template->notLogged = true;
         }
 
 
@@ -83,6 +82,12 @@ class MailSettings extends Control
                 $mailTypesByCategories[$mailType->mail_type_category_id] = [];
             }
             $mailType->is_subscribed = isset($userSubscriptions[$mailType->id]);
+            if (!$isLoggedIn) {
+                $mailType->subscribe_email_url = $this->presenter->link(
+                    ':RempMailer:MailSettings:subscribeEmail',
+                    ['id' => $mailType->code],
+                );
+            }
 
             $variants = $mailType->variants;
             $mailType->variants = [];
@@ -198,6 +203,10 @@ class MailSettings extends Control
     private function isProhibited(): bool
     {
         if (!$this->mailerConfig->getSubscribeOnlyConfirmedUser()) {
+            return false;
+        }
+
+        if (!$this->presenter->getUser()->isLoggedIn()) {
             return false;
         }
 

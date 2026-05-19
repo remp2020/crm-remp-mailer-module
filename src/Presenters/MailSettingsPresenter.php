@@ -35,12 +35,7 @@ class MailSettingsPresenter extends FrontendPresenter
         return $mailSettingsControlFactory->create();
     }
 
-    public function renderMailSettings()
-    {
-        $this->onlyLoggedIn();
-    }
-
-    public function renderSubscribeEmail($id, ?string $successUrl = null)
+    public function renderSubscribeEmail($id, ?string $successUrl = null, ?int $variantId = null)
     {
         $this->onlyLoggedIn();
 
@@ -55,6 +50,9 @@ class MailSettingsPresenter extends FrontendPresenter
             ->setMailTypeCode($mailType->code)
             ->setMailTypeId($mailType->id)
             ->setUser($user);
+        if ($variantId !== null) {
+            $msr->setVariantId($variantId);
+        }
         $this->mailUserSubscriptionsRepository->subscribe($msr, $this->rtmParams());
 
         // if successUrl is valid, add flashmessage and redirect
