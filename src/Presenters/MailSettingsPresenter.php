@@ -177,6 +177,10 @@ class MailSettingsPresenter extends FrontendPresenter
 
     private function shouldRedirectToSettingUp()
     {
+        if (!$this->getUser()->isLoggedIn()) {
+            return false;
+        }
+
         $user = $this->userManager->loadUser($this->getUser());
         $window = $this->mailerConfig->getRecentlyConfirmedWindowSeconds();
         if ($window !== null && $this->getUser()->isLoggedIn() && $this->mailerConfig->getSubscribeOnlyConfirmedUser()) {
