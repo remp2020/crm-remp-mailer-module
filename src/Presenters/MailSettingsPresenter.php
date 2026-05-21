@@ -8,6 +8,7 @@ use Crm\ApplicationModule\Router\RedirectValidator;
 use Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface;
 use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
+use Crm\RempMailerModule\Models\MailerConfig;
 use Crm\RempMailerModule\Repositories\MailTypesRepository;
 use Crm\RempMailerModule\Repositories\MailUserSubscriptionsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
@@ -22,12 +23,33 @@ class MailSettingsPresenter extends FrontendPresenter
     #[Inject]
     public RedirectValidator $redirectValidator;
 
-    public function __construct(
-        protected MailUserSubscriptionsRepository $mailUserSubscriptionsRepository,
-        protected MailTypesRepository $mailTypesRepository,
-        protected Client $mailerApiClient,
-    ) {
-        parent::__construct();
+    #[Inject]
+    public MailUserSubscriptionsRepository $mailUserSubscriptionsRepository;
+
+    #[Inject]
+    public MailTypesRepository $mailTypesRepository;
+
+    #[Inject]
+    public MailerConfig $mailerConfig;
+
+    #[Inject]
+    public Client $mailerApiClient;
+
+    public function renderMailSettings()
+    {
+        if ($this->shouldRedirectToSettingUp()) {
+            $this->redirect('settingUp', ['back' => $this->storeRequest()]);
+        }
+    }
+
+    public function renderSettingUp(?string $back = null)
+    {
+        if (!$this->shouldRedirectToSettingUp()) {
+            if ($back !== null) {
+                $this->restoreRequest($back);
+            }
+            $this->redirect('mailSettings');
+        }
     }
 
     public function createComponentMailSettings(MailSettingsControlFactoryInterface $mailSettingsControlFactory)
@@ -38,6 +60,9 @@ class MailSettingsPresenter extends FrontendPresenter
     public function renderSubscribeEmail($id, ?string $successUrl = null, ?int $variantId = null)
     {
         $this->onlyLoggedIn();
+        if ($this->shouldRedirectToSettingUp()) {
+            $this->redirect('settingUp', ['back' => $this->storeRequest()]);
+        }
 
         $mailType = $this->mailTypesRepository->getByCode($id);
         if (!$mailType) {
@@ -148,5 +173,16 @@ class MailSettingsPresenter extends FrontendPresenter
             $this->mailUserSubscriptionsRepository->unsubscribe($msr, $this->rtmParams());
         }
         $this->template->header = $message;
+    }
+
+    private function shouldRedirectToSettingUp()
+    {
+        $user = $this->userManager->loadUser($this->getUser());
+        $window = $this->mailerConfig->getRecentlyConfirmedWindowSeconds();
+        if ($window !== null && $this->getUser()->isLoggedIn() && $this->mailerConfig->getSubscribeOnlyConfirmedUser()) {
+            return $user->confirmed_at >= new \DateTime("-{$window} seconds");
+        }
+
+        return false;
     }
 }

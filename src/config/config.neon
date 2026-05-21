@@ -15,9 +15,7 @@ services:
 
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
-	- Crm\RempMailerModule\Components\MailSettings\MailSettings
 	- Crm\RempMailerModule\Components\MailSettings\MailSettingsControlFactoryInterface
-	- Crm\RempMailerModule\Components\MailLogs\MailLogs
 	- Crm\RempMailerModule\Components\MailLogs\MailLogControlFactoryInterface
 
 	# DI

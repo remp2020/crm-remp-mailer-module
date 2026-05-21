@@ -1,0 +1,46 @@
+{block #title}{_remp_mailer.frontend.setting_up.title}{/block}
+
+{block #head}
+<style>
+    .setting-up-dots {
+        height: 30px;
+        aspect-ratio: 2.5;
+        --_g: no-repeat radial-gradient(farthest-side, #aaa 90%, #0000);
+        background: var(--_g), var(--_g), var(--_g), var(--_g);
+        background-size: 20% 50%;
+        animation: setting-up-dots 1s infinite linear;
+        display: inline-block;
+    }
+    @keyframes setting-up-dots {
+        0%      { background-position: calc(0*100%/3) 50%,  calc(1*100%/3) 50%,  calc(2*100%/3) 50%,  calc(3*100%/3) 50%  }
+        16.67%  { background-position: calc(0*100%/3) 0,    calc(1*100%/3) 50%,  calc(2*100%/3) 50%,  calc(3*100%/3) 50%  }
+        33.33%  { background-position: calc(0*100%/3) 100%, calc(1*100%/3) 0,    calc(2*100%/3) 50%,  calc(3*100%/3) 50%  }
+        50%     { background-position: calc(0*100%/3) 50%,  calc(1*100%/3) 100%, calc(2*100%/3) 0,    calc(3*100%/3) 50%  }
+        66.67%  { background-position: calc(0*100%/3) 50%,  calc(1*100%/3) 50%,  calc(2*100%/3) 100%, calc(3*100%/3) 0    }
+        83.33%  { background-position: calc(0*100%/3) 50%,  calc(1*100%/3) 50%,  calc(2*100%/3) 50%,  calc(3*100%/3) 100% }
+        100%    { background-position: calc(0*100%/3) 50%,  calc(1*100%/3) 50%,  calc(2*100%/3) 50%,  calc(3*100%/3) 50%  }
+    }
+</style>
+{/block}
+
+{block #content}
+<meta http-equiv="refresh" content="5">
+
+<div class="row" style="margin-top: 60px; text-align: center;">
+    <div class="col-md-8 col-md-offset-2">
+
+        <div n:ifset="$logoUrl">
+            <img src="{$logoUrl}" alt="" style="max-height: 60px; margin-bottom: 40px;">
+        </div>
+
+        <h2>{_remp_mailer.frontend.setting_up.message}</h2>
+
+        <p class="text-muted" style="margin-top: 16px; margin-bottom: 40px;">
+            {_remp_mailer.frontend.setting_up.description}
+        </p>
+
+        <div class="setting-up-dots" aria-hidden="true"></div>
+
+    </div>
+</div>
+{/block}

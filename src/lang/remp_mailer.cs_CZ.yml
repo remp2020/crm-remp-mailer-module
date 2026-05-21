@@ -50,6 +50,12 @@ frontend:
 
     subscribe_email:
         subscribe_success: Úspešně jste se přihlásili k odběru newsletteru '%mail_type_title%'.
+
+    setting_up:
+        title: Nastavujeme newslettery
+        message: Poprvé nastavujeme vaše newslettery.
+        description: Může to chvíli trvat. Stránka se automaticky obnoví.
+
 admin:
     mail_logs_component:
         header: Odeslané e-maily

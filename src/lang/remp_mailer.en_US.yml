@@ -51,6 +51,11 @@ frontend:
     subscribe_email:
         subscribe_success: "You have successfully subscribed to the newsletter '%mail_type_title%'."
 
+    setting_up:
+        title: Configuring newsletters
+        message: We're setting up your newsletters for the first time.
+        description: This may take a moment. The page will refresh automatically.
+
 admin:
     mail_logs_component:
         header: Sent emails

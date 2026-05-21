@@ -43,6 +43,11 @@ frontend:
     subscribe_email:
         subscribe_success: "Sikeresen feliratkoztál a '%mail_type_title%' hírlevélre!"
 
+    setting_up:
+        title: Hírlevelek beállítása
+        message: Első alkalommal állítjuk be az Ön hírleveleit.
+        description: Ez eltarthat egy pillanatig. Az oldal automatikusan frissül.
+
 admin:
     mail_logs_component:
         no_content: Nincs elküldött e-mail

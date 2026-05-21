@@ -52,6 +52,11 @@ frontend:
     subscribe_email:
         subscribe_success: "Úspešne ste sa prihlásili k odberu newslettra '%mail_type_title%'."
 
+    setting_up:
+        title: Nastavujeme newslettre
+        message: Prvýkrát nastavujeme vaše newslettre.
+        description: Môže to chvíľu trvať. Stránka sa automaticky obnoví.
+
 admin:
     mail_logs_component:
         header: Odoslané e-maily
