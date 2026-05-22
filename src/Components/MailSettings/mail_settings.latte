@@ -76,8 +76,7 @@
     var backendData = {
         mailTypesByCategories: {$mailTypesByCategories ?? []},
         categories: {$categories ?? []},
-        prohibitedMode: {$prohibitedMode},
-        notLogged: {$notLogged}
+        prohibitedMode: {$prohibitedMode}
     };
     var rtmParams =  {$rtmParams};
 </script>
@@ -89,21 +88,6 @@
                 newsletter_action : event
             });
         }
-    }
-
-    function redirectGuestToSubscribe(mailType, variantId, beforeRedirect) {
-        if (!backendData.notLogged) {
-            return false;
-        }
-        if (beforeRedirect) {
-            beforeRedirect();
-        }
-        var url = mailType.subscribe_email_url;
-        if (variantId !== null && variantId !== undefined) {
-            url += (url.indexOf('?') === -1 ? '?' : '&') + 'variantId=' + encodeURIComponent(variantId);
-        }
-        window.location.href = url;
-        return true;
     }
 
     function ajaxSubscribe(subscribe, mailTypeCode, variantId, alwaysCallback, failCallback, doneCallback) {
@@ -195,9 +179,8 @@
                 this.mailType.is_subscribed = true;
             },
             onToggleMailType: function (event) {
-                if (redirectGuestToSubscribe(this.mailType, null, () => {
-                    this.mailType.is_subscribed = true;
-                })) {
+                if (this.mailType.subscribe_email_url) {
+                    window.location.href = this.mailType.subscribe_email_url;
                     return;
                 }
                 this.disabled = true;
@@ -287,7 +270,8 @@
         },
         methods: {
             onToggle: function (selectedVariantId) {
-                if (redirectGuestToSubscribe(this.mailType, selectedVariantId)) {
+                if (this.mailType.variants[selectedVariantId].subscribe_email_url) {
+                    window.location.href = this.mailType.variants[selectedVariantId].subscribe_email_url;
                     return;
                 }
                 for (var variantId in this.mailType.variants) {
@@ -337,9 +321,8 @@
         },
         methods: {
             onToggle: function (event) {
-                if (redirectGuestToSubscribe(this.mailType, this.variant.id, () => {
-                    this.variant.is_subscribed = true;
-                })) {
+                if (this.variant.subscribe_email_url) {
+                    window.location.href = this.variant.subscribe_email_url;
                     return;
                 }
                 this.disabled = true;

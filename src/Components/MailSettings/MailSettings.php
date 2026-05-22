@@ -38,7 +38,6 @@ class MailSettings extends Control
     {
         $this->template->setFile(__DIR__ . '/' . $this->view);
         $isLoggedIn = $this->presenter->getUser()->isLoggedIn();
-        $this->template->notLogged = !$isLoggedIn;
 
         $categories = $this->mailTypeCategoriesRepository->all();
         if ($mailTypeCategoryCodes) {
@@ -93,12 +92,19 @@ class MailSettings extends Control
             $mailType->variants = [];
 
             foreach ($variants as $variantId => $variant) {
-                $mailType->variants[$variantId] = (object) [
+                $variantObj = (object) [
                     'id' => $variantId,
                     'title' => $variant->title,
                     'is_subscribed' => isset($userSubscriptions[$mailType->id]['variants'][$variantId]),
                     'is_default' => (int) $variantId === (int) $mailType->default_variant_id,
                 ];
+                if (!$isLoggedIn) {
+                    $variantObj->subscribe_email_url = $this->presenter->link(
+                        ':RempMailer:MailSettings:subscribeEmail',
+                        ['id' => $mailType->code, 'variantId' => $variantId],
+                    );
+                }
+                $mailType->variants[$variantId] = $variantObj;
             }
             $mailTypesByCategories[$mailType->mail_type_category_id][] = $mailType;
         }
