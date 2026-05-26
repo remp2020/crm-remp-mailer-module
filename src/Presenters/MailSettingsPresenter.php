@@ -106,6 +106,9 @@ class MailSettingsPresenter extends FrontendPresenter
 
     public function renderSubscribeEmailSuccess($id, ?array $mailTypeCategoryCodes = null)
     {
+        if ($this->shouldRedirectToSettingUp()) {
+            $this->redirect('settingUp', ['back' => $this->storeRequest()]);
+        }
         $this->onlyLoggedIn();
 
         $mailType = $this->mailTypesRepository->getByCode($id);
