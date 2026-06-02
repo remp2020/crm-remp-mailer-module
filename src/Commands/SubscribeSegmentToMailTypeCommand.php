@@ -46,6 +46,12 @@ class SubscribeSegmentToMailTypeCommand extends Command
                 'Mail type code to subscribe users to',
             )
             ->addOption(
+                'variant-code',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Optional mail type variant code to subscribe users to (must belong to the provided mail type)',
+            )
+            ->addOption(
                 'chunk-size',
                 'c',
                 InputOption::VALUE_REQUIRED,
@@ -53,6 +59,7 @@ class SubscribeSegmentToMailTypeCommand extends Command
                 1000,
             )
             ->addUsage("--segment=active_registered_users --mail-type=svetovy_newsfilter")
+            ->addUsage("--segment=active_registered_users --mail-type=svetovy_newsfilter --variant-code=svetovy_newsfilter_morning")
             ->addUsage("--segment=active_registered_users --mail-type=svetovy_newsfilter --chunk-size=500")
         ;
     }
@@ -71,6 +78,8 @@ class SubscribeSegmentToMailTypeCommand extends Command
             return Command::FAILURE;
         }
 
+        $variantCode = $input->getOption('variant-code');
+
         try {
             $segment = $this->segmentFactory->buildSegment($segmentCode);
         } catch (UnexpectedValueException $e) {
@@ -78,16 +87,32 @@ class SubscribeSegmentToMailTypeCommand extends Command
             return Command::FAILURE;
         }
 
-        $mailType = $this->mailTypesRepository->getByCode($mailTypeCode);
+        $mailType = $this->mailTypesRepository->getByCode($mailTypeCode, includeVariantsData: $variantCode !== null);
         if ($mailType === null) {
             $this->error("Mail type with code [{$mailTypeCode}] doesn't exist.");
             return Command::FAILURE;
         }
 
+        $mailTypeVariant = null;
+        if ($variantCode !== null) {
+            foreach ($mailType->variants as $variant) {
+                if ($variant->code === $variantCode) {
+                    $mailTypeVariant = $variant;
+                    break;
+                }
+            }
+
+            if ($mailTypeVariant === null) {
+                $this->error("Variant with code [{$variantCode}] doesn't exist for mail type [{$mailTypeCode}].");
+                return Command::FAILURE;
+            }
+        }
+
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
+        $variantInfo = $mailTypeVariant !== null ? " variant <info>{$mailTypeVariant->code}</info>" : "";
         $question = new ConfirmationQuestion(
-            "This command will subscribe <info>{$segment->totalCount()} users</info> belonging to <info>[{$segmentCode}]</info> segment to mail type <info>{$mailType->title} - [{$mailTypeCode}]</info>. Continue? ",
+            "This command will subscribe <info>{$segment->totalCount()} users</info> belonging to <info>[{$segmentCode}]</info> segment to mail type <info>{$mailType->title} - [{$mailTypeCode}]</info>{$variantInfo}. Continue? ",
             false,
         );
         if (!$helper->ask($input, $output, $question)) {
@@ -103,9 +128,13 @@ class SubscribeSegmentToMailTypeCommand extends Command
 
         $this->line("Subscribing, requests to Mailer will be sent every <comment>{$chunkSize}</comment> new subscribers.");
 
-        $segment->process(function ($user) use ($mailType, $chunkSize, &$subscribed, &$failed, &$alreadySubscribed, &$requests, &$chunkNumber) {
+        $segment->process(function ($user) use ($mailType, $mailTypeVariant, $chunkSize, &$subscribed, &$failed, &$alreadySubscribed, &$requests, &$chunkNumber) {
             $userPreferences = $this->mailUserSubscriptionsRepository->userPreferences($user->id);
             $isSubscribed = $userPreferences[$mailType->id]['is_subscribed'] ?? false;
+
+            if ($mailTypeVariant) {
+                $isSubscribed = isset($userPreferences[$mailType->id][$mailTypeVariant->id]);
+            }
 
             if ($isSubscribed) {
                 $alreadySubscribed++;
@@ -128,6 +157,14 @@ class SubscribeSegmentToMailTypeCommand extends Command
             $request->setMailTypeCode($mailType->code);
             $request->setSendAccompanyingEmails(false);
             $request->setSubscribed(true);
+            if ($mailTypeVariant === null) {
+                $request->setForceNoVariantSubscription(true);
+            }
+
+            if ($mailTypeVariant !== null) {
+                $request->setVariantId($mailTypeVariant->id);
+                $request->setVariantCode($mailTypeVariant->code);
+            }
 
             $requests[] = $request;
 

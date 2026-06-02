@@ -24,6 +24,8 @@ class MailSubscribeRequest
 
     private $keepMailTypeSubscription;
 
+    private $forceNoVariantSubscription;
+
     public function setUser(ActiveRow $user)
     {
         $this->userId = $user->id;
@@ -72,6 +74,11 @@ class MailSubscribeRequest
         $this->keepMailTypeSubscription = $keepMailTypeSubscription;
     }
 
+    public function setForceNoVariantSubscription(bool $forceNoVariantSubscription)
+    {
+        $this->forceNoVariantSubscription = $forceNoVariantSubscription;
+    }
+
     public function getRequestData()
     {
         return array_filter([
@@ -84,6 +91,7 @@ class MailSubscribeRequest
             'variant_code' => $this->variantCode,
             'send_accompanying_emails' => $this->sendAccompanyingEmails,
             'keep_list_subscription' => $this->keepMailTypeSubscription,
+            'force_no_variant_subscription' => $this->forceNoVariantSubscription,
         ], function ($item) {
             return $item !== null;
         });
