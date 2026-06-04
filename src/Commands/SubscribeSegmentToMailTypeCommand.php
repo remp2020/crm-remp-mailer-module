@@ -133,7 +133,7 @@ class SubscribeSegmentToMailTypeCommand extends Command
             $isSubscribed = $userPreferences[$mailType->id]['is_subscribed'] ?? false;
 
             if ($mailTypeVariant) {
-                $isSubscribed = isset($userPreferences[$mailType->id][$mailTypeVariant->id]);
+                $isSubscribed = isset($userPreferences[$mailType->id]['variants'][$mailTypeVariant->id]);
             }
 
             if ($isSubscribed) {
@@ -142,7 +142,7 @@ class SubscribeSegmentToMailTypeCommand extends Command
                 return;
             }
 
-            if (isset($userPreferences[$mailType->id]) && $userPreferences[$mailType->id]['updated_at'] !== $userPreferences[$mailType->id]['created_at']) {
+            if ($mailTypeVariant === null && isset($userPreferences[$mailType->id]) && $userPreferences[$mailType->id]['updated_at'] !== $userPreferences[$mailType->id]['created_at']) {
                 // if user made a change in the mail subscription in the past
                 $alreadySubscribed++;
                 $this->line(" * {$user->email} - SKIPPED (already unsubscribed manually)");
