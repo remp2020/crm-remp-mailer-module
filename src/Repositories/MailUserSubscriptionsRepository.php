@@ -126,25 +126,27 @@ class MailUserSubscriptionsRepository
 
     final public function subscribeUserAll($user)
     {
-        $subscribedMailTypes = $this->userPreferences($user->id, false);
+        $unsubscribedMailTypes = $this->userPreferences($user->id, false);
 
-        $subscribedMailTypeCodes = array_column($subscribedMailTypes, 'code');
-        $mailTypes = [];
-        foreach ($this->mailTypesRepository->getAllByCode($subscribedMailTypeCodes) as $mailType) {
-            $mailTypes[$mailType->code] = $mailType;
+        $publicMailTypes = [];
+        foreach ($this->mailTypesRepository->all(publicListing: true) as $mailType) {
+            $publicMailTypes[$mailType->code] = $mailType;
         }
 
         $subscribeRequests = [];
-        foreach ($subscribedMailTypes as $subscribedMailType) {
-            if ($mailTypes[$subscribedMailType['code']]->locked ||
-                $subscribedMailType['is_subscribed']) {
+        foreach ($unsubscribedMailTypes as $unsubscribedMailType) {
+            $code = $unsubscribedMailType['code'];
+            if (!isset($publicMailTypes[$code])) {
+                continue;
+            }
+            if ($publicMailTypes[$code]->locked || $unsubscribedMailType['is_subscribed']) {
                 continue;
             }
             $subscribeRequests[] = (new MailSubscribeRequest())
                 ->setUser($user)
                 ->setSubscribed(true)
-                ->setMailTypeId($subscribedMailType['id'])
-                ->setMailTypeCode($subscribedMailType['code'])
+                ->setMailTypeId($unsubscribedMailType['id'])
+                ->setMailTypeCode($code)
                 ->setSendAccompanyingEmails(false);
         }
 
@@ -170,22 +172,25 @@ class MailUserSubscriptionsRepository
     {
         $subscribedMailTypes = $this->userPreferences($user->id, true);
 
-        $subscribedMailTypeCodes = array_column($subscribedMailTypes, 'code');
-        $mailTypes = [];
-        foreach ($this->mailTypesRepository->getAllByCode($subscribedMailTypeCodes) as $mailType) {
-            $mailTypes[$mailType->code] = $mailType;
+        $publicMailTypes = [];
+        foreach ($this->mailTypesRepository->all(publicListing: true) as $mailType) {
+            $publicMailTypes[$mailType->code] = $mailType;
         }
 
         $subscribeRequests = [];
         foreach ($subscribedMailTypes as $subscribedMailType) {
-            if ($mailTypes[$subscribedMailType['code']]->locked ||
-                !$subscribedMailType['is_subscribed']) {
+            $code = $subscribedMailType['code'];
+            if (!isset($publicMailTypes[$code])) {
+                continue;
+            }
+            if ($publicMailTypes[$code]->locked || !$subscribedMailType['is_subscribed']) {
                 continue;
             }
             $subscribeRequests[] = (new MailSubscribeRequest())
                 ->setUser($user)
                 ->setSubscribed(false)
                 ->setMailTypeId($subscribedMailType['id'])
+                ->setMailTypeCode($code)
                 ->setSendAccompanyingEmails(false);
         }
 
