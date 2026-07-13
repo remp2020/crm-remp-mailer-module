@@ -65,6 +65,7 @@ services:
 	        - addAllowedMailTypeCodes('system', 'system_optional')
 
 	- Crm\RempMailerModule\Scenarios\UserSubscribedNewslettersCountCriteria
+	- Crm\RempMailerModule\Scenarios\MailTypeSubscriptionCriteria
 
 	sendNotificationEmailGenericEvent:
 		factory: Crm\RempMailerModule\Scenarios\SendNotificationEmailToAddressesGenericEvent

@@ -35,6 +35,7 @@ use Crm\RempMailerModule\Hermes\UserRegisteredHandler;
 use Crm\RempMailerModule\Models\Authenticator\TokenAuthenticator;
 use Crm\RempMailerModule\Models\User\RempMailerUserDataProvider;
 use Crm\RempMailerModule\Scenarios\MailReceivedCriteria;
+use Crm\RempMailerModule\Scenarios\MailTypeSubscriptionCriteria;
 use Crm\RempMailerModule\Scenarios\UserSubscribedNewslettersCountCriteria;
 use Crm\RempMailerModule\Seeders\SegmentsSeeder;
 use Crm\UsersModule\Events\NotificationEvent;
@@ -165,6 +166,7 @@ class RempMailerModule extends CrmModule
     {
         $scenariosCriteriaStorage->register('user', MailReceivedCriteria::KEY, $this->getInstance(MailReceivedCriteria::class));
         $scenariosCriteriaStorage->register('user', UserSubscribedNewslettersCountCriteria::KEY, $this->getInstance(UserSubscribedNewslettersCountCriteria::class));
+        $scenariosCriteriaStorage->register('user', MailTypeSubscriptionCriteria::KEY, $this->getInstance(MailTypeSubscriptionCriteria::class));
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)

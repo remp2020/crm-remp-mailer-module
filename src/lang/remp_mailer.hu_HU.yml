@@ -81,3 +81,7 @@ admin:
             count_param:
                 label: Minimális szám
                 unit: hírlevelek
+        mail_type_subscription:
+            label: E-mail típus feliratkozás
+            mail_type_param:
+                label: E-mail típus

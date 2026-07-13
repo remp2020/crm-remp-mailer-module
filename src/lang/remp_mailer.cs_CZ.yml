@@ -91,3 +91,7 @@ admin:
             count_param:
                 label: Minimální počet
                 unit: newsletterů
+        mail_type_subscription:
+            label: Odběr newslettru
+            mail_type_param:
+                label: Newsletter

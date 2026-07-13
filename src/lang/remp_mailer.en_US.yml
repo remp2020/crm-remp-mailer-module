@@ -91,3 +91,7 @@ admin:
             count_param:
                 label: Minimum count
                 unit: newsletters
+        mail_type_subscription:
+            label: Newsletter subscription
+            mail_type_param:
+                label: Newsletter
