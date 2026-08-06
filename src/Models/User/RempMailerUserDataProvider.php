@@ -47,7 +47,6 @@ class RempMailerUserDataProvider implements UserDataProviderInterface
                 'opened_at' => $log->opened_at?->format(DateTimeInterface::RFC3339),
                 'clicked_at' => $log->clicked_at?->format(DateTimeInterface::RFC3339),
                 'spam_complained_at' => $log->spam_complained_at?->format(DateTimeInterface::RFC3339),
-                'hard_bounced_at' => $log->hard_bounced_at?->format(DateTimeInterface::RFC3339),
             ]);
         }
 

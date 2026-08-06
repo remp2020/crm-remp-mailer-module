@@ -55,10 +55,6 @@
             <a n:href="Filter! filter => spam_complained" class="ajax"><strong n:tag-if="$filter == 'spam_complained'">{_remp_mailer.data.mail_logs.fields.spam_complained_at}</strong></a>
             <span class="badge">{$totals['spam_complained']}</span>
           </li>
-          <li class="list-group-item">
-            <a n:href="Filter! filter => hard_bounced" class="ajax"><strong n:tag-if="$filter == 'hard_bounced'">{_remp_mailer.data.mail_logs.fields.hard_bounced_at}</strong></a>
-            <span class="badge">{$totals['hard_bounced']}</span>
-          </li>
         </ul>
       </div>
     </div>
@@ -91,7 +87,6 @@
           <span n:if="$email->clicked_at" class="label label-success" data-toggle="tooltip" data-placement="top" title="{$email->clicked_at|userDate}">{_remp_mailer.data.mail_logs.fields.clicked_at}</span>
           <span n:if="$email->dropped_at" class="label label-warning" data-toggle="tooltip" data-placement="top" title="{$email->dropped_at|userDate}">{_remp_mailer.data.mail_logs.fields.dropped_at}</span>
           <span n:if="$email->spam_complained_at" class="label label-danger" data-toggle="tooltip" data-placement="top" title="{$email->spam_complained_at|userDate}">{_remp_mailer.data.mail_logs.fields.spam_complained_at}</span>
-          <span n:if="$email->hard_bounced_at" class="label label-default" data-toggle="tooltip" data-placement="top" title="{$email->hard_bounced_at|userDate}">{_remp_mailer.data.mail_logs.fields.hard_bounced_at}</span>
         </td>
       </tr>
     </tbody>

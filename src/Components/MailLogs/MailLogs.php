@@ -86,7 +86,6 @@ class MailLogs extends BaseLazyWidget implements DetailWidgetInterface
                 'opened_at',
                 'dropped_at',
                 'spam_complained_at',
-                'hard_bounced_at',
             ]);
         }
 
@@ -99,7 +98,6 @@ class MailLogs extends BaseLazyWidget implements DetailWidgetInterface
             'opened' => $counts['opened_at'] ?? 0,
             'dropped' => $counts['dropped_at'] ?? 0,
             'spam_complained' => $counts['spam_complained_at'] ?? 0,
-            'hard_bounced' => $counts['hard_bounced_at'] ?? 0,
         ];
 
         $this->template->setFile(__DIR__ . '/' . $this->view . '.latte');
@@ -129,8 +127,6 @@ class MailLogs extends BaseLazyWidget implements DetailWidgetInterface
             $this->logQuery->setFilter('dropped_at');
         } elseif ($filter === 'spam_complained') {
             $this->logQuery->setFilter('spam_complained_at');
-        } elseif ($filter === 'hard_bounced') {
-            $this->logQuery->setFilter('hard_bounced_at');
         }
 
         $this->redrawControl('mailLogslisting');

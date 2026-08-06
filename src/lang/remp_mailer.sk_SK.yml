@@ -17,7 +17,6 @@ data:
             clicked_at: Kliknuté
             dropped_at: Zahodené
             spam_complained_at: Spam
-            hard_bounced_at: Bounced
             conversions: Konverzie
 
 frontend:

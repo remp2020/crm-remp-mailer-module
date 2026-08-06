@@ -207,7 +207,6 @@ class Client
                 $records[$i]->opened_at = $this->toDateTime($row->opened_at);
                 $records[$i]->clicked_at = $this->toDateTime($row->clicked_at);
                 $records[$i]->spam_complained_at = $this->toDateTime($row->spam_complained_at);
-                $records[$i]->hard_bounced_at = $this->toDateTime($row->hard_bounced_at);
             }
             return $records;
         } catch (ClientException $e) {

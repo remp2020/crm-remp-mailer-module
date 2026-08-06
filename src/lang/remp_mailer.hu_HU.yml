@@ -16,7 +16,6 @@ data:
             delivered_at: Beérkező
             clicked_at: Megnyitott hivatkozás
             opened_at: Olvasott
-            hard_bounced_at: Kézbesítetlen
 frontend:
     mail_settings:
         header: E-mail beállítások
