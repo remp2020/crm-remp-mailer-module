@@ -17,13 +17,13 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
 {
     use TimeframeScenarioTrait;
 
-    public const KEY = 'mail_received';
-    public const TEMPLATE_KEY = 'mail_received_template';
-    public const TIMEFRAME_KEY = self::KEY . '_timeframe';
-    public const UNITS = ['days', 'weeks', 'months', 'years'];
-    public const OPERATOR_BEFORE = 'before';
-    public const OPERATOR_IN_THE_LAST = 'in the last';
-    public const OPERATORS = [self::OPERATOR_IN_THE_LAST, self::OPERATOR_BEFORE];
+    public const string KEY = 'mail_received';
+    public const string TEMPLATE_KEY = 'mail_received_template';
+    public const string TIMEFRAME_KEY = self::KEY . '_timeframe';
+    public const array UNITS = ['days', 'weeks', 'months', 'years'];
+    public const string OPERATOR_BEFORE = 'before';
+    public const string OPERATOR_IN_THE_LAST = 'in the last';
+    public const array OPERATORS = [self::OPERATOR_IN_THE_LAST, self::OPERATOR_BEFORE];
 
     private array $allowedMailTypeCodes = [];
 
@@ -73,25 +73,15 @@ class MailReceivedCriteria implements ScenariosCriteriaInterface
         $templateCodes = $paramValues[self::TEMPLATE_KEY]->selection;
 
         $timeframe = $this->getTimeframe($paramValues, self::UNITS, self::OPERATORS, self::TIMEFRAME_KEY);
-        if (!$timeframe) {
-            return false;
-        }
-
-        $deliveredAtTimeFilter = [];
-        if ($timeframe['operator'] === self::OPERATOR_BEFORE) {
-            $deliveredAtTimeFilter['to'] = $timeframe['limit'];
-        } elseif ($timeframe['operator'] === self::OPERATOR_IN_THE_LAST) {
-            $deliveredAtTimeFilter['from'] = $timeframe['limit'];
-        }
+        $operator = $timeframe['operator'] ?? null;
+        $deliveredFrom = $operator === self::OPERATOR_IN_THE_LAST ? $timeframe['limit'] : null;
+        $deliveredTo = $operator === self::OPERATOR_BEFORE ? $timeframe['limit'] : null;
 
         $logQuery = new MailLogQueryBuilder();
         $logQuery->setEmail($criterionItemRow->email)
             ->setMailTemplateCodes($templateCodes)
-            ->setFilter(
-                'delivered_at',
-                $deliveredAtTimeFilter['from'] ?? null,
-                $deliveredAtTimeFilter['to'] ?? null,
-            )
+            ->setFilter('delivered_at', $deliveredFrom, $deliveredTo)
+            ->setLimit(1)
             ->setPage(1);
 
         $result = $this->mailLogsRepository->get($logQuery);
