@@ -16,7 +16,7 @@ use Nette\Application\UI\Control;
 use Nette\Localization\Translator;
 
 /**
- * @property FrontendPresenter $presenter
+ * @method FrontendPresenter getPresenter()
  */
 class MailSettings extends Control
 {
@@ -37,7 +37,7 @@ class MailSettings extends Control
     public function render(?array $mailTypeCategoryCodes = null)
     {
         $this->template->setFile(__DIR__ . '/' . $this->view);
-        $isLoggedIn = $this->presenter->getUser()->isLoggedIn();
+        $isLoggedIn = $this->getPresenter()->getUser()->isLoggedIn();
 
         $categories = $this->mailTypeCategoriesRepository->all();
         if ($mailTypeCategoryCodes) {
@@ -48,7 +48,7 @@ class MailSettings extends Control
         }
 
         $this->template->categories = $categories;
-        $this->template->rtmParams = $this->presenter->rtmParams();
+        $this->template->rtmParams = $this->getPresenter()->rtmParams();
         $this->template->prohibitedMode = $this->isProhibited();
 
         if (empty($categories)) {
@@ -69,7 +69,7 @@ class MailSettings extends Control
         $userSubscriptions = [];
         if ($isLoggedIn) {
             $userSubscriptions = $this->mailUserSubscriptionsRepository->userPreferences(
-                $this->presenter->getUser()->id,
+                $this->getPresenter()->getUser()->id,
                 true,
             );
         }
@@ -82,7 +82,7 @@ class MailSettings extends Control
             }
             $mailType->is_subscribed = isset($userSubscriptions[$mailType->id]);
             if (!$isLoggedIn) {
-                $mailType->subscribe_email_url = $this->presenter->link(
+                $mailType->subscribe_email_url = $this->getPresenter()->link(
                     ':RempMailer:MailSettings:subscribeEmail',
                     ['id' => $mailType->code],
                 );
@@ -99,7 +99,7 @@ class MailSettings extends Control
                     'is_default' => (int) $variantId === (int) $mailType->default_variant_id,
                 ];
                 if (!$isLoggedIn) {
-                    $variantObj->subscribe_email_url = $this->presenter->link(
+                    $variantObj->subscribe_email_url = $this->getPresenter()->link(
                         ':RempMailer:MailSettings:subscribeEmail',
                         ['id' => $mailType->code, 'variantId' => $variantId],
                     );
@@ -111,7 +111,7 @@ class MailSettings extends Control
 
         $this->template->mailTypesByCategories = $mailTypesByCategories;
         $this->template->mailTypeCategoryCodes = $mailTypeCategoryCodes;
-        $this->template->rtmParams = $this->presenter->rtmParams();
+        $this->template->rtmParams = $this->getPresenter()->rtmParams();
         $this->template->prohibitedMode = $this->isProhibited();
 
         $this->template->render();
@@ -119,8 +119,8 @@ class MailSettings extends Control
 
     public function handleAllSubscribe(?array $cat = null)
     {
-        $this->presenter->onlyLoggedIn();
-        $user = $this->userManager->loadUser($this->presenter->user);
+        $this->getPresenter()->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->getPresenter()->user);
         $this->onlyConfirmedUser();
 
         if ($cat) {
@@ -143,14 +143,14 @@ class MailSettings extends Control
             $this->mailUserSubscriptionsRepository->subscribeUserAll($user);
         }
 
-        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
-        $this->presenter->redirect('this');
+        $this->getPresenter()->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_success'));
+        $this->getPresenter()->redirect('this');
     }
 
     public function handleAllUnSubscribe(?array $cat = null)
     {
-        $this->presenter->onlyLoggedIn();
-        $user = $this->userManager->loadUser($this->presenter->user);
+        $this->getPresenter()->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->getPresenter()->user);
 
         if ($cat) {
             $mailTypes = $this->mailTypesRepository->getAllByCategoryCode($cat, true);
@@ -172,16 +172,16 @@ class MailSettings extends Control
             $this->mailUserSubscriptionsRepository->unsubscribeUserAll($user);
         }
 
-        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
-        $this->presenter->redirect('this');
+        $this->getPresenter()->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.unsubscribe_success'));
+        $this->getPresenter()->redirect('this');
     }
 
     public function handleConfirmEmail()
     {
-        $this->presenter->onlyLoggedIn();
-        $user = $this->userManager->loadUser($this->presenter->getUser());
+        $this->getPresenter()->onlyLoggedIn();
+        $user = $this->userManager->loadUser($this->getPresenter()->getUser());
 
-        $confirmationUrl = $this->presenter->link('//:Users:Users:EmailConfirm', [
+        $confirmationUrl = $this->getPresenter()->link('//:Users:Users:EmailConfirm', [
             'token' => $this->userEmailConfirmationsRepository->generate($user->id)['token'],
         ]);
 
@@ -194,15 +194,15 @@ class MailSettings extends Control
             ],
         ));
 
-        $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.confirmation_email_sent', ['email' => $user->email]));
+        $this->getPresenter()->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.confirmation_email_sent', ['email' => $user->email]));
         $this->redirect('this');
     }
 
     private function onlyConfirmedUser(): void
     {
         if ($this->isProhibited()) {
-            $this->presenter->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_not_allowed'), 'warning');
-            $this->presenter->redirect('this');
+            $this->getPresenter()->flashMessage($this->translator->translate('remp_mailer.frontend.mail_settings.subscribe_not_allowed'), 'warning');
+            $this->getPresenter()->redirect('this');
         }
     }
 
@@ -212,11 +212,11 @@ class MailSettings extends Control
             return false;
         }
 
-        if (!$this->presenter->getUser()->isLoggedIn()) {
+        if (!$this->getPresenter()->getUser()->isLoggedIn()) {
             return false;
         }
 
-        $user = $this->userManager->loadUser($this->presenter->getUser());
+        $user = $this->userManager->loadUser($this->getPresenter()->getUser());
         return $user && $user->confirmed_at === null;
     }
 }
