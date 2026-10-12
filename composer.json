@@ -11,7 +11,6 @@
   "autoload": {
     "psr-4": {
       "Crm\\RempMailerModule\\": "src/"
-    },
-    "classmap": ["src/"]
+    }
   }
 }
