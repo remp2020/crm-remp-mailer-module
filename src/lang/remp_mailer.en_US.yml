@@ -10,6 +10,8 @@ data:
             subject: Subject
             email: E-mail address
             mail_template_id: E-mail
+            mail_type_id: Newsletter
+            public_preview: Preview
             events: Events
             delivered_at: Delivered
             opened_at: Opened

@@ -13,6 +13,11 @@ services:
 	# commands
 	- Crm\RempMailerModule\Commands\SubscribeSegmentToMailTypeCommand
 
+	# presenters
+	- Crm\RempMailerModule\Presenters\MailSettingsPresenter
+	- Crm\RempMailerModule\Presenters\MailTemplatesAdminPresenter
+	- Crm\RempMailerModule\Presenters\MailTypesAdminPresenter
+
 	# components
 	- Crm\RempMailerModule\Components\UserEmailSettings\UserEmailSettingsWidget
 	- Crm\RempMailerModule\Components\MailSettings\MailSettings

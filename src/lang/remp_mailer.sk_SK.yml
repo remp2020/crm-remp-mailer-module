@@ -11,6 +11,8 @@ data:
             subject: Predmet
             email: E-mailová adresa
             mail_template_id: E-mail
+            mail_type_id: Newsletter
+            public_preview: Náhľad
             events: Udalosti
             delivered_at: Doručené
             opened_at: Otvorené

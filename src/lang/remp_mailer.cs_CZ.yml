@@ -10,6 +10,8 @@ data:
             subject: Předmět
             email: E-mailová adresa
             mail_template_id: E-mail
+            mail_type_id: Newsletter
+            public_preview: Náhled
             events: Události
             delivered_at: Doručené
             opened_at: Otevřené

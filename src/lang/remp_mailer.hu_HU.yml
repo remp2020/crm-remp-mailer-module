@@ -10,6 +10,8 @@ data:
             dropped_at: Törölt
             email: E-mail cím
             mail_template_id: E-mail
+            mail_type_id: Hírlevél
+            public_preview: Előnézet
             events: Események
             spam_complained_at: Spam
             conversions: Konverziók
