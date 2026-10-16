@@ -7,6 +7,7 @@ use Crm\RempMailerModule\Models\Api\Client;
 use Crm\RempMailerModule\Models\Api\MailSubscribeRequest;
 use Crm\RempMailerModule\Models\Api\MailSubscribeResponse;
 use Crm\RempMailerModule\Models\MailerException;
+use Crm\UsersModule\Models\User\UnclaimedUser;
 use Crm\UsersModule\Repositories\UsersRepository;
 use League\Event\Emitter;
 
@@ -17,13 +18,14 @@ class MailUserSubscriptionsRepository
         private UsersRepository $usersRepository,
         private MailTypesRepository $mailTypesRepository,
         private Emitter $emitter,
+        private UnclaimedUser $unclaimedUser,
     ) {
     }
 
     final public function userPreferences(int $userId, ?bool $subscribed = null): ?array
     {
         $user = $this->usersRepository->find($userId);
-        if ($user->deleted_at) {
+        if ($user->deleted_at || $this->unclaimedUser->isUnclaimedUser($user)) {
             return [];
         }
 

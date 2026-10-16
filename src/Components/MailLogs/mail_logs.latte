@@ -87,7 +87,7 @@
           <a n:ifset="$email->mail_type" href="{plink :RempMailer:MailTypesAdmin:show $email->mail_type->id}">{$email->mail_type->title}</a>
         </td>
         <td>
-          <a n:ifset="$email->mail_template->public_preview_url" href="{$email->mail_template->public_preview_url}" target="_blank" onclick="window.open(this.href, 'mail_preview', 'popup,width=600,height=800'); return false;"><i class="fa fa-external-link-alt"></i> {_remp_mailer.data.mail_logs.fields.public_preview}</a>
+          <a n:ifset="$email->mail_template->public_preview_url" href="{$email->mail_template->public_preview_url}" target="_blank" onclick="window.open(this.href, 'mail_preview', 'popup,width=600,height=800'); return false;"><i class="fa fa-external-link-alt"></i>&nbsp;{_remp_mailer.data.mail_logs.fields.public_preview}</a>
         </td>
         <td>
           <span n:if="$email->delivered_at" class="label label-primary" data-toggle="tooltip" data-placement="top" title="{$email->delivered_at|userDate}">{_remp_mailer.data.mail_logs.fields.delivered_at}</span>
