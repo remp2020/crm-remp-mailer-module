@@ -77,6 +77,7 @@ class TokenAuthenticator extends BaseAuthenticator
             throw new AuthenticationException('Invalid token provided', Authenticator::IdentityNotFound);
         }
         if ($user->role === UsersRepository::ROLE_ADMIN) {
+            $this->addAttempt($user->email, $user, $this->source, LoginAttemptsRepository::STATUS_LOGIN_TYPE_DISABLED_FOR_ADMIN);
             throw new AuthenticationException('Autologin for this account is disabled', Authenticator::IdentityNotFound);
         }
 
