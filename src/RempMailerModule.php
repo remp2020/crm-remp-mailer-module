@@ -3,7 +3,7 @@
 namespace Crm\RempMailerModule;
 
 use Crm\ApiModule\Models\Api\ApiRoutersContainerInterface;
-use Crm\ApiModule\Models\Authorization\BearerTokenAuthorization;
+use Crm\ApiModule\Models\Authorization\AdminLoggedOrBearerTokenAuthorization;
 use Crm\ApiModule\Models\Router\ApiIdentifier;
 use Crm\ApiModule\Models\Router\ApiRoute;
 use Crm\ApplicationModule\Application\CommandsContainerInterface;
@@ -137,7 +137,7 @@ class RempMailerModule extends CrmModule
             new ApiRoute(
                 new ApiIdentifier('1', 'mail-template', 'list'),
                 MailTemplateListApiHandler::class,
-                BearerTokenAuthorization::class,
+                AdminLoggedOrBearerTokenAuthorization::class,
             ),
         );
 
